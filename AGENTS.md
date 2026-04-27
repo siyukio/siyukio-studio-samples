@@ -71,13 +71,17 @@ Tasks that involve git commits (e.g., implementing features, fixing bugs, refact
 
 #### Development Task Workflow
 
+**MANDATORY**: This workflow MUST be followed for all development tasks without exception.
+
+**NOTE**: You may resume from any step during execution, but you MUST complete the entire workflow step by step.
+
 1. **Check test branch** - If `test/{project-version}` does not exist, create it from `main` and push
 2. **Create a feature branch** from `test/{project-version}` with appropriate prefix (e.g., `feat/`, `fix/`, `refactor/`)
-2. **Implement changes** following the applicable sub-project skill
-3. **Verify** using the sub-project's verification gates
-4. **Commit** with Lore-compliant message format: `<type>(<scope>): <intent>`
-5. **Push branch and create PR** to `test/{project-version}`
-6. **Cleanup**: Switch back to `test/{project-version}` and delete the submitted local branch
+3. **Implement changes** following the applicable sub-project skill
+4. **Verify** using the sub-project's verification gates
+5. **Commit** with Lore-compliant message format: `<type>(<scope>): <intent>`
+6. **Push branch and create PR** to `test/{project-version}`
+7. **Cleanup**: Switch back to `test/{project-version}` and delete the submitted local branch
 
 #### Local Environment Configuration
 
