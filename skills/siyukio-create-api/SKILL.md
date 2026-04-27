@@ -1,14 +1,15 @@
 ---
 name: siyukio-create-api
-description: "Generate API layer (Controller + DTOs) for Siyukio-based Spring Boot applications using @ApiController, @ApiMapping, @ApiParameter annotations"
+description: "Generate API layer (Controller + DTOs) for Siyukio-based Spring Boot applications"
 triggers:
   - "add api"
   - "create api"
   - "new api"
   - "add endpoint"
+  - "create endpoint"
   - "new endpoint"
-  - "api add"
-  - "api create"
+  - "add controller"
+  - "create controller"
 ---
 
 <Purpose>

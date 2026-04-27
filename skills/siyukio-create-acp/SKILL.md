@@ -1,17 +1,13 @@
 ---
 name: siyukio-create-acp
-description: "Generate ACP (Agent Client Protocol) Session Handler for Siyukio-based Spring Boot applications, enabling quick agent service implementation"
+description: "Generate ACP (Agent Client Protocol) Session Handler for Siyukio-based Spring Boot applications"
 triggers:
-  - "add acp handler"
-  - "create acp handler"
-  - "new acp handler"
-  - "acp handler add"
-  - "acp handler create"
+  - "add acp"
+  - "create acp"
+  - "new acp"
   - "add agent"
   - "create agent"
   - "new agent"
-  - "agent add"
-  - "agent create"
 ---
 
 <Purpose>

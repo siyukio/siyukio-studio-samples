@@ -1,15 +1,14 @@
 ---
 name: siyukio-create-unit-test
-description: "Generate unit tests for Siyukio Spring Boot applications using @ApiMock for API testing"
+description: "Generate unit tests for Siyukio-based Spring Boot applications"
 triggers:
   - "add unit test"
   - "create unit test"
   - "new unit test"
-  - "test add"
-  - "test create"
+  - "add test"
+  - "create test"
+  - "new test"
   - "write test"
-  - "unit test"
-  - "api test"
 ---
 
 <Purpose>

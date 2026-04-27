@@ -2,14 +2,12 @@
 name: siyukio-create-infrastructure
 description: "Generate Infrastructure layer components for Siyukio-based Spring Boot applications, such as external service clients"
 triggers:
-  - "add infrastructure component"
-  - "create infrastructure component"
-  - "new infrastructure component"
+  - "add infrastructure"
+  - "create infrastructure"
+  - "new infrastructure"
   - "add client"
   - "create client"
   - "new client"
-  - "infrastructure component add"
-  - "infrastructure component create"
 ---
 
 <Purpose>

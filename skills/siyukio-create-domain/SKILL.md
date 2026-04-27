@@ -1,6 +1,6 @@
 ---
 name: siyukio-create-domain
-description: "Generate and modify domain model (Entity) for Siyukio-based Spring Boot applications using PostgreSQL"
+description: "Generate domain model (Entity), Policy, and errors for Siyukio-based Spring Boot applications using PostgreSQL"
 triggers:
   - "add entity"
   - "create entity"
@@ -9,14 +9,12 @@ triggers:
   - "update entity"
   - "add field"
   - "add index"
-  - "entity add"
-  - "entity create"
-  - "entity modify"
   - "add policy"
   - "create policy"
-  - "check entity policy"
   - "add errors"
   - "create errors"
+  - "add domain"
+  - "create domain"
 ---
 
 <Purpose>

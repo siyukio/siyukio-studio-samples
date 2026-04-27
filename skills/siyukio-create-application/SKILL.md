@@ -1,12 +1,12 @@
 ---
 name: siyukio-create-application
-description: "Generate Application Service layer for Siyukio-based Spring Boot applications, exposing domain functionality to API layer"
+description: "Generate Application Service layer for Siyukio-based Spring Boot applications"
 triggers:
-  - "add application service"
-  - "create application service"
-  - "new application service"
-  - "application service add"
-  - "application service create"
+  - "add service"
+  - "create service"
+  - "new service"
+  - "add application"
+  - "create application"
 ---
 
 <Purpose>
