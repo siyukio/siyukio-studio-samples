@@ -42,23 +42,6 @@ maven-version: 3.9
 
 (TBD)
 
-## Available Skills
-
-### Server
-
-| Skill                            | Purpose                                                                                         |
-|----------------------------------|-------------------------------------------------------------------------------------------------|
-| `$siyukio-init-springboot`       | Initialize Spring Boot project structure                                                        |
-| `$siyukio-create-domain`         | Create domain models and policy logic                                                           |
-| `$siyukio-create-api`            | Create domain API                                                                               |
-| `$siyukio-create-application`    | Create application layer (accept API requests, call domain policy, operate model data)          |
-| `$siyukio-create-acp`            | Initialize ACP server session handler                                                           |
-| `$siyukio-create-domain-module`  | Create complete domain feature with module dependencies                                         |
-
-### Web / Desktop / Console
-
-(TBD)
-
 ## Task Execution Guidelines
 
 **Restriction**: Currently only Server is under development. Web / Desktop / Console technical details are not yet finalized - reject any related tasks.

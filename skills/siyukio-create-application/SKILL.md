@@ -31,6 +31,12 @@ Application layer structure under domain module:
 
 </Use_When>
 
+<Do_Not_Use_When>
+
+- If the service does not operate on domain models, it is not a business service, use `$siyukio-create-infrastructure` instead
+
+</Do_Not_Use_When>
+
 <Prerequisites>
 
 **Important workflow order:**
@@ -84,6 +90,8 @@ Location: `{project-name}/{project-name}-domain-{domain}/src/main/java/{package-
 **Service design rules:**
 
 - Service method signatures must match API controller (same method names, request params, response types)
+- If method is called by controller: use controller DTOs (Request/Response) as parameters
+- If method is NOT called by controller: use `record {method}Command` for input, `record {method}Result` for output (define both records inside the Service class)
 - Inject `PgEntityDao<Entity>` for direct database operations
 - Inject `{Context}Policy` for validation and business rule checks
 - Use `Token` parameter if user context is needed
@@ -107,6 +115,7 @@ import io.github.siyukio.tools.entity.sort.FieldSortBuilder;
 import io.github.siyukio.tools.entity.sort.SortBuilders;
 import io.github.siyukio.tools.entity.sort.SortOrder;
 import io.github.siyukio.tools.util.XDataUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -116,6 +125,7 @@ import java.util.List;
 /**
  * Application service for {Context} operations.
  */
+@Slf4j
 @Service
 public class {Context}Service {
 
@@ -240,7 +250,7 @@ public class {Context}Service {
 
 <SortBuilders_Usage>
 
-## SortBuilders (排序构建器)
+## SortBuilders
 
 | Method                                      | Purpose                        |
 | ------------------------------------------- | ------------------------------ |
@@ -248,7 +258,7 @@ public class {Context}Service {
 | `SortBuilders.fieldSort(field).order(order)` | Set sort order (ASC/DESC)     |
 | `SortBuilders.fieldSort(builder1, builder2)` | Multi-field sort              |
 
-## SortOrder (排序方向)
+## SortOrder
 
 | Value  | Description |
 | ------ | ----------- |
@@ -261,7 +271,7 @@ public class {Context}Service {
 
 <QueryBuilders_Usage>
 
-## QueryBuilders (查询构建器)
+## QueryBuilders
 
 | Method                                           | Purpose                            |
 | ------------------------------------------------ | ---------------------------------- |
@@ -274,7 +284,7 @@ public class {Context}Service {
 | `QueryBuilders.wildcardPrefixQuery(name, value)` | Prefix wildcard (\*value)         |
 | `QueryBuilders.wildcardSuffixQuery(name, value)` | Suffix wildcard (value\*)         |
 
-## BoolQueryBuilder (布尔查询)
+## BoolQueryBuilder
 
 | Method                | Purpose       |
 | --------------------- | ------------- |
@@ -288,7 +298,7 @@ public class {Context}Service {
 
 <XDataUtils_Usage>
 
-## Object Copy (深度复制)
+## Object Copy
 
 | Method                                               | Purpose                                   |
 | ---------------------------------------------------- | ----------------------------------------- |
@@ -296,13 +306,13 @@ public class {Context}Service {
 | `XDataUtils.copy(from, List.class, Item.class)`       | Copy List with type transformation        |
 | `XDataUtils.copy(from, Map.class, K.class, V.class)`  | Copy Map with key/value types             |
 
-## Object Merge (合并非null属性)
+## Object Merge
 
 | Method                                   | Purpose                                     |
 | ---------------------------------------- | ------------------------------------------- |
 | `XDataUtils.mergeNotNul(source, target)` | Merge non-null fields from source to target |
 
-## JSON Parse (JSON解析)
+## JSON Parse
 
 | Method                          | Purpose                         |
 | ------------------------------- | ------------------------------- |
@@ -310,14 +320,14 @@ public class {Context}Service {
 | `XDataUtils.parseObject(json)`  | Parse JSON string to JSONObject |
 | `XDataUtils.parseArray(json)`   | Parse JSON string to JSONArray  |
 
-## JSON Serialize (JSON序列化)
+## JSON Serialize
 
 | Method                                | Purpose                          |
 | ------------------------------------- | -------------------------------- |
 | `XDataUtils.toJSONString(from)`       | Convert object to JSON string    |
 | `XDataUtils.toPrettyJSONString(from)` | Convert to formatted JSON string |
 
-## DateTime (日期时间)
+## DateTime
 
 | Method                             | Purpose                                                     |
 | ---------------------------------- | ---------------------------------------------------------- |
