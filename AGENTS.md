@@ -26,7 +26,7 @@ siyukio-studio-samples/
 
 ```yaml
 project-name: siyukio-studio-server
-project-version: 3.5.13
+project-version: 1.0.0
 package-name: io.github.siyukio.samples
 package-path: /io/github/siyukio/samples
 java-version: 21

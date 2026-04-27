@@ -53,7 +53,7 @@ If `{project-name}/pom.xml` does not exist, create it:
     <parent>
         <groupId>io.github.siyukio</groupId>
         <artifactId>spring-siyukio</artifactId>
-        <version>3.5.13</version>
+        <version>3.5.14-M1</version>
     </parent>
     <groupId>{package-name}</groupId>
     <artifactId>{project-name}</artifactId>
@@ -387,13 +387,13 @@ After execution, the project structure will be:
 <Key_Conventions>
 
 | Item             | Value                      |
-|------------------|----------------------------|
+| ---------------- | -------------------------- |
 | Parent Artifact  | `{project-name}`           |
 | Package          | `{package-name}`           |
 | Package Path     | `{package-path}`           |
 | Common Module    | `{project-name}-common`    |
 | Bootstrap Module | `{project-name}-bootstrap` |
-| Siyukio Version  | `3.5.13`                   |
+| Siyukio Version  | `3.5.14-M1`                |
 | Java Version     | 21                         |
 
 </Key_Conventions>
