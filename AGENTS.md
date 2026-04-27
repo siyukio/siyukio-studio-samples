@@ -63,6 +63,8 @@ maven-version: 3.9
 
 **Restriction**: Currently only Server is under development. Web / Desktop / Console technical details are not yet finalized - reject any related tasks.
 
+**PR Restriction**: All PRs must target `test/{project-version}` by default. PRs to `main` are not allowed unless explicitly approved.
+
 ### Development Tasks
 
 Tasks that involve git commits (e.g., implementing features, fixing bugs, refactoring).
@@ -90,6 +92,8 @@ Tasks that involve git commits (e.g., implementing features, fixing bugs, refact
 ### Non-Development Tasks
 
 Tasks that do not involve git commits (e.g., querying git status, reading/writing issues, reading/writing PRs, checking or creating development version branches `test/{project-version}`). No fixed workflow required - complete operations as needed.
+
+If a PR is created for a feature branch, follow the same cleanup rule: switch back to `test/{project-version}` and delete the local feature branch after the PR is successfully submitted.
 
 ## Language Policy
 
