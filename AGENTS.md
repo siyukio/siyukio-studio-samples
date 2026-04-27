@@ -22,11 +22,16 @@ siyukio-studio-samples/
 
 ## Context Parameters
 
+### Global
+
+```yaml
+project-version: 1.0.0
+```
+
 ### Server
 
 ```yaml
 project-name: siyukio-studio-server
-project-version: 1.0.0
 package-name: io.github.siyukio.samples
 package-path: /io/github/siyukio/samples
 java-version: 21
@@ -64,7 +69,8 @@ Tasks that involve git commits (e.g., implementing features, fixing bugs, refact
 
 #### Development Task Workflow
 
-1. **Create a feature branch** from `test/{project-version}` with appropriate prefix (e.g., `feat/`, `fix/`, `refactor/`)
+1. **Check test branch** - If `test/{project-version}` does not exist, create it from `main` and push
+2. **Create a feature branch** from `test/{project-version}` with appropriate prefix (e.g., `feat/`, `fix/`, `refactor/`)
 2. **Implement changes** following the applicable sub-project skill
 3. **Verify** using the sub-project's verification gates
 4. **Commit** with Lore-compliant message format: `<type>(<scope>): <intent>`
@@ -83,7 +89,7 @@ Tasks that involve git commits (e.g., implementing features, fixing bugs, refact
 
 ### Non-Development Tasks
 
-Tasks that do not involve git commits (e.g., querying git status, creating PRs). No fixed workflow required - complete operations as needed.
+Tasks that do not involve git commits (e.g., querying git status, reading/writing issues, reading/writing PRs, checking or creating development version branches `test/{project-version}`). No fixed workflow required - complete operations as needed.
 
 ## Language Policy
 
