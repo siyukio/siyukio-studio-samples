@@ -1,0 +1,9 @@
+# Local omx directory
+.omx/
+
+# OS files
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
