@@ -54,6 +54,10 @@ maven-version: 3.9
 
 **NOTE**: You may resume from any step during execution, but you MUST complete the remaining workflow from that step onwards. For example, if the current task is only to submit a PR, you can start from step 4 and continue to step 7.
 
+**RULES**:
+- When executing specific steps, prefer to use skills with `siyukio` prefix
+- Strictly follow the steps described in the skill; do not deviate from the workflow
+
 1. **Check test branch** - If `test/{project-version}` does not exist, create it from `main` and push
 2. **Create a feature branch** from `test/{project-version}` with appropriate prefix (e.g., `feat/`, `fix/`, `refactor/`)
 3. **Implement changes** following the applicable sub-project skill
