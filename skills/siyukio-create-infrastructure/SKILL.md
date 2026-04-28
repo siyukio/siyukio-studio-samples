@@ -126,4 +126,5 @@ After implementation:
 1. Run `./mvnw compile` to verify code compiles
 2. Check all imports are correct
 3. Verify record Command and Result field types match requirements
+4. If `{Service}Client` has unit test, run `./mvnw test -DskipTests=false -pl {project-name}/{project-name}-domain-{domain}` to verify the unit test passes
 </Verification>

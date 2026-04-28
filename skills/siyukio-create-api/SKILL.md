@@ -225,14 +225,14 @@ public class {Context}Controller {
 ```
 
 > **Note**: Add `Token token` parameter to access authenticated user information. Authorization is enabled by default (
-`authorization = true`). Failed authentication will be intercepted and return an error response.
+> `authorization = true`). Failed authentication will be intercepted and return an error response.
 
 </Execution_Protocol>
 
 <Key_Conventions>
 
 | Item         | Convention                                                               |
-|--------------|--------------------------------------------------------------------------|
+| ------------ | ------------------------------------------------------------------------ |
 | Package      | `{package-name}.{domain}.api`                                            |
 | Package Path | `{package-path}/{domain}/api/`                                           |
 | Paths        | `{Context}Paths.java` interface with path constants in `api/paths/`      |
@@ -261,7 +261,7 @@ public class {Context}Controller {
 ```
 
 | Property  | Default | Description                                              |
-|-----------|---------|----------------------------------------------------------|
+| --------- | ------- | -------------------------------------------------------- |
 | `tags`    | {}      | **Recommended.** Category tags for filtering in api-docs |
 | `summary` | ""      | **Recommended.** Brief description of the controller     |
 
@@ -286,7 +286,7 @@ public PageResponse<{Context}Response> list(PageRequest request) {}
 ```
 
 | Property        | Default | Description                                                           |
-|-----------------|---------|-----------------------------------------------------------------------|
+| --------------- | ------- | --------------------------------------------------------------------- |
 | `path`          | -       | **Required.** Use `{Context}Paths.GET`, `{Context}Paths.CREATE`, etc. |
 | `summary`       | ""      | **Recommended.** Brief description of the API                         |
 | `description`   | ""      | Detailed description of the API                                       |
@@ -319,7 +319,7 @@ public record {Context}Request(
 ```
 
 | Property      | Default | Description                                                                         |
-|---------------|---------|-------------------------------------------------------------------------------------|
+| ------------- | ------- | ----------------------------------------------------------------------------------- |
 | `required`    | true    | Whether it is required                                                              |
 | `description` | ""      | Parameter description (defaults to field name, only set when field name is unclear) |
 
@@ -367,4 +367,8 @@ After implementation:
 3. Verify DTO field mappings match Application Service
 4. Test POST JSON requests with correct operation paths
 5. If ACP enabled, verify ACP client configuration
+6. If {Context}Controller has a corresponding unit test (e.g., `{Context}ControllerTest.java`), run it:
+   ```bash
+   ./mvnw test -DskipTests=false -pl {project-name}/{project-name}-domain-{domain}
+   ```
 </Verification>
