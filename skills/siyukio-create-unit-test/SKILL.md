@@ -53,17 +53,41 @@ src/test/
 
 <Execution_Protocol>
 
-## Step 1: Analyze Code for Test Generation
+## Step 1: Add Test Dependencies to Module pom.xml (if not exists)
 
-Based on the API Controller, Application Service, and DTOs, identify:
+Location:
+`{project-name}/{project-name}-domain-{domain}/pom.xml`
 
-- Test scenarios (positive, negative, edge cases)
-- Required test data
-- Assertions for response validation
-- Dependencies on other services
-- Database state requirements
+Add the following dependency inside `<dependencies>` section:
 
-## Step 2: Generate Spring Boot Test Entry (if not exists)
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-test</artifactId>
+    <scope>test</scope>
+</dependency>
+```
+
+## Step 2: Prepare Local Test Configuration (if not exists)
+
+> **Note**: Environment variables for local testing should be obtained from the **Local Environment Configuration** section in `AGENTS.md`. Refer to that file for the required variables and their expected values.
+
+Extract local test environment variables from `AGENTS.md` and create:
+
+Location:
+`{project-name}/{project-name}-domain-{domain}/src/test/resources/application-local.yml`
+
+```yaml
+spring:
+  datasource:
+    postgres:
+      master:
+        url: ${SIYUKIO_DB_MASTER_URL}
+        username: ${SIYUKIO_DB_MASTER_USERNAME}
+        password: ${SIYUKIO_DB_MASTER_PASSWORD}
+```
+
+## Step 3: Generate Spring Boot Test Entry (if not exists)
 
 Location:
 `{project-name}/{project-name}-domain-{domain}/src/test/java/{package-path}/Test{Domain}Application.java`
@@ -88,26 +112,17 @@ public class Test{Domain}Application {
 }
 ```
 
-## Step 3: Prepare Local Test Configuration
+## Step 4: Analyze Code for Test Generation
 
-> **Note**: Environment variables for local testing should be obtained from the **Local Environment Configuration** section in `AGENTS.md`. Refer to that file for the required variables and their expected values.
+Based on the API Controller, Application Service, and DTOs, identify:
 
-Extract local test environment variables from `AGENTS.md` and create:
+- Test scenarios (positive, negative, edge cases)
+- Required test data
+- Assertions for response validation
+- Dependencies on other services
+- Database state requirements
 
-Location:
-`{project-name}/{project-name}-domain-{domain}/src/test/resources/application-local.yml`
-
-```yaml
-spring:
-  datasource:
-    postgres:
-      master:
-        url: ${SIYUKIO_DB_MASTER_URL}
-        username: ${SIYUKIO_DB_MASTER_USERNAME}
-        password: ${SIYUKIO_DB_MASTER_PASSWORD}
-```
-
-## Step 4: Generate API Controller Test Class
+## Step 5: Generate API Controller Test Class (Optional)
 
 Location:
 `{project-name}/{project-name}-domain-{domain}/src/test/java/{package-path}/{domain}/api/{Context}ControllerTest.java`
@@ -211,7 +226,7 @@ class {Context}ControllerTest {
 }
 ```
 
-## Step 5: Generate Application Service Test Class (Optional)
+## Step 6: Generate Application Service Test Class (Optional)
 
 For more granular testing of service methods not exposed via API:
 
@@ -239,9 +254,9 @@ class {Context}ServiceTest {
 }
 ```
 
-> **Note**: If an Application Service method is called by a Controller, skip creating a unit test for that method. Instead, create the unit test for the corresponding Controller method (Step 4). Only generate tests for service methods that are not exposed via API.
+> **Note**: If an Application Service method is called by a Controller, skip creating a unit test for that method. Instead, create the unit test for the corresponding Controller method (Step 5). Only generate tests for service methods that are not exposed via API.
 
-## Step 6: Generate Infrastructure Client Test Class (Optional)
+## Step 7: Generate Infrastructure Client Test Class (Optional)
 
 For testing external service clients. Each domain can have its own infrastructure layer:
 
@@ -278,15 +293,9 @@ class {Context}ClientTest {
 }
 ```
 
-## Step 7: Execute Tests
+## Step 8: Execute Tests
 
 Run tests for a specific domain module:
-
-```bash
-./mvnw test -DskipTests=false -pl {project-name}/{project-name}-domain-{domain}
-```
-
-Run tests for infrastructure client in specific domain:
 
 ```bash
 ./mvnw test -DskipTests=false -pl {project-name}/{project-name}-domain-{domain}
@@ -296,14 +305,14 @@ Run tests for infrastructure client in specific domain:
 
 <Key_Conventions>
 
-| Item                     | Convention                                                    |
-| ------------------------ | ------------------------------------------------------------ |
-| Test Entry               | `Test{Domain}Application.java` in package root              |
-| API Test Location        | `src/test/java/{package-path}/{domain}/api/`                  |
-| Service Test Location    | `src/test/java/{package-path}/{domain}/application/`         |
-| Client Test Location     | `src/test/java/{package-path}/{domain}/infrastructure/`            |
-| Test Configuration       | `src/test/resources/application-local.yml`                    |
-| Test Annotation          | `@SpringBootTest` + `@ActiveProfiles("local")`               |
+| Item                  | Convention                                                     |
+| --------------------- | -------------------------------------------------------------- |
+| Test Entry            | `Test{Domain}Application.java` in package root                 |
+| API Test Location     | `src/test/java/{package-path}/{domain}/api/`                   |
+| Service Test Location | `src/test/java/{package-path}/{domain}/application/`           |
+| Client Test Location  | `src/test/java/{package-path}/{domain}/infrastructure/`        |
+| Test Configuration    | `src/test/resources/application-local.yml`                     |
+| Test Annotation       | `@SpringBootTest` + `@ActiveProfiles("local")`                 |
 | API Mock Utility      | `ApiMock` from `io.github.siyukio.tools.test.api`              |
 | Profile               | Use `local` profile for integration tests with real database   |
 | Assertions            | Use JUnit 5 assertions from `org.junit.jupiter.api.Assertions` |
