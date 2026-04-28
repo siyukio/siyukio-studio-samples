@@ -48,15 +48,16 @@ maven-version: 3.9
 
 **PR Restriction**: All PRs must target `test/{project-version}` by default. PRs to `main` are not allowed unless explicitly approved.
 
+<Execution_Policy>
+
+- All tasks must follow the workflow described in this document.
+- When executing specific steps, prefer to use skills with `siyukio` prefix.
+
+</Execution_Policy>
+
 ### Task Workflow
 
-**MANDATORY**: All tasks must follow this workflow.
-
 **NOTE**: You may resume from any step during execution, but you MUST complete the remaining workflow from that step onwards. For example, if the current task is only to submit a PR, you can start from step 4 and continue to step 7.
-
-**RULES**:
-- When executing specific steps, prefer to use skills with `siyukio` prefix
-- Strictly follow the steps described in the skill; do not deviate from the workflow
 
 1. **Check test branch** - If `test/{project-version}` does not exist, create it from `main` and push
 2. **Create a feature branch** from `test/{project-version}` with appropriate prefix (e.g., `feat/`, `fix/`, `refactor/`)
