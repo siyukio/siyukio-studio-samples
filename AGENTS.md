@@ -48,15 +48,11 @@ maven-version: 3.9
 
 **PR Restriction**: All PRs must target `test/{project-version}` by default. PRs to `main` are not allowed unless explicitly approved.
 
-### Development Tasks
+### Task Workflow
 
-Tasks that involve git commits (e.g., implementing features, fixing bugs, refactoring).
+**MANDATORY**: All tasks must follow this workflow.
 
-#### Development Task Workflow
-
-**MANDATORY**: This workflow MUST be followed for all development tasks without exception.
-
-**NOTE**: You may resume from any step during execution, but you MUST complete the entire workflow step by step.
+**NOTE**: You may resume from any step during execution, but you MUST complete the remaining workflow from that step onwards. For example, if the current task is only to submit a PR, you can start from step 4 and continue to step 7.
 
 1. **Check test branch** - If `test/{project-version}` does not exist, create it from `main` and push
 2. **Create a feature branch** from `test/{project-version}` with appropriate prefix (e.g., `feat/`, `fix/`, `refactor/`)
@@ -66,7 +62,7 @@ Tasks that involve git commits (e.g., implementing features, fixing bugs, refact
 6. **Push branch and create PR** to `test/{project-version}`
 7. **Cleanup**: Switch back to `test/{project-version}` and delete the submitted local branch
 
-#### Local Environment Configuration
+### Local Environment Configuration
 
 **Required Environment Variables for Local Test:**
 
@@ -75,12 +71,6 @@ Tasks that involve git commits (e.g., implementing features, fixing bugs, refact
 | SIYUKIO_DB_MASTER_URL      | Database url      | jdbc:postgresql://localhost:5432/root |
 | SIYUKIO_DB_MASTER_USERNAME | Database username | root                                  |
 | SIYUKIO_DB_MASTER_PASSWORD | Database password | FYm7JqaEcptxUTgy                      |
-
-### Non-Development Tasks
-
-Tasks that do not involve git commits (e.g., querying git status, reading/writing issues, reading/writing PRs, checking or creating development version branches `test/{project-version}`). No fixed workflow required - complete operations as needed.
-
-If a PR is created for a feature branch, follow the same cleanup rule: switch back to `test/{project-version}` and delete the local feature branch after the PR is successfully submitted.
 
 ## Language Policy
 
