@@ -41,11 +41,11 @@ Infrastructure layer structure under common module:
 
 <Prerequisites>
 
-**Important workflow order:**
-
-1. Infrastructure components are independent of domain modules
-2. They typically reside in the common module
-3. They provide integration capabilities for other application components
+<Execution_Policy>
+- Infrastructure components are independent of domain modules
+- They typically reside in the common module
+- They provide integration capabilities for other application components
+</Execution_Policy>
 
 Requirements:
 

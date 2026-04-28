@@ -39,11 +39,11 @@ Application layer structure under domain module:
 
 <Prerequisites>
 
-**Important workflow order:**
-
-1. If domain model/policy needs to be created or updated: use `$siyukio-create-domain` first
-2. If API/controller/DTO needs to be created or updated: use `$siyukio-create-api` first
-3. Finally, create the Application Service
+<Execution_Policy>
+- If domain model/policy needs to be created or updated: use `$siyukio-create-domain` first
+- If API/controller/DTO needs to be created or updated: use `$siyukio-create-api` first
+- Finally, create the Application Service
+</Execution_Policy>
 
 Requirements:
 

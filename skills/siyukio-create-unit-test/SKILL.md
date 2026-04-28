@@ -51,10 +51,10 @@ src/test/
 
 </Prerequisites>
 
-**RULES**:
-
-1. **DO NOT use mocks** - All test objects must be real instances injected via `@Autowired`
-2. All tests must use `@SpringBootTest` with `@ActiveProfiles("local")` for full integration testing
+<Execution_Policy>
+- **DO NOT use mocks** - All test objects must be real instances injected via `@Autowired`
+- All tests must use `@SpringBootTest` with `@ActiveProfiles("local")` for full integration testing
+</Execution_Policy>
 
 <Execution_Protocol>
 
