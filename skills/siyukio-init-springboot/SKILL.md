@@ -333,7 +333,7 @@ Location: `./{project-name}/.gitignore`
 **/target/
 
 # Local profile configurations (secrets for unit tests)
-**/*-local.*
+/**/application-local.yml
 
 # OMX
 .omx/

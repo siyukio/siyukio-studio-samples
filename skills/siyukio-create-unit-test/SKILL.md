@@ -77,10 +77,14 @@ Add the following dependency inside `<dependencies>` section:
 
 > **Note**: Environment variables for local testing should be obtained from the **Local Environment Configuration** section in `AGENTS.md`. Refer to that file for the required variables and their expected values.
 
-Extract local test environment variables from `AGENTS.md` and create:
+1. **Read `AGENTS.md`** and extract the **Local Environment Configuration** table
+2. **Read the existing `application-local.yml` template** (if exists) to identify any variable placeholders (e.g., `${SIYUKIO_DB_MASTER_URL}`)
+3. **Replace variable placeholders** with actual values from the AGENTS.md configuration table
 
 Location:
 `{project-name}/{project-name}-domain-{domain}/src/test/resources/application-local.yml`
+
+Example (with placeholders):
 
 ```yaml
 spring:
@@ -103,17 +107,9 @@ One entry per module. Only create if not exists.
 package {package-name};
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
 
-@SpringBootApplication
-public class Test{Domain}Application {
-
-    public static void main(String[] args) {
-        new SpringApplicationBuilder(Test{Domain}Application.class)
-                .build()
-                .run(args);
-    }
-
+@SpringBootApplication(scanBasePackages = "{package-name}")
+public class TestApplication {
 }
 ```
 
@@ -141,6 +137,7 @@ Inject Controller directly and call its methods. Each test method should:
 ```java
 package {package-name}.{domain}.api;
 
+import {package-name}.TestApplication;
 import {package-name}.{domain}.api.{Context}Controller;
 import {package-name}.{domain}.api.dto.{Context}Request;
 import {package-name}.{domain}.api.dto.{Context}Response;
@@ -153,7 +150,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@SpringBootTest(classes = TestApplication.class)
 @ActiveProfiles("local")
 class {Context}ControllerTest {
 
@@ -222,6 +219,7 @@ Location:
 ```java
 package {package-name}.{domain}.application;
 
+import {package-name}.TestApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -229,7 +227,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@SpringBootTest(classes = TestApplication.class)
 @ActiveProfiles("local")
 class {Context}ServiceTest {
 
@@ -252,6 +250,7 @@ Location:
 ```java
 package {package-name}.{domain}.infrastructure;
 
+import {package-name}.TestApplication;
 import {package-name}.{domain}.infrastructure.{Context}Client;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -260,7 +259,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@SpringBootTest(classes = TestApplication.class)
 @ActiveProfiles("local")
 class {Context}ClientTest {
 
