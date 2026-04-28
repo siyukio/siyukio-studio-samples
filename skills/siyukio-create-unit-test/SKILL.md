@@ -12,7 +12,7 @@ triggers:
 ---
 
 <Purpose>
-Generate unit tests for Siyukio Spring Boot applications. This skill focuses on testing API endpoints using the `@ApiMock` utility class which provides a clean way to perform HTTP requests against mocked API endpoints.
+Generate unit tests for Siyukio Spring Boot applications. This skill focuses on testing API endpoints by directly injecting Controller objects and calling their methods.
 
 Test structure under domain module:
 
@@ -44,12 +44,17 @@ src/test/
 </Use_When>
 
 <Prerequisites>
+
 - Target domain module must exist: `{project-name}/{project-name}-domain-{domain}/`
 - Target test location: `src/test/java/{package-path}/{domain}/`
 - Local test configuration in `src/test/resources/application-local.yml`
 
-> **Note**: When `$siyukio-create-api` or `$siyukio-create-application` skill is executed successfully, if there is an explicit requirement to create corresponding unit tests, use this skill to create them. This skill can create unit tests for existing APIs or applications.
-> </Prerequisites>
+</Prerequisites>
+
+**RULES**:
+
+1. **DO NOT use mocks** - All test objects must be real instances injected via `@Autowired`
+2. All tests must use `@SpringBootTest` with `@ActiveProfiles("local")` for full integration testing
 
 <Execution_Protocol>
 
@@ -127,19 +132,20 @@ Based on the API Controller, Application Service, and DTOs, identify:
 Location:
 `{project-name}/{project-name}-domain-{domain}/src/test/java/{package-path}/{domain}/api/{Context}ControllerTest.java`
 
-Use `@ApiMock` for API endpoint testing. Each test method should:
+Inject Controller directly and call its methods. Each test method should:
 
 1. Setup test data if needed
-2. Perform the API call using `apiMock.perform()`
+2. Call controller method directly
 3. Assert the response
 
 ```java
 package {package-name}.{domain}.api;
 
+import {package-name}.{domain}.api.{Context}Controller;
 import {package-name}.{domain}.api.dto.{Context}Request;
 import {package-name}.{domain}.api.dto.{Context}Response;
-import {package-name}.{domain}.api.paths.{Context}Paths;
-import io.github.siyukio.tools.test.api.ApiMock;
+import io.github.siyukio.tools.api.dto.PageRequest;
+import io.github.siyukio.tools.api.dto.PageResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -152,14 +158,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class {Context}ControllerTest {
 
     @Autowired
-    private ApiMock apiMock;
+    private {Context}Controller {context}Controller;
 
     @Test
     void testCreate{Context}() {
-        {Context}Response response = this.apiMock.perform(
-                {Context}Paths.CREATE,
-                new {Context}Request(null, "Test Name", "Description"),
-                {Context}Response.class);
+        {Context}Request request = new {Context}Request(null, "Test Name", "Description");
+        {Context}Response response = {context}Controller.create(request);
 
         assertNotNull(response.id());
         assertEquals("Test Name", response.name());
@@ -168,16 +172,11 @@ class {Context}ControllerTest {
     @Test
     void testGet{Context}() {
         // Create test data first
-        {Context}Response created = this.apiMock.perform(
-                {Context}Paths.CREATE,
-                new {Context}Request(null, "Test Name", "Description"),
-                {Context}Response.class);
+        {Context}Request createRequest = new {Context}Request(null, "Test Name", "Description");
+        {Context}Response created = {context}Controller.create(createRequest);
 
         // Test GET endpoint
-        {Context}Response response = this.apiMock.perform(
-                {Context}Paths.GET,
-                new {Context}Request(created.id(), null, null),
-                {Context}Response.class);
+        {Context}Response response = {context}Controller.get(created.id());
 
         assertEquals(created.id(), response.id());
         assertEquals("Test Name", response.name());
@@ -186,16 +185,12 @@ class {Context}ControllerTest {
     @Test
     void testUpdate{Context}() {
         // Create test data first
-        {Context}Response created = this.apiMock.perform(
-                {Context}Paths.CREATE,
-                new {Context}Request(null, "Original Name", "Description"),
-                {Context}Response.class);
+        {Context}Request createRequest = new {Context}Request(null, "Original Name", "Description");
+        {Context}Response created = {context}Controller.create(createRequest);
 
         // Test UPDATE endpoint
-        {Context}Response updated = this.apiMock.perform(
-                {Context}Paths.UPDATE,
-                new {Context}Request(created.id(), "Updated Name", "Updated Description"),
-                {Context}Response.class);
+        {Context}Request updateRequest = new {Context}Request(created.id(), "Updated Name", "Updated Description");
+        {Context}Response updated = {context}Controller.update(updateRequest);
 
         assertEquals(created.id(), updated.id());
         assertEquals("Updated Name", updated.name());
@@ -205,20 +200,11 @@ class {Context}ControllerTest {
     @Test
     void testList{Context}() {
         // Create test data
-        this.apiMock.perform(
-                {Context}Paths.CREATE,
-                new {Context}Request(null, "Test 1", "Description 1"),
-                {Context}Response.class);
-        this.apiMock.perform(
-                {Context}Paths.CREATE,
-                new {Context}Request(null, "Test 2", "Description 2"),
-                {Context}Response.class);
+        {context}Controller.create(new {Context}Request(null, "Test 1", "Description 1"));
+        {context}Controller.create(new {Context}Request(null, "Test 2", "Description 2"));
 
         // Test LIST endpoint
-        PageResponse<{Context}Response> response = this.apiMock.perform(
-                {Context}Paths.LIST,
-                new PageRequest(0, 10),
-                new ParameterizedTypeReference<PageResponse<{Context}Response>>() {});
+        PageResponse<{Context}Response> response = {context}Controller.list(new PageRequest(0, 10));
 
         assertNotNull(response);
         assertTrue(response.getTotal() >= 2);
@@ -313,37 +299,12 @@ Run tests for a specific domain module:
 | Client Test Location  | `src/test/java/{package-path}/{domain}/infrastructure/`        |
 | Test Configuration    | `src/test/resources/application-local.yml`                     |
 | Test Annotation       | `@SpringBootTest` + `@ActiveProfiles("local")`                 |
-| API Mock Utility      | `ApiMock` from `io.github.siyukio.tools.test.api`              |
 | Profile               | Use `local` profile for integration tests with real database   |
 | Assertions            | Use JUnit 5 assertions from `org.junit.jupiter.api.Assertions` |
 
 </Key_Conventions>
 
 <Annotation_Reference>
-
-### @ApiMock
-
-The `@ApiMock` utility class provides a clean interface for testing API endpoints. It handles HTTP request/response
-serialization and deserialization automatically.
-
-```java
-@Autowired
-private ApiMock apiMock;
-
-// Simple POST request
-{Context}Response response = this.apiMock.perform(
-        {Context}Paths.CREATE,
-        new {Context}Request(null, "Name", "Description"),
-        {Context}Response.class);
-
-// With generic type reference for parameterized responses
-ParameterizedTypeReference<PageResponse<{Context}Response>> typeRef =
-        new ParameterizedTypeReference<PageResponse<{Context}Response>>() {};
-PageResponse<{Context}Response> page = this.apiMock.perform(
-        {Context}Paths.LIST,
-        new PageRequest(0, 10),
-        typeRef);
-```
 
 ### PageRequest and PageResponse
 
@@ -356,10 +317,8 @@ import io.github.siyukio.tools.api.dto.PageResponse;
 // Create page request
 PageRequest request = new PageRequest(page, size);
 
-// Use in API call
-ParameterizedTypeReference<PageResponse<{Context}Response>> typeRef =
-        new ParameterizedTypeReference<PageResponse<{Context}Response>>() {};
-PageResponse<{Context}Response> response = this.apiMock.perform(path, request, typeRef);
+// Call controller method
+PageResponse<{Context}Response> response = {context}Controller.list(request);
 ```
 
 </Annotation_Reference>
