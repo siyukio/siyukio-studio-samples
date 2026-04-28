@@ -258,7 +258,7 @@ class {Context}ServiceTest {
 
 ## Step 7: Generate Infrastructure Client Test Class (Optional)
 
-For testing external service clients. Each domain can have its own infrastructure layer:
+For testing external service clients. Each domain can have its own infrastructure layer. Use `@SpringBootTest` with real objects injected via `@Autowired`. Do NOT use mocks.
 
 Location:
 `{project-name}/{project-name}-domain-{domain}/src/test/java/{package-path}/{domain}/infrastructure/{Context}ClientTest.java`
