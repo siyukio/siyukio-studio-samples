@@ -154,7 +154,7 @@ If files already exist, merge conservatively and keep existing user customizatio
     <name>{ProjectName} Bootstrap</name>
 
     <properties>
-        <deployment-profile>full</deployment-profile>
+        <deployment-profile>empty</deployment-profile>
     </properties>
 
     <dependencies>
@@ -171,6 +171,9 @@ If files already exist, merge conservatively and keep existing user customizatio
     <profiles>
         <profile>
             <id>full</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <deployment-profile>full</deployment-profile>
             </properties>
