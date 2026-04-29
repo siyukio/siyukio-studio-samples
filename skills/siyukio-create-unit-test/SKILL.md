@@ -1,69 +1,74 @@
 ---
 name: siyukio-create-unit-test
-description: "Generate unit tests for Siyukio-based Spring Boot applications"
-triggers:
-  - "add unit test"
-  - "create unit test"
-  - "new unit test"
-  - "add test"
-  - "create test"
-  - "new test"
-  - "write test"
+description: Create or update integration-style unit tests for Siyukio Spring Boot domain modules by using @SpringBootTest, @ActiveProfiles("local"), and real Spring beans (no mocks). Use when adding controller/application/infrastructure test classes, test bootstrap classes, local test configuration, and CRUD/validation/authorization/edge-case assertions.
 ---
 
-<Purpose>
-Generate unit tests for Siyukio Spring Boot applications. This skill focuses on testing API endpoints by directly injecting Controller objects and calling their methods.
+# siyukio-create-unit-test
 
-Test structure under domain module:
+Generate test code for Siyukio server domain modules.
 
+## Scope
+
+Create or update files under:
+
+```text
+{project-name}/{project-name}-domain-{domain}/
+├── pom.xml
+└── src/test/
+    ├── java/{package-path}/
+    │   ├── TestApplication.java
+    │   └── {domain}/
+    │       ├── api/{Context}ControllerTest.java
+    │       ├── application/{Context}ServiceTest.java      (optional)
+    │       └── infrastructure/{Context}ClientTest.java    (optional)
+    └── resources/application-local.yml
 ```
-src/test/
-├── java/{package-path}/
-│   ├── Test{Domain}Application.java   (Spring Boot test entry)
-│   └── {domain}/
-│       ├── application/
-│       │   └── {Context}ServiceTest.java
-│       ├── api/
-│       │   └── {Context}ControllerTest.java
-│       └── infrastructure/
-│           └── {Context}ClientTest.java
-└── resources/
-    └── application-local.yml           (local test configuration)
-```
 
-</Purpose>
+## Use this skill when
 
-<Use_When>
+- Add tests for controller CRUD or query endpoints.
+- Add tests for application methods that are not covered by controller tests.
+- Add tests for infrastructure clients that call external dependencies.
+- Add or repair local test bootstrap and test profile configuration.
 
-- Creating unit tests for API endpoints
-- Testing Application Service layer methods
-- Validating API request/response DTOs
-- Testing CRUD operations with database integration
-- Verifying authorization and parameter validation
+## Do not use this skill when
 
-</Use_When>
+- Work is web/desktop/console (not supported in this project yet).
+- Work is domain/API/application implementation without testing scope.
+- Pure unit tests with mocks are required (this skill enforces real-bean integration style).
 
-<Prerequisites>
+## Test policy
 
-- Target domain module must exist: `{project-name}/{project-name}-domain-{domain}/`
-- Target test location: `src/test/java/{package-path}/{domain}/`
-- Local test configuration in `src/test/resources/application-local.yml`
+- Do not use mocks.
+- Inject real objects via `@Autowired`.
+- Use `@SpringBootTest(classes = TestApplication.class)`.
+- Use `@ActiveProfiles("local")`.
+- Keep assertions deterministic and scenario-focused.
 
-</Prerequisites>
+## Preconditions
 
-<Execution_Policy>
-- **DO NOT use mocks** - All test objects must be real instances injected via `@Autowired`
-- All tests must use `@SpringBootTest` with `@ActiveProfiles("local")` for full integration testing
-</Execution_Policy>
+1. Ensure target module exists: `{project-name}/{project-name}-domain-{domain}`.
+2. Ensure local test environment variables are available from `AGENTS.md`:
+   - `SIYUKIO_DB_MASTER_URL`
+   - `SIYUKIO_DB_MASTER_USERNAME`
+   - `SIYUKIO_DB_MASTER_PASSWORD`
+3. Ensure test package root exists: `src/test/java/{package-path}/{domain}`.
 
-<Execution_Protocol>
+## Execution workflow
 
-## Step 1: Add Test Dependencies to Module pom.xml (if not exists)
+### 1) Normalize inputs
 
-Location:
-`{project-name}/{project-name}-domain-{domain}/pom.xml`
+Extract and normalize:
 
-Add the following dependency inside `<dependencies>` section:
+- `{domain}`: module suffix in kebab-case (example: `user-management`)
+- `{Domain}`: PascalCase variant used in class names (example: `UserManagement`)
+- `{Context}`: PascalCase context (example: `User`)
+- `{context}`: camelCase variable (example: `user`)
+
+### 2) Ensure test dependency
+
+Update `{project-name}/{project-name}-domain-{domain}/pom.xml`.
+Add if missing:
 
 ```xml
 <dependency>
@@ -73,18 +78,17 @@ Add the following dependency inside `<dependencies>` section:
 </dependency>
 ```
 
-## Step 2: Prepare Local Test Configuration (if not exists)
+### 3) Ensure local test profile config
 
-> **Note**: Environment variables for local testing should be obtained from the **Local Environment Configuration** section in `AGENTS.md`. Refer to that file for the required variables and their expected values.
+Create or update `src/test/resources/application-local.yml`.
 
-1. **Read `AGENTS.md`** and extract the **Local Environment Configuration** table
-2. **Read the existing `application-local.yml` template** (if exists) to identify any variable placeholders (e.g., `${SIYUKIO_DB_MASTER_URL}`)
-3. **Replace variable placeholders** with actual values from the AGENTS.md configuration table
+Rules:
 
-Location:
-`{project-name}/{project-name}-domain-{domain}/src/test/resources/application-local.yml`
+- Keep datasource config aligned with module runtime requirements.
+- Prefer environment placeholders (for example `${SIYUKIO_DB_MASTER_URL}`) instead of hardcoding credentials.
+- If AGENTS.md explicitly requires fixed local values for this repo, apply those values only in test-local scope.
 
-Example (with placeholders):
+Template:
 
 ```yaml
 spring:
@@ -96,12 +100,10 @@ spring:
         password: ${SIYUKIO_DB_MASTER_PASSWORD}
 ```
 
-## Step 3: Generate Spring Boot Test Entry (if not exists)
+### 4) Ensure test bootstrap class
 
-Location:
-`{project-name}/{project-name}-domain-{domain}/src/test/java/{package-path}/Test{Domain}Application.java`
-
-One entry per module. Only create if not exists.
+Create if missing:
+`src/test/java/{package-path}/TestApplication.java`
 
 ```java
 package {package-name};
@@ -113,34 +115,34 @@ public class TestApplication {
 }
 ```
 
-## Step 4: Analyze Code for Test Generation
+### 5) Build a scenario matrix before writing tests
 
-Based on the API Controller, Application Service, and DTOs, identify:
+Cover at least:
 
-- Test scenarios (positive, negative, edge cases)
-- Required test data
-- Assertions for response validation
-- Dependencies on other services
-- Database state requirements
+- Positive path: create/get/update/list/delete success.
+- Validation path: required-field or format failure.
+- Not-found or disabled path.
+- Permission/token path when endpoint/service requires user context.
+- Edge path: empty result list, large page size, boundary values.
 
-## Step 5: Generate API Controller Test Class (Optional)
+### 6) Generate controller tests first
 
-Location:
-`{project-name}/{project-name}-domain-{domain}/src/test/java/{package-path}/{domain}/api/{Context}ControllerTest.java`
+Create or update:
+`src/test/java/{package-path}/{domain}/api/{Context}ControllerTest.java`
 
-Inject Controller directly and call its methods. Each test method should:
+Rules:
 
-1. Setup test data if needed
-2. Call controller method directly
-3. Assert the response
+- Call controller methods directly.
+- Prepare data in each test or helper methods.
+- Use unique test data (suffix/prefix) to avoid collisions.
+- Assert both identity fields and business fields.
+
+Template:
 
 ```java
 package {package-name}.{domain}.api;
 
 import {package-name}.TestApplication;
-import {package-name}.{domain}.api.{Context}Controller;
-import {package-name}.{domain}.api.dto.{Context}Request;
-import {package-name}.{domain}.api.dto.{Context}Response;
 import io.github.siyukio.tools.api.dto.PageRequest;
 import io.github.siyukio.tools.api.dto.PageResponse;
 import org.junit.jupiter.api.Test;
@@ -158,174 +160,51 @@ class {Context}ControllerTest {
     private {Context}Controller {context}Controller;
 
     @Test
-    void testCreate{Context}() {
-        {Context}Request request = new {Context}Request(null, "Test Name", "Description");
-        {Context}Response response = {context}Controller.create(request);
+    void createAndGetShouldSucceed() {
+        {Context}Request request = new {Context}Request(null, "name-1", "description-1");
+        {Context}Response created = {context}Controller.create(request);
 
-        assertNotNull(response.id());
-        assertEquals("Test Name", response.name());
+        assertNotNull(created.id());
+
+        {Context}Response loaded = {context}Controller.get(created.id());
+        assertEquals(created.id(), loaded.id());
+        assertEquals("name-1", loaded.name());
     }
 
     @Test
-    void testGet{Context}() {
-        // Create test data first
-        {Context}Request createRequest = new {Context}Request(null, "Test Name", "Description");
-        {Context}Response created = {context}Controller.create(createRequest);
-
-        // Test GET endpoint
-        {Context}Response response = {context}Controller.get(created.id());
-
-        assertEquals(created.id(), response.id());
-        assertEquals("Test Name", response.name());
-    }
-
-    @Test
-    void testUpdate{Context}() {
-        // Create test data first
-        {Context}Request createRequest = new {Context}Request(null, "Original Name", "Description");
-        {Context}Response created = {context}Controller.create(createRequest);
-
-        // Test UPDATE endpoint
-        {Context}Request updateRequest = new {Context}Request(created.id(), "Updated Name", "Updated Description");
-        {Context}Response updated = {context}Controller.update(updateRequest);
-
-        assertEquals(created.id(), updated.id());
-        assertEquals("Updated Name", updated.name());
-        assertEquals("Updated Description", updated.description());
-    }
-
-    @Test
-    void testList{Context}() {
-        // Create test data
-        {context}Controller.create(new {Context}Request(null, "Test 1", "Description 1"));
-        {context}Controller.create(new {Context}Request(null, "Test 2", "Description 2"));
-
-        // Test LIST endpoint
+    void listShouldReturnCreatedData() {
+        {context}Controller.create(new {Context}Request(null, "name-2", "description-2"));
         PageResponse<{Context}Response> response = {context}Controller.list(new PageRequest(0, 10));
 
         assertNotNull(response);
-        assertTrue(response.getTotal() >= 2);
+        assertTrue(response.getTotal() >= 1);
     }
 }
 ```
 
-## Step 6: Generate Application Service Test Class (Optional)
+### 7) Generate service/client tests only when needed
 
-For more granular testing of service methods not exposed via API:
+Generate `application/{Context}ServiceTest.java` only for methods that are not exercised by controller tests.
+Generate `infrastructure/{Context}ClientTest.java` only when client behavior needs direct verification.
 
-Location:
-`{project-name}/{project-name}-domain-{domain}/src/test/java/{package-path}/{domain}/application/{Context}ServiceTest.java`
+### 8) Run verification
 
-```java
-package {package-name}.{domain}.application;
-
-import {package-name}.TestApplication;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-@SpringBootTest(classes = TestApplication.class)
-@ActiveProfiles("local")
-class {Context}ServiceTest {
-
-    @Autowired
-    private {Context}Service {context}Service;
-
-    // TODO: Add tests for service methods not called by controllers
-}
-```
-
-> **Note**: If an Application Service method is called by a Controller, skip creating a unit test for that method. Instead, create the unit test for the corresponding Controller method (Step 5). Only generate tests for service methods that are not exposed via API.
-
-## Step 7: Generate Infrastructure Client Test Class (Optional)
-
-For testing external service clients. Each domain can have its own infrastructure layer. Use `@SpringBootTest` with real objects injected via `@Autowired`. Do NOT use mocks.
-
-Location:
-`{project-name}/{project-name}-domain-{domain}/src/test/java/{package-path}/{domain}/infrastructure/{Context}ClientTest.java`
-
-```java
-package {package-name}.{domain}.infrastructure;
-
-import {package-name}.TestApplication;
-import {package-name}.{domain}.infrastructure.{Context}Client;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-@SpringBootTest(classes = TestApplication.class)
-@ActiveProfiles("local")
-class {Context}ClientTest {
-
-    @Autowired
-    private {Context}Client {context}Client;
-
-    @Test
-    void test{Method}() {
-        // Command and Result are defined inside {Context}Client
-        {Method}Command command = new {Method}Command({commandFields});
-        {Method}Result result = {context}Client.{method}(command);
-
-        assertNotNull(result);
-        // Add assertions based on expected result
-    }
-}
-```
-
-## Step 8: Execute Tests
-
-Run tests for a specific domain module:
+From `siyukio-studio-server/` run:
 
 ```bash
 ./mvnw test -DskipTests=false -pl {project-name}/{project-name}-domain-{domain}
 ```
 
-</Execution_Protocol>
+If test setup changes broader modules, run a wider verification sweep:
 
-<Key_Conventions>
-
-| Item                  | Convention                                                     |
-| --------------------- | -------------------------------------------------------------- |
-| Test Entry            | `Test{Domain}Application.java` in package root                 |
-| API Test Location     | `src/test/java/{package-path}/{domain}/api/`                   |
-| Service Test Location | `src/test/java/{package-path}/{domain}/application/`           |
-| Client Test Location  | `src/test/java/{package-path}/{domain}/infrastructure/`        |
-| Test Configuration    | `src/test/resources/application-local.yml`                     |
-| Test Annotation       | `@SpringBootTest` + `@ActiveProfiles("local")`                 |
-| Profile               | Use `local` profile for integration tests with real database   |
-| Assertions            | Use JUnit 5 assertions from `org.junit.jupiter.api.Assertions` |
-
-</Key_Conventions>
-
-<Annotation_Reference>
-
-### PageRequest and PageResponse
-
-Use built-in pagination classes for list endpoint testing:
-
-```java
-import io.github.siyukio.tools.api.dto.PageRequest;
-import io.github.siyukio.tools.api.dto.PageResponse;
-
-// Create page request
-PageRequest request = new PageRequest(page, size);
-
-// Call controller method
-PageResponse<{Context}Response> response = {context}Controller.list(request);
+```bash
+./mvnw test -DskipTests=false
 ```
 
-</Annotation_Reference>
+## Output checklist
 
-<Verification>
-After implementation:
-1. Run `./mvnw test -pl {project-name}/{project-name}-domain-{domain}` to execute tests
-2. Verify all assertions pass
-3. Check test coverage for all API endpoints
-4. Ensure positive, negative, and edge case scenarios are covered
-</Verification>
+- `spring-boot-starter-test` dependency present.
+- `TestApplication` exists and compiles.
+- Controller tests cover positive + negative + edge scenarios.
+- Optional service/client tests are added only when controller coverage is insufficient.
+- Maven tests pass for the target module.
