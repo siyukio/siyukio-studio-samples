@@ -192,13 +192,13 @@ Generate `infrastructure/{Context}ClientTest.java` only when client behavior nee
 From `siyukio-studio-server/` run:
 
 ```bash
-./mvnw test -DskipTests=false -pl {project-name}/{project-name}-domain-{domain}
+./mvnw test -pl {project-name}/{project-name}-domain-{domain}
 ```
 
 If test setup changes broader modules, run a wider verification sweep:
 
 ```bash
-./mvnw test -DskipTests=false
+./mvnw test
 ```
 
 ## Output checklist
