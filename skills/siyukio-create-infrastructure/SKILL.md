@@ -1,74 +1,70 @@
 ---
 name: siyukio-create-infrastructure
-description: "Generate Infrastructure layer components for Siyukio-based Spring Boot applications, such as external service clients"
-triggers:
-  - "add infrastructure"
-  - "create infrastructure"
-  - "new infrastructure"
-  - "add client"
-  - "create client"
-  - "new client"
+description: Create or update infrastructure clients/adapters in Siyukio Spring Boot common modules for external REST, gRPC, SDK, or message integrations. Use when adding outbound service access, transport DTO mapping, timeout/retry/error handling, or shared integration components that must stay free of domain business logic.
 ---
 
-<Purpose>
-Generate Infrastructure layer components for Siyukio Spring Boot applications. Infrastructure components are non-business common components, such as clients for accessing external services (REST APIs, gRPC, etc.).
+# siyukio-create-infrastructure
 
-Infrastructure layer structure under common module:
+Create infrastructure-layer integration components that can be reused by application services.
+
+## Scope
+
+Write or update files under:
 
 ```
-{project-name}-common/
-└── infrastructure/
-    └── {Service}Client.java
+{project-name}/{project-name}-common/src/main/java/{package-path}/common/infrastructure/
+├── {Service}Client.java
+└── config/
+    └── {Service}ClientConfig.java   (optional)
 ```
 
-</Purpose>
+## Use this skill when
 
-<Use_When>
+- Add a new external service integration.
+- Introduce or refactor a shared outbound client.
+- Add request/response transport DTO mapping.
+- Standardize retry, timeout, and error translation behavior.
 
-- Creating a client for external service access
-- Implementing integration with third-party APIs
-- Creating HTTP/REST/gRPC clients
-- Implementing data transformation from external services
+## Do not use this skill when
 
-</Use_When>
+- Implement domain entities, policies, or invariants. Use `$siyukio-create-domain`.
+- Implement application orchestration/use-case logic. Use `$siyukio-create-application`.
+- Expose API endpoints. Use `$siyukio-create-api`.
 
-<Do_Not_Use_When>
+## Preconditions
 
-- If the component needs to operate on domain models (entities, policies), use `$siyukio-create-application` instead
-- Infrastructure components should not contain business logic
+- Module exists: `{project-name}/{project-name}-common`.
+- Package base exists: `{package-name}.common.infrastructure`.
+- External service contract is known: endpoints/protocol, auth mode, and required operations.
+- No business rules are expected inside infrastructure classes.
 
-</Do_Not_Use_When>
+## Execution workflow
 
-<Prerequisites>
+### 1) Normalize integration inputs
 
-<Execution_Policy>
-- Infrastructure components are independent of domain modules
-- They typically reside in the common module
-- They provide integration capabilities for other application components
-</Execution_Policy>
+Extract and normalize:
 
-Requirements:
+- `{Service}`: PascalCase service name (example: `Payment`, `Wechat`, `Sms`).
+- `{service}`: camelCase field name (example: `payment`, `wechat`, `sms`).
+- Operations: required verbs and signatures (`send`, `query`, `fetch`, etc.).
+- Cross-cutting concerns: timeout, retry, idempotency, and logging/redaction needs.
 
-- Target module: `{project-name}-common/`
-- Target file location: `src/main/java/{package-path}/common/infrastructure/`
+### 2) Design a stable client contract
 
-</Prerequisites>
+Define one public method per operation with explicit input/output types.
 
-<Execution_Protocol>
+Rules:
 
-## Step 1: Determine Infrastructure Component Requirements
+- Keep method names business-neutral and transport-aware.
+- Prefer immutable `record` command/result types for each operation.
+- Keep framework-specific payload types out of public client contracts when possible.
 
-From the argument, extract:
+### 3) Implement `{Service}Client`
 
-- `{Service}`: The external service name (PascalCase, e.g., `Wechat`, `Payment`, `Sms`)
-- `{service}`: The service variable name (camelCase, e.g., `wechat`, `payment`, `sms`)
-- Operations: what operations are needed (send, fetch, query, etc.)
+Create or update:
+`{project-name}/{project-name}-common/src/main/java/{package-path}/common/infrastructure/{Service}Client.java`
 
-## Step 2: Generate Infrastructure Component
-
-Location: `{project-name}-common/src/main/java/{package-path}/common/infrastructure/{Service}Client.java`
-
-**Component structure:**
+Template:
 
 ```java
 package {package-name}.common.infrastructure;
@@ -76,55 +72,70 @@ package {package-name}.common.infrastructure;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-/**
- * Client for {Service} external service integration.
- */
 @Slf4j
 @Component
 public class {Service}Client {
 
-    /**
-     * {method} operation.
-     */
-    public {method}Result {method}({method}Command command) {
-        // implementation
+    public QueryResult query(QueryCommand command) {
+        // 1. Validate transport-level input
+        // 2. Build outbound request
+        // 3. Call external service
+        // 4. Map response or translate exception
+        return new QueryResult(true, null);
     }
 
-    /**
-     * Command for {method} operation.
-     */
-    public record {method}Command(
-            {fields}
-    ) {}
+    public record QueryCommand(
+            String requestId,
+            String payload
+    ) {
+    }
 
-    /**
-     * Result for {method} operation.
-     */
-    public record {method}Result(
-            {resultFields}
-    ) {}
+    public record QueryResult(
+            boolean success,
+            String message
+    ) {
+    }
 }
 ```
 
-</Execution_Protocol>
+### 4) Add optional client configuration
 
-<Key_Conventions>
+Create `config/{Service}ClientConfig.java` only when endpoint or credential settings are needed.
 
-| Item            | Convention                                         |
-| --------------- | -------------------------------------------------- |
-| Package         | `{package-name}.common.infrastructure`             |
-| Package Path    | `{package-path}/common/infrastructure/`            |
-| Component class | `{Service}Client.java` with `@Component`           |
-| Command type    | `record {method}Command(...)` for input parameters |
-| Result type     | `record {method}Result(...)` for return values     |
-| Logging         | Use `@Slf4j` for logging                           |
+Rules:
 
-</Key_Conventions>
+- Bind properties explicitly (for example `@ConfigurationProperties`).
+- Keep secrets in environment or external configuration.
+- Do not hardcode tokens, passwords, or endpoint secrets.
 
-<Verification>
-After implementation:
-1. Run `./mvnw compile` to verify code compiles
-2. Check all imports are correct
-3. Verify record Command and Result field types match requirements
-4. If `{Service}Client` has unit test, run `./mvnw test -DskipTests=false -pl {project-name}/{project-name}-domain-{domain}` to verify the unit test passes
-</Verification>
+### 5) Apply infrastructure conventions
+
+- Package: `{package-name}.common.infrastructure`
+- Class naming: `{Service}Client`
+- Input type naming: `{Operation}Command`
+- Output type naming: `{Operation}Result`
+- Logging: include request IDs/correlation IDs, avoid sensitive payload leakage
+- Error handling: translate low-level exceptions into integration-oriented messages
+
+## Verification
+
+From repository root, run:
+
+```bash
+cd siyukio-studio-server
+./mvnw -pl siyukio-studio-server-common -DskipTests compile
+```
+
+If related tests exist, run:
+
+```bash
+cd siyukio-studio-server
+./mvnw -pl siyukio-studio-server-common test -Dtest={Service}ClientTest
+```
+
+Then confirm:
+
+- Client APIs are deterministic and type-safe.
+- Public client contract is independent from domain entities.
+- Configuration and secrets handling follow project conventions.
+- Logging and exception mapping are safe and actionable.
