@@ -1,6 +1,6 @@
 ---
 name: siyukio-create-domain
-description: "Generate and modify domain model (Entity) for Siyukio-based Spring Boot applications using PostgreSQL"
+description: "Generate domain model (Entity), Policy, and errors for Siyukio-based Spring Boot applications using PostgreSQL"
 triggers:
   - "add entity"
   - "create entity"
@@ -9,14 +9,12 @@ triggers:
   - "update entity"
   - "add field"
   - "add index"
-  - "entity add"
-  - "entity create"
-  - "entity modify"
   - "add policy"
   - "create policy"
-  - "check entity policy"
   - "add errors"
   - "create errors"
+  - "add domain"
+  - "create domain"
 ---
 
 <Purpose>
@@ -121,7 +119,13 @@ public record {Entity}(
         LocalDateTime createdAt,
 
         @PgColumn
-        LocalDateTime updatedAt
+        long createdAtTs,
+
+        @PgColumn
+        LocalDateTime updatedAt,
+
+        @PgColumn
+        long updatedAtTs
 
 ) {
     // Nested records for complex fields
@@ -369,7 +373,7 @@ public record User(String id, String email, String name, boolean active) {}
           partition = EntityDefinition.Partition.NONE,
           indexes = {
               @PgIndex(columns = {"email"}, unique = true),
-              @PgIndex(columns = {"status", "createdAt"}, unique = false)
+              @PgIndex(columns = {"status", "createdAtTs"}, unique = false)
           },
           keyInfo = "user-encryption-context")
 public record User(String id, String email, String name, boolean active) {}
@@ -422,6 +426,19 @@ Field names are automatically mapped to database column names using camelCase to
 - Collections: `List<T>`, `Set<T>`
 - Enums: Inner enum types
 - Nested records: Inner record types (with `@Builder` and `@With`)
+
+### Required Timestamp Fields
+
+Every Entity must include these 4 timestamp fields:
+
+| Field         | Type           | Purpose                              |
+| ------------- | -------------- | ------------------------------------ |
+| `createdAt`   | `LocalDateTime` | Creation timestamp (readable)       |
+| `createdAtTs` | `long`         | Creation timestamp (for indexing)    |
+| `updatedAt`   | `LocalDateTime` | Update timestamp (readable)         |
+| `updatedAtTs` | `long`         | Update timestamp (for indexing)      |
+
+> **Note:** Indexes should use `*Ts` fields (long type) for better query performance.
 
 </Annotation_Reference>
 

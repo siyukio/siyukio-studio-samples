@@ -1,14 +1,12 @@
 ---
 name: siyukio-create-domain-module
-description: "Generate a complete domain module for Siyukio-based Spring Boot applications, including API, Application, and Domain layers"
+description: "Generate a complete domain module including API, Application, and Domain layers for Siyukio-based Spring Boot applications"
 triggers:
-  - "add domain module"
-  - "create domain module"
-  - "new domain module"
-  - "domain module add"
-  - "domain module create"
   - "add module"
   - "create module"
+  - "new module"
+  - "add domain module"
+  - "create domain module"
 ---
 
 <Purpose>

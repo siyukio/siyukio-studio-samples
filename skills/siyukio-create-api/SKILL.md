@@ -1,14 +1,15 @@
 ---
 name: siyukio-create-api
-description: "Generate API layer (Controller + DTOs) for Siyukio-based Spring Boot applications using @ApiController, @ApiMapping, @ApiParameter annotations"
+description: "Generate API layer (Controller + DTOs) for Siyukio-based Spring Boot applications"
 triggers:
   - "add api"
   - "create api"
   - "new api"
   - "add endpoint"
+  - "create endpoint"
   - "new endpoint"
-  - "api add"
-  - "api create"
+  - "add controller"
+  - "create controller"
 ---
 
 <Purpose>
@@ -224,14 +225,14 @@ public class {Context}Controller {
 ```
 
 > **Note**: Add `Token token` parameter to access authenticated user information. Authorization is enabled by default (
-`authorization = true`). Failed authentication will be intercepted and return an error response.
+> `authorization = true`). Failed authentication will be intercepted and return an error response.
 
 </Execution_Protocol>
 
 <Key_Conventions>
 
 | Item         | Convention                                                               |
-|--------------|--------------------------------------------------------------------------|
+| ------------ | ------------------------------------------------------------------------ |
 | Package      | `{package-name}.{domain}.api`                                            |
 | Package Path | `{package-path}/{domain}/api/`                                           |
 | Paths        | `{Context}Paths.java` interface with path constants in `api/paths/`      |
@@ -260,7 +261,7 @@ public class {Context}Controller {
 ```
 
 | Property  | Default | Description                                              |
-|-----------|---------|----------------------------------------------------------|
+| --------- | ------- | -------------------------------------------------------- |
 | `tags`    | {}      | **Recommended.** Category tags for filtering in api-docs |
 | `summary` | ""      | **Recommended.** Brief description of the controller     |
 
@@ -285,7 +286,7 @@ public PageResponse<{Context}Response> list(PageRequest request) {}
 ```
 
 | Property        | Default | Description                                                           |
-|-----------------|---------|-----------------------------------------------------------------------|
+| --------------- | ------- | --------------------------------------------------------------------- |
 | `path`          | -       | **Required.** Use `{Context}Paths.GET`, `{Context}Paths.CREATE`, etc. |
 | `summary`       | ""      | **Recommended.** Brief description of the API                         |
 | `description`   | ""      | Detailed description of the API                                       |
@@ -318,7 +319,7 @@ public record {Context}Request(
 ```
 
 | Property      | Default | Description                                                                         |
-|---------------|---------|-------------------------------------------------------------------------------------|
+| ------------- | ------- | ----------------------------------------------------------------------------------- |
 | `required`    | true    | Whether it is required                                                              |
 | `description` | ""      | Parameter description (defaults to field name, only set when field name is unclear) |
 
@@ -366,119 +367,8 @@ After implementation:
 3. Verify DTO field mappings match Application Service
 4. Test POST JSON requests with correct operation paths
 5. If ACP enabled, verify ACP client configuration
+6. If {Context}Controller has a corresponding unit test (e.g., `{Context}ControllerTest.java`), run it:
+   ```bash
+   ./mvnw test -DskipTests=false -pl {project-name}/{project-name}-domain-{domain}
+   ```
 </Verification>
-
-<Unit_Testing>
-
-## Step 1: Analyze API for Test Generation
-
-Based on the API's description, request DTO, and response DTO, identify:
-
-- Test scenarios (positive, negative, edge cases)
-- Required test data
-- Assertions for response validation
-- Dependencies on other APIs
-
-## Step 2: Generate Spring Boot Test Entry (if not exists)
-
-Location: `{project-name}/{project-name}-domain-{domain}/src/test/java/{package-path}/Test{Domain}Application.java`
-
-One entry per module. Only create if not exists.
-
-```java
-package {package-name};
-
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-
-@SpringBootApplication
-public class Test{Domain}Application {
-
-    public static void main(String[] args) {
-        new SpringApplicationBuilder(Test{Domain}Application.class)
-                .build()
-                .run(args);
-    }
-
-}
-```
-
-## Step 3: Prepare Local Test Configuration
-
-Extract local test environment variables from context and create:
-
-Location: `{project-name}/{project-name}-domain-{domain}/src/test/resources/application-local.yml`
-
-```yaml
-spring:
-  datasource:
-    postgres:
-      master:
-        url: ${SIYUKIO_DB_MASTER_URL}
-        username: ${SIYUKIO_DB_MASTER_USERNAME}
-        password: ${SIYUKIO_DB_MASTER_PASSWORD}
-```
-
-## Step 4: Generate Unit Test Class
-
-Location: `{project-name}/{project-name}-domain-{domain}/src/test/java/{package-path}/{domain}/api/{Context}ControllerTest.java`
-
-```java
-package {package-name}.{domain}.api;
-
-import {package-name}.{domain}.api.dto.{Context}Request;
-import {package-name}.{domain}.api.dto.{Context}Response;
-import {package-name}.{domain}.api.paths.{Context}Paths;
-import io.github.siyukio.tools.test.api.ApiMock;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-
-@SpringBootTest
-@ActiveProfiles("local")
-class {Context}ControllerTest {
-
-    @Autowired
-    private ApiMock apiMock;
-
-    @Test
-    void testCreate{Context}() {
-        {Context}Response response = this.apiMock.perform(
-                {Context}Paths.CREATE,
-                new {Context}Request(null, "Test Name", "Description"),
-                {Context}Response.class);
-
-        assertNotNull(response.id());
-        assertEquals("Test Name", response.name());
-    }
-
-    @Test
-    void testGet{Context}() {
-        // Create test data first
-        {Context}Response created = this.apiMock.perform(
-                {Context}Paths.CREATE,
-                new {Context}Request(null, "Test Name", "Description"),
-                {Context}Response.class);
-
-        // Test GET endpoint
-        {Context}Response response = this.apiMock.perform(
-                {Context}Paths.GET,
-                new {Context}Request(created.id(), null, null),
-                {Context}Response.class);
-
-        assertEquals(created.id(), response.id());
-        assertEquals("Test Name", response.name());
-    }
-}
-```
-
-## Step 5: Execute Tests
-
-Run tests:
-
-```bash
-./mvnw test -DskipTests=false -pl {project-name}/{project-name}-domain-{domain}
-```
-
-</Unit_Testing>

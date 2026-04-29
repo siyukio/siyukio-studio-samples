@@ -1,12 +1,12 @@
 ---
 name: siyukio-create-application
-description: "Generate Application Service layer for Siyukio-based Spring Boot applications, exposing domain functionality to API layer"
+description: "Generate Application Service layer for Siyukio-based Spring Boot applications"
 triggers:
-  - "add application service"
-  - "create application service"
-  - "new application service"
-  - "application service add"
-  - "application service create"
+  - "add service"
+  - "create service"
+  - "new service"
+  - "add application"
+  - "create application"
 ---
 
 <Purpose>
@@ -31,13 +31,19 @@ Application layer structure under domain module:
 
 </Use_When>
 
+<Do_Not_Use_When>
+
+- If the service does not operate on domain models, it is not a business service, use `$siyukio-create-infrastructure` instead
+
+</Do_Not_Use_When>
+
 <Prerequisites>
 
-**Important workflow order:**
-
-1. If domain model/policy needs to be created or updated: use `$siyukio-create-domain` first
-2. If API/controller/DTO needs to be created or updated: use `$siyukio-create-api` first
-3. Finally, create the Application Service
+<Execution_Policy>
+- If domain model/policy needs to be created or updated: use `$siyukio-create-domain` first
+- If API/controller/DTO needs to be created or updated: use `$siyukio-create-api` first
+- Finally, create the Application Service
+</Execution_Policy>
 
 Requirements:
 
@@ -84,6 +90,8 @@ Location: `{project-name}/{project-name}-domain-{domain}/src/main/java/{package-
 **Service design rules:**
 
 - Service method signatures must match API controller (same method names, request params, response types)
+- If method is called by controller: use controller DTOs (Request/Response) as parameters
+- If method is NOT called by controller: use `record {method}Command` for input, `record {method}Result` for output (define both records inside the Service class)
 - Inject `PgEntityDao<Entity>` for direct database operations
 - Inject `{Context}Policy` for validation and business rule checks
 - Use `Token` parameter if user context is needed
@@ -107,6 +115,7 @@ import io.github.siyukio.tools.entity.sort.FieldSortBuilder;
 import io.github.siyukio.tools.entity.sort.SortBuilders;
 import io.github.siyukio.tools.entity.sort.SortOrder;
 import io.github.siyukio.tools.util.XDataUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -116,6 +125,7 @@ import java.util.List;
 /**
  * Application service for {Context} operations.
  */
+@Slf4j
 @Service
 public class {Context}Service {
 
@@ -220,35 +230,35 @@ public class {Context}Service {
 
 <Key_Conventions>
 
-| Item             | Convention                                                                        |
-| ---------------- | --------------------------------------------------------------------------------- |
-| Package          | `{package-name}.{domain}.application`                                             |
-| Package Path     | `{package-path}/{domain}/application/`                                            |
-| Service class    | `{Context}Service.java` with `@Service`                                           |
+| Item             | Convention                                                                            |
+| ---------------- | ------------------------------------------------------------------------------------- |
+| Package          | `{package-name}.{domain}.application`                                                 |
+| Package Path     | `{package-path}/{domain}/application/`                                                |
+| Service class    | `{Context}Service.java` with `@Service`                                               |
 | DAO injection    | `@Autowired private PgEntityDao<Entity> {entity}PgEntityDao` (only for batch queries) |
-| Policy injection | `@Autowired private {Domain}Policy {domain}Policy`                                |
-| Validation       | Always use Policy for Entity validation, never query directly via DAO             |
-| DTO conversion   | Use `XDataUtils.copy(source, TargetClass.class)` for Entity → DTO                 |
-| DTO merge        | Use `XDataUtils.mergeNotNul(source, target)` for DTO → Entity update              |
-| User context     | Add `Token token` parameter if user information is needed                         |
-| Pagination       | Use `PageRequest<T>` and `PageResponse<T>` from `io.github.siyukio.tools.api.dto` |
-| Query building   | Use `BoolQueryBuilder` + `QueryBuilders.termQuery()` for complex conditions      |
-| Sorting          | Use `SortBuilders.fieldSort()` with `SortOrder.DESC/ASC`                         |
-| Transaction      | Add `@Transactional` on methods with multiple insert/update/delete operations     |
+| Policy injection | `@Autowired private {Domain}Policy {domain}Policy`                                    |
+| Validation       | Always use Policy for Entity validation, never query directly via DAO                 |
+| DTO conversion   | Use `XDataUtils.copy(source, TargetClass.class)` for Entity → DTO                     |
+| DTO merge        | Use `XDataUtils.mergeNotNul(source, target)` for DTO → Entity update                  |
+| User context     | Add `Token token` parameter if user information is needed                             |
+| Pagination       | Use `PageRequest<T>` and `PageResponse<T>` from `io.github.siyukio.tools.api.dto`     |
+| Query building   | Use `BoolQueryBuilder` + `QueryBuilders.termQuery()` for complex conditions           |
+| Sorting          | Use `SortBuilders.fieldSort()` with `SortOrder.DESC/ASC`                              |
+| Transaction      | Add `@Transactional` on methods with multiple insert/update/delete operations         |
 
 </Key_Conventions>
 
 <SortBuilders_Usage>
 
-## SortBuilders (排序构建器)
+## SortBuilders
 
-| Method                                      | Purpose                        |
-| ------------------------------------------- | ------------------------------ |
-| `SortBuilders.fieldSort(field)`             | Create field sort             |
-| `SortBuilders.fieldSort(field).order(order)` | Set sort order (ASC/DESC)     |
-| `SortBuilders.fieldSort(builder1, builder2)` | Multi-field sort              |
+| Method                                       | Purpose                   |
+| -------------------------------------------- | ------------------------- |
+| `SortBuilders.fieldSort(field)`              | Create field sort         |
+| `SortBuilders.fieldSort(field).order(order)` | Set sort order (ASC/DESC) |
+| `SortBuilders.fieldSort(builder1, builder2)` | Multi-field sort          |
 
-## SortOrder (排序方向)
+## SortOrder
 
 | Value  | Description |
 | ------ | ----------- |
@@ -261,7 +271,7 @@ public class {Context}Service {
 
 <QueryBuilders_Usage>
 
-## QueryBuilders (查询构建器)
+## QueryBuilders
 
 | Method                                           | Purpose                            |
 | ------------------------------------------------ | ---------------------------------- |
@@ -271,10 +281,10 @@ public class {Context}Service {
 | `QueryBuilders.rangeQuery(name)`                 | Range query (gt, gte, lt, lte, eq) |
 | `QueryBuilders.matchQuery(name, value)`          | Full-text match query              |
 | `QueryBuilders.wildcardQuery(name, pattern)`     | Wildcard query (\*, ?)             |
-| `QueryBuilders.wildcardPrefixQuery(name, value)` | Prefix wildcard (\*value)         |
-| `QueryBuilders.wildcardSuffixQuery(name, value)` | Suffix wildcard (value\*)         |
+| `QueryBuilders.wildcardPrefixQuery(name, value)` | Prefix wildcard (\*value)          |
+| `QueryBuilders.wildcardSuffixQuery(name, value)` | Suffix wildcard (value\*)          |
 
-## BoolQueryBuilder (布尔查询)
+## BoolQueryBuilder
 
 | Method                | Purpose       |
 | --------------------- | ------------- |
@@ -288,21 +298,21 @@ public class {Context}Service {
 
 <XDataUtils_Usage>
 
-## Object Copy (深度复制)
+## Object Copy
 
 | Method                                               | Purpose                                   |
 | ---------------------------------------------------- | ----------------------------------------- |
-| `XDataUtils.copy(from, TargetClass.class)`            | Copy object to target type (Entity → DTO) |
-| `XDataUtils.copy(from, List.class, Item.class)`       | Copy List with type transformation        |
-| `XDataUtils.copy(from, Map.class, K.class, V.class)`  | Copy Map with key/value types             |
+| `XDataUtils.copy(from, TargetClass.class)`           | Copy object to target type (Entity → DTO) |
+| `XDataUtils.copy(from, List.class, Item.class)`      | Copy List with type transformation        |
+| `XDataUtils.copy(from, Map.class, K.class, V.class)` | Copy Map with key/value types             |
 
-## Object Merge (合并非null属性)
+## Object Merge
 
 | Method                                   | Purpose                                     |
 | ---------------------------------------- | ------------------------------------------- |
 | `XDataUtils.mergeNotNul(source, target)` | Merge non-null fields from source to target |
 
-## JSON Parse (JSON解析)
+## JSON Parse
 
 | Method                          | Purpose                         |
 | ------------------------------- | ------------------------------- |
@@ -310,16 +320,16 @@ public class {Context}Service {
 | `XDataUtils.parseObject(json)`  | Parse JSON string to JSONObject |
 | `XDataUtils.parseArray(json)`   | Parse JSON string to JSONArray  |
 
-## JSON Serialize (JSON序列化)
+## JSON Serialize
 
 | Method                                | Purpose                          |
 | ------------------------------------- | -------------------------------- |
 | `XDataUtils.toJSONString(from)`       | Convert object to JSON string    |
 | `XDataUtils.toPrettyJSONString(from)` | Convert to formatted JSON string |
 
-## DateTime (日期时间)
+## DateTime
 
-| Method                             | Purpose                                                     |
+| Method                             | Purpose                                                    |
 | ---------------------------------- | ---------------------------------------------------------- |
 | `XDataUtils.parse(text)`           | Parse string to LocalDateTime (multiple formats supported) |
 | `XDataUtils.format(localDateTime)` | Format LocalDateTime to string                             |
@@ -335,4 +345,5 @@ After implementation:
 2. Check all imports are correct
 3. Verify service methods match API controller method signatures
 4. Verify DTO field mappings match entity
+5. If `{Context}Service` has unit test, run `./mvnw test -DskipTests=false -pl {project-name}/{project-name}-domain-{domain}` to execute unit test
 </Verification>

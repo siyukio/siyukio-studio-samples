@@ -1,13 +1,13 @@
 ---
 name: siyukio-init-springboot
-description: "Initialize a new Siyukio-based Spring Boot Maven project from scratch with parent pom, common module, and bootstrap module"
+description: "Initialize a new Siyukio-based Spring Boot Maven project with parent pom, common module, and bootstrap module"
 triggers:
   - "init project"
   - "initialize project"
   - "new project"
-  - "create project"
   - "start project"
   - "setup project"
+  - "bootstrap project"
 ---
 
 <Purpose>
@@ -333,7 +333,7 @@ Location: `./{project-name}/.gitignore`
 **/target/
 
 # Local profile configurations (secrets for unit tests)
-**/*-local.*
+/**/application-local.yml
 
 # OMX
 .omx/
