@@ -153,10 +153,6 @@ If files already exist, merge conservatively and keep existing user customizatio
     <artifactId>{project-name}-bootstrap</artifactId>
     <name>{ProjectName} Bootstrap</name>
 
-    <properties>
-        <deployment-profile>empty</deployment-profile>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>{package-name}</groupId>
