@@ -25,7 +25,7 @@ siyukio-studio-samples/
 ### Global
 
 ```yaml
-project-version: 1.0.0
+project-version: 1.0.1
 ```
 
 ### Server
