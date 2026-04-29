@@ -13,9 +13,7 @@ Write or update files under:
 
 ```
 {project-name}/{project-name}-common/src/main/java/{package-path}/common/infrastructure/
-├── {Service}Client.java
-└── config/
-    └── {Service}ClientConfig.java   (optional)
+└── {Context}Client.java
 ```
 
 ## Use this skill when
@@ -44,8 +42,8 @@ Write or update files under:
 
 Extract and normalize:
 
-- `{Service}`: PascalCase service name (example: `Payment`, `Wechat`, `Sms`).
-- `{service}`: camelCase field name (example: `payment`, `wechat`, `sms`).
+- `{Context}`: PascalCase integration context name (example: `Payment`, `Wechat`, `Sms`).
+- `{context}`: camelCase field name (example: `payment`, `wechat`, `sms`).
 - Operations: required verbs and signatures (`send`, `query`, `fetch`, etc.).
 - Cross-cutting concerns: timeout, retry, idempotency, and logging/redaction needs.
 
@@ -59,10 +57,10 @@ Rules:
 - Prefer immutable `record` command/result types for each operation.
 - Keep framework-specific payload types out of public client contracts when possible.
 
-### 3) Implement `{Service}Client`
+### 3) Implement `{Context}Client`
 
 Create or update:
-`{project-name}/{project-name}-common/src/main/java/{package-path}/common/infrastructure/{Service}Client.java`
+`{project-name}/{project-name}-common/src/main/java/{package-path}/common/infrastructure/{Context}Client.java`
 
 Template:
 
@@ -74,7 +72,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class {Service}Client {
+public class {Context}Client {
 
     public QueryResult query(QueryCommand command) {
         // 1. Validate transport-level input
@@ -95,23 +93,31 @@ public class {Service}Client {
             String message
     ) {
     }
+
+    public record ClientConfig(
+            String baseUrl,
+            int timeoutMillis,
+            int retryTimes
+    ) {
+    }
 }
 ```
 
-### 4) Add optional client configuration
+### 4) Add optional client configuration inline
 
-Create `config/{Service}ClientConfig.java` only when endpoint or credential settings are needed.
+Define client configuration as a nested `record` inside `{Context}Client` when endpoint, timeout, or auth settings are needed.
 
 Rules:
 
 - Bind properties explicitly (for example `@ConfigurationProperties`).
 - Keep secrets in environment or external configuration.
 - Do not hardcode tokens, passwords, or endpoint secrets.
+- Do not create a standalone `config/` subdirectory for client configuration.
 
 ### 5) Apply infrastructure conventions
 
 - Package: `{package-name}.common.infrastructure`
-- Class naming: `{Service}Client`
+- Class naming: `{Context}Client`
 - Input type naming: `{Operation}Command`
 - Output type naming: `{Operation}Result`
 - Logging: include request IDs/correlation IDs, avoid sensitive payload leakage
@@ -130,7 +136,7 @@ If related tests exist, run:
 
 ```bash
 cd siyukio-studio-server
-./mvnw -pl siyukio-studio-server-common test -Dtest={Service}ClientTest
+./mvnw -pl siyukio-studio-server-common test -Dtest={Context}ClientTest
 ```
 
 Then confirm:
