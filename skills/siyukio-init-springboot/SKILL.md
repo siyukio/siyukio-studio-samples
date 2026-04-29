@@ -78,7 +78,7 @@ If files already exist, merge conservatively and keep existing user customizatio
     <parent>
         <groupId>io.github.siyukio</groupId>
         <artifactId>spring-siyukio</artifactId>
-        <version>3.5.14-M1</version>
+        <version>3.5.14-M2</version>
     </parent>
 
     <groupId>{package-name}</groupId>
