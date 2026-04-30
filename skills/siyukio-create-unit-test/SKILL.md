@@ -21,7 +21,9 @@ Create or update files under:
     │       ├── api/{Context}ControllerTest.java
     │       ├── application/{Context}ServiceTest.java      (optional)
     │       └── infrastructure/{Context}ClientTest.java    (optional)
-    └── resources/application-local.yml
+    └── resources/
+        ├── application.yml
+        └── application-local.yml
 ```
 
 ## Use this skill when
@@ -80,25 +82,13 @@ Add if missing:
 
 ### 3) Ensure local test profile config
 
-Create or update `src/test/resources/application-local.yml`.
+Copy both files from `{project-name}-bootstrap/src/main/resources` to
+`{project-name}-domain-{domain}/src/test/resources`:
 
-Rules:
+- `application.yml`
+- `application-local.yml`
 
-- Keep datasource config aligned with module runtime requirements.
-- Prefer environment placeholders (for example `${SIYUKIO_DB_MASTER_URL}`) instead of hardcoding credentials.
-- If AGENTS.md explicitly requires fixed local values for this repo, apply those values only in test-local scope.
-
-Template:
-
-```yaml
-spring:
-  datasource:
-    postgres:
-      master:
-        url: ${SIYUKIO_DB_MASTER_URL}
-        username: ${SIYUKIO_DB_MASTER_USERNAME}
-        password: ${SIYUKIO_DB_MASTER_PASSWORD}
-```
+If the target `src/test/resources` directory does not exist, create it first.
 
 ### 4) Ensure test bootstrap class
 
