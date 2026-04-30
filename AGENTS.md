@@ -42,6 +42,8 @@ maven-version: 3.9
 
 ```yaml
 project-name: siyukio-studio-console
+app-name: Siyukio Studio
+watermark: Siyukio Studio
 ```
 
 ## Task Execution Guidelines
