@@ -47,16 +47,22 @@ Initialize or refresh a Siyukio Vue3 console project with repeatable metadata an
    - Set `VITE_WATERMARK` to `<watermark>` when provided; otherwise use `"<console project-name> <project-version>"`.
    - Replace existing keys when present; append keys when missing.
 
-5. Apply optional branding assets (only when source files exist next to `AGENTS.md`).
+5. Remove starter repository metadata files.
+   - Delete `<target-dir>/LICENSE`.
+   - Delete `<target-dir>/README.md`.
+   - Delete `<target-dir>/README-zh_CN.md`.
+
+6. Apply optional branding assets (only when source files exist next to `AGENTS.md`).
    - `favicon.svg` -> `<target-dir>/public/favicon.svg`
    - `favicon.ico` -> `<target-dir>/public/favicon.ico`
    - `logo.svg` -> `<target-dir>/src/assets/assets-t-logo.svg`
    - `logo-full.svg` -> `<target-dir>/src/assets/assets-logo-full.svg`
 
-6. Verify results.
+7. Verify results.
    - Confirm clone and sync action completed.
    - Confirm `<target-dir>/package.json` has expected `name` and `version`.
    - Confirm all `.env*` files contain updated `VITE_APP_NAME` and `VITE_WATERMARK`.
+   - Confirm `<target-dir>/LICENSE`, `<target-dir>/README.md`, and `<target-dir>/README-zh_CN.md` are absent.
    - Confirm optional SVG replacements when source files were provided.
 
 # Suggested Command Pattern
@@ -71,6 +77,7 @@ git clone --depth=1 --branch main https://github.com/siyukio/siyukio-tdesign-vue
 rm -rf "$tmp_dir/starter/.git"
 mkdir -p "<target-dir>"
 rsync -a --delete --exclude ".git" "$tmp_dir/starter/" "<target-dir>/"
+rm -f "<target-dir>/LICENSE" "<target-dir>/README.md" "<target-dir>/README-zh_CN.md"
 rm -rf "$tmp_dir"
 ```
 
