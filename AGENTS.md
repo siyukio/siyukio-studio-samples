@@ -38,9 +38,11 @@ java-version: 21
 maven-version: 3.9
 ```
 
-### Web / Desktop / Console
+### Console
 
-(TBD)
+```yaml
+project-name: siyukio-studio-console
+```
 
 ## Task Execution Guidelines
 
