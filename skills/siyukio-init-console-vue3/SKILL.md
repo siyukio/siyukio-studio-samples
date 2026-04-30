@@ -1,6 +1,6 @@
 ---
 name: siyukio-init-console-vue3
-description: Initialize or sync a Siyukio Vue3 admin/console project from siyukio-tdesign-vue-next-starter using git subtree, then apply project-name/project-version from AGENTS.md into package.json and .env files plus optional branding SVG replacements.
+description: Initialize or sync a Siyukio Vue3 admin/console project from siyukio-tdesign-vue-next-starter using git clone, then apply project-name/project-version from AGENTS.md into package.json and .env files plus optional branding SVG replacements.
 ---
 
 # Goal
@@ -11,7 +11,6 @@ Initialize or refresh a Siyukio Vue3 console project with repeatable metadata an
 
 - `target-dir` (derived): must equal Console `project-name` resolved from `AGENTS.md` (no default value and no manual fallback)
 - `template-url` (optional): default `https://github.com/siyukio/siyukio-tdesign-vue-next-starter.git`
-- `template-remote` (optional): default `siyukio_tdesign_vue_next_starter`
 - `template-branch` (optional): default `main`
 - Optional override values:
   - `app-name` for `VITE_APP_NAME`
@@ -31,11 +30,13 @@ Initialize or refresh a Siyukio Vue3 console project with repeatable metadata an
    - Set `target-dir = <console project-name>`.
    - Stop with a clear error if either value is missing.
 
-2. Sync starter code with git subtree.
-   - Ensure the template remote exists and points to the expected URL.
-   - Detect whether `<target-dir>` already exists in `HEAD`:
-     - Exists: run `git subtree pull --prefix=<target-dir> <template-remote> <template-branch> --squash`
-     - Missing: run `git subtree add --prefix=<target-dir> <template-remote> <template-branch> --squash`
+2. Sync starter code with git clone.
+   - Create a temporary working directory.
+   - Run `git clone --depth=1 --branch=<template-branch> <template-url> <temp-dir>`.
+   - Remove `<temp-dir>/.git`.
+   - Detect whether `<target-dir>` already exists:
+     - Exists: sync `<temp-dir>/` to `<target-dir>/` (recommended: `rsync -a --delete --exclude ".git"`).
+     - Missing: create `<target-dir>` and copy `<temp-dir>/` into it.
 
 3. Update `<target-dir>/package.json`.
    - Set `name = <console project-name>`.
@@ -53,7 +54,7 @@ Initialize or refresh a Siyukio Vue3 console project with repeatable metadata an
    - `logo-full.svg` -> `<target-dir>/src/assets/assets-logo-full.svg`
 
 6. Verify results.
-   - Confirm subtree action completed (`add` or `pull`).
+   - Confirm clone and sync action completed.
    - Confirm `<target-dir>/package.json` has expected `name` and `version`.
    - Confirm all `.env*` files contain updated `VITE_APP_NAME` and `VITE_WATERMARK`.
    - Confirm optional SVG replacements when source files were provided.
@@ -65,9 +66,12 @@ Use these commands as a baseline and adapt to the actual task context:
 ```bash
 git rev-parse --show-toplevel
 git status --porcelain
-git remote get-url siyukio_tdesign_vue_next_starter || git remote add siyukio_tdesign_vue_next_starter https://github.com/siyukio/siyukio-tdesign-vue-next-starter.git
-git remote set-url siyukio_tdesign_vue_next_starter https://github.com/siyukio/siyukio-tdesign-vue-next-starter.git
-git ls-tree -d --name-only HEAD -- "<target-dir>"
+tmp_dir="$(mktemp -d)"
+git clone --depth=1 --branch main https://github.com/siyukio/siyukio-tdesign-vue-next-starter.git "$tmp_dir/starter"
+rm -rf "$tmp_dir/starter/.git"
+mkdir -p "<target-dir>"
+rsync -a --delete --exclude ".git" "$tmp_dir/starter/" "<target-dir>/"
+rm -rf "$tmp_dir"
 ```
 
-Then run either `git subtree add` or `git subtree pull`, followed by direct file edits and verification commands.
+Then run direct file edits and verification commands.
