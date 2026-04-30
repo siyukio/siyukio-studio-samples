@@ -44,6 +44,9 @@ maven-version: 3.9
 project-name: siyukio-studio-console
 app-name: Siyukio Studio
 watermark: Siyukio Studio
+#favicon: assets/favicon.ico
+#logo: assets/logo.svg
+#logo-full: assets/logo-full.svg
 ```
 
 ## Task Execution Guidelines
