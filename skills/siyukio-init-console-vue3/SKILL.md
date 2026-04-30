@@ -48,6 +48,7 @@ Initialize or refresh a Siyukio Vue3 console project with repeatable metadata an
 
 5. Apply optional branding assets (only when source files exist next to `AGENTS.md`).
    - `favicon.svg` -> `<target-dir>/public/favicon.svg`
+   - `favicon.ico` -> `<target-dir>/public/favicon.ico`
    - `logo.svg` -> `<target-dir>/src/assets/assets-t-logo.svg`
    - `logo-full.svg` -> `<target-dir>/src/assets/assets-logo-full.svg`
 
