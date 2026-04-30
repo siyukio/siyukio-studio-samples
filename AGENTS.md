@@ -73,11 +73,12 @@ project-name: siyukio-studio-console
 
 **Required Environment Variables for Local Test:**
 
-| Variable                   | Purpose           | Test Value                            |
-|----------------------------|-------------------|---------------------------------------|
-| SIYUKIO_DB_MASTER_URL      | Database url      | jdbc:postgresql://localhost:5432/root |
-| SIYUKIO_DB_MASTER_USERNAME | Database username | root                                  |
-| SIYUKIO_DB_MASTER_PASSWORD | Database password | FYm7JqaEcptxUTgy                      |
+| Variable                   | Purpose           | Test Value                                   |
+|----------------------------|-------------------|----------------------------------------------|
+| SIYUKIO_DB_MASTER_KEY      | Database encrypt  | 06CVrBQL+6VZzbXYhxfXYIm40I/cS4Ern2DW7beR5JU= |
+| SIYUKIO_DB_MASTER_URL      | Database url      | jdbc:postgresql://localhost:5432/root        |
+| SIYUKIO_DB_MASTER_USERNAME | Database username | root                                         |
+| SIYUKIO_DB_MASTER_PASSWORD | Database password | FYm7JqaEcptxUTgy                             |
 
 ## Language Policy
 

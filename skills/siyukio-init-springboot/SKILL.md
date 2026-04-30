@@ -58,9 +58,10 @@ Do not use this skill for web/desktop/console tasks.
 5. Create `./{project-name}/{project-name}-bootstrap/pom.xml`.
 6. Create `./{project-name}/{project-name}-bootstrap/src/main/java/{package-path}/{main-class}.java`.
 7. Create `./{project-name}/{project-name}-bootstrap/src/main/resources/application.yml`.
-8. Create `./{project-name}/.gitignore`.
-9. Run `cd ./{project-name} && mvn -N wrapper:wrapper`.
-10. Verify with `./mvnw -q -DskipTests compile`.
+8. Create `{project-name}-bootstrap/src/main/resources/application-local.yml` with exactly four flat key-value entries.
+9. Create `./{project-name}/.gitignore`.
+10. Run `cd ./{project-name} && mvn -N wrapper:wrapper`.
+11. Verify with `./mvnw -q -DskipTests compile`.
 
 If files already exist, merge conservatively and keep existing user customizations unless they block the required structure.
 
@@ -242,6 +243,21 @@ spring:
 
 server:
   port: ${SERVER_PORT:8080}
+```
+
+## `application-local.yml`
+
+- Source values from current repo `AGENTS.md` -> `Local Environment Configuration`
+- Do not nest under `spring:`
+- Do not duplicate `application.yml` content
+
+Required keys:
+
+```yaml
+SIYUKIO_DB_MASTER_KEY: <value>
+SIYUKIO_DB_MASTER_URL: <value>
+SIYUKIO_DB_MASTER_USERNAME: <value>
+SIYUKIO_DB_MASTER_PASSWORD: <value>
 ```
 
 ## `.gitignore`
