@@ -1,37 +1,37 @@
 ---
 name: siyukio-init-springboot
-description: "Initialize a new server-side Siyukio Spring Boot Maven project from an empty directory/repo by creating a parent module plus {project-name}-common and {project-name}-bootstrap, Maven wrapper, baseline application.yml, and .gitignore. Use when asked to start/bootstrap a fresh Siyukio backend project."
+description: Initialize a new Siyukio Spring Boot Maven backend from an empty directory/repo, including parent/common/bootstrap modules, Maven wrapper, baseline application configs, and .gitignore. Use when bootstrapping a fresh server project.
 ---
 
-# Goal
+# siyukio-init-springboot
 
-Create a ready-to-build Siyukio Spring Boot multi-module project skeleton.
+Bootstrap a ready-to-build Siyukio Spring Boot multi-module backend skeleton.
 
-# Scope
+## Scope
 
-Use this skill for **server-side project initialization only**.
+Use this skill only for **new server initialization**.
 
-Do not use this skill for web/desktop/console tasks.
+Do not use for web/desktop/console tasks.
 
-# Required inputs
+## Required inputs
 
-- `{project-name}`: artifact/module prefix in kebab-case (example: `order-center`).
-- `{package-name}`: base Java package (example: `io.github.siyukio.samples`).
-- `{project-version}`: initial semantic version without `-SNAPSHOT` (example: `1.0.0`).
+- `{project-name}`: kebab-case module prefix (example: `order-center`)
+- `{package-name}`: base package (example: `io.github.siyukio.samples`)
+- `{project-version}`: semantic version without `-SNAPSHOT` (example: `1.0.0`)
 
-# Derived values
+## Derived values
 
-- `{package-path}`: `{package-name}` with dots replaced by `/`.
-- `{ProjectName}`: PascalCase from `{project-name}` (example: `order-center` -> `OrderCenter`).
-- `{main-class}`: `{ProjectName}Main`.
+- `{package-path}` = `{package-name}` with `.` replaced by `/`
+- `{ProjectName}` = PascalCase of `{project-name}`
+- `{main-class}` = `{ProjectName}Main`
 
-# Preconditions
+## Preconditions
 
-- Target location is empty or contains only `.git` metadata.
-- Java 21 and Maven 3.9+ are available.
-- Output code/comments remain in English.
+- Target directory is empty (or only contains `.git` metadata)
+- Java 21 and Maven 3.9+ are available
+- Generated code/comments stay in English
 
-# Output structure
+## Target structure
 
 ```text
 {project-name}/
@@ -46,149 +46,49 @@ Do not use this skill for web/desktop/console tasks.
     ├── pom.xml
     └── src/main/
         ├── java/{package-path}/{main-class}.java
-        └── resources/application.yml
+        └── resources/
+            ├── application.yml
+            └── application-local.yml
 ```
 
-# Workflow
+## Implementation rules
 
-1. Validate inputs and derive `{package-path}` / `{ProjectName}` / `{main-class}`.
-2. Create `./{project-name}`.
-3. Create `./{project-name}/pom.xml` using the parent template.
-4. Create `./{project-name}/{project-name}-common/pom.xml`.
-5. Create `./{project-name}/{project-name}-bootstrap/pom.xml`.
-6. Create `./{project-name}/{project-name}-bootstrap/src/main/java/{package-path}/{main-class}.java`.
-7. Create `./{project-name}/{project-name}-bootstrap/src/main/resources/application.yml`.
-8. Create `./{project-name}/.gitignore`.
-9. Run `cd ./{project-name} && mvn -N wrapper:wrapper`.
-10. Verify with `./mvnw -q -DskipTests compile`.
+### 1) Parent `pom.xml`
 
-If files already exist, merge conservatively and keep existing user customizations unless they block the required structure.
+- Inherit parent:
+  - `groupId`: `io.github.siyukio`
+  - `artifactId`: `spring-siyukio`
+  - `version`: `3.5.14-M2`
+- Set:
+  - `groupId = {package-name}`
+  - `artifactId = {project-name}`
+  - `version = {project-version}-SNAPSHOT`
+  - `packaging = pom`
+  - Java source/target = `21`
+- Modules:
+  - `{project-name}-common`
+  - `{project-name}-bootstrap`
+- In `dependencyManagement`, include both module artifacts with `${project.version}`
 
-# Templates
+### 2) `{project-name}-common/pom.xml`
 
-## Parent `pom.xml`
+- Parent points to root project (`{package-name}:{project-name}:{project-version}-SNAPSHOT`)
+- `artifactId = {project-name}-common`
 
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+### 3) `{project-name}-bootstrap/pom.xml`
 
-    <parent>
-        <groupId>io.github.siyukio</groupId>
-        <artifactId>spring-siyukio</artifactId>
-        <version>3.5.14-M2</version>
-    </parent>
+- Parent points to root project (`{package-name}:{project-name}:{project-version}-SNAPSHOT`)
+- `artifactId = {project-name}-bootstrap`
+- Dependencies:
+  - `{package-name}:{project-name}-common`
+  - `io.github.siyukio:spring-siyukio-application-acp`
+- Add default `full` profile with property `deployment-profile=full`
+- Configure `spring-boot-maven-plugin`
+- `finalName = {project-name}-${deployment-profile}`
 
-    <groupId>{package-name}</groupId>
-    <artifactId>{project-name}</artifactId>
-    <version>{project-version}-SNAPSHOT</version>
-    <packaging>pom</packaging>
-    <name>{ProjectName}</name>
+### 4) Main class
 
-    <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
-    <modules>
-        <module>{project-name}-common</module>
-        <module>{project-name}-bootstrap</module>
-    </modules>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>{package-name}</groupId>
-                <artifactId>{project-name}-common</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>{package-name}</groupId>
-                <artifactId>{project-name}-bootstrap</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-</project>
-```
-
-## `{project-name}-common/pom.xml`
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
-    <parent>
-        <groupId>{package-name}</groupId>
-        <artifactId>{project-name}</artifactId>
-        <version>{project-version}-SNAPSHOT</version>
-    </parent>
-
-    <artifactId>{project-name}-common</artifactId>
-    <name>{ProjectName} Common</name>
-</project>
-```
-
-## `{project-name}-bootstrap/pom.xml`
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
-    <parent>
-        <groupId>{package-name}</groupId>
-        <artifactId>{project-name}</artifactId>
-        <version>{project-version}-SNAPSHOT</version>
-    </parent>
-
-    <artifactId>{project-name}-bootstrap</artifactId>
-    <name>{ProjectName} Bootstrap</name>
-
-    <dependencies>
-        <dependency>
-            <groupId>{package-name}</groupId>
-            <artifactId>{project-name}-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.github.siyukio</groupId>
-            <artifactId>spring-siyukio-application-acp</artifactId>
-        </dependency>
-    </dependencies>
-
-    <profiles>
-        <profile>
-            <id>full</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <deployment-profile>full</deployment-profile>
-            </properties>
-        </profile>
-    </profiles>
-
-    <build>
-        <finalName>{project-name}-${deployment-profile}</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-</project>
-```
-
-## Main class
+Create `{project-name}-bootstrap/src/main/java/{package-path}/{main-class}.java`:
 
 ```java
 package {package-name};
@@ -207,7 +107,9 @@ public class {main-class} {
 }
 ```
 
-## `application.yml`
+### 5) `application.yml`
+
+Create `{project-name}-bootstrap/src/main/resources/application.yml`:
 
 ```yaml
 management:
@@ -244,7 +146,26 @@ server:
   port: ${SERVER_PORT:8080}
 ```
 
-## `.gitignore`
+### 6) `application-local.yml`
+
+Create `{project-name}-bootstrap/src/main/resources/application-local.yml` with exactly four flat key-value entries.
+
+- Source values from current repo `AGENTS.md` -> `Local Environment Configuration`
+- Do not nest under `spring:`
+- Do not duplicate `application.yml` content
+
+Required keys:
+
+```yaml
+SIYUKIO_DB_MASTER_KEY: <value>
+SIYUKIO_DB_MASTER_URL: <value>
+SIYUKIO_DB_MASTER_USERNAME: <value>
+SIYUKIO_DB_MASTER_PASSWORD: <value>
+```
+
+### 7) `.gitignore`
+
+Include at least:
 
 ```gitignore
 **/target/
@@ -269,8 +190,20 @@ Thumbs.db
 .classpath
 ```
 
-# Verification checklist
+If files already exist, merge conservatively and keep user customizations unless they break required structure.
 
-1. Run `./mvnw -q -DskipTests compile` in `./{project-name}`.
-2. Optionally run `./mvnw -q -pl {project-name}-bootstrap spring-boot:run`.
-3. Confirm startup logs show Spring Boot application started successfully.
+## Workflow
+
+1. Validate inputs and derive `{package-path}`, `{ProjectName}`, `{main-class}`
+2. Create `./{project-name}` and module directories
+3. Write root/common/bootstrap POM files using rules above
+4. Write main class and resource files
+5. Write `.gitignore`
+6. Run `cd ./{project-name} && mvn -N wrapper:wrapper`
+7. Run `./mvnw -q -DskipTests compile`
+
+## Verification
+
+1. `./mvnw -q -DskipTests compile` succeeds in `./{project-name}`
+2. `application-local.yml` exists with exactly four required keys from `AGENTS.md`
+3. Optional runtime check: `./mvnw -q -pl {project-name}-bootstrap spring-boot:run`
