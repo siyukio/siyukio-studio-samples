@@ -171,16 +171,16 @@ public class {Context}Controller {
 
 ### 6) Verify implementation
 
-From repository root, run:
+From `{project-name}/` run:
 
 ```bash
-./mvnw -pl {project-name}/{project-name}-{domain} -DskipTests compile
+./mvnw -pl {project-name}-{domain} -DskipTests compile
 ```
 
 If controller tests exist, run:
 
 ```bash
-./mvnw -pl {project-name}/{project-name}-{domain} test -Dtest={Context}ControllerTest
+./mvnw -pl {project-name}-{domain} test -Dtest={Context}ControllerTest
 ```
 
 Then confirm:

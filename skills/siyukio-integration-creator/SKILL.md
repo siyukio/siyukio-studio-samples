@@ -1,18 +1,18 @@
 ---
-name: siyukio-create-infrastructure
-description: Create or update infrastructure clients/adapters in Siyukio Spring Boot common modules for external REST, gRPC, SDK, or message integrations. Use when adding outbound service access, transport DTO mapping, timeout/retry/error handling, or shared integration components that must stay free of domain business logic.
+name: siyukio-integration-creator
+description: Create or update integration clients/adapters in Siyukio Spring Boot domain modules for external REST, gRPC, SDK, or message integrations. Use when adding outbound service access, or shared integration components that must stay free of domain business logic.
 ---
 
-# siyukio-create-infrastructure
+# siyukio-integration-creator
 
-Create infrastructure-layer integration components that can be reused by application services.
+Create integration-layer integration components that can be reused by application services.
 
 ## Scope
 
 Write or update files under:
 
 ```
-{project-name}/{project-name}-common/src/main/java/{package-path}/common/infrastructure/
+{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/integration/
 └── {Context}Client.java
 ```
 
@@ -26,15 +26,15 @@ Write or update files under:
 ## Do not use this skill when
 
 - Implement domain model entities, policies, or errors. Use `$siyukio-model-creator`.
-- Implement application orchestration/use-case logic. Use `$siyukio-application-creator`.
-- Expose API endpoints. Use `$siyukio-api-creator`.
+- Implement domain application orchestration/use-case logic. Use `$siyukio-application-creator`.
+- Expose domain API endpoints. Use `$siyukio-api-creator`.
 
 ## Preconditions
 
-- Module exists: `{project-name}/{project-name}-common`.
-- Package base exists: `{package-name}.common.infrastructure`.
+- Module exists: `{project-name}/{project-name}-{domain}`.
+- Package base exists: `{project-name}-{domain}.integration`.
 - External service contract is known: endpoints/protocol, auth mode, and required operations.
-- No business rules are expected inside infrastructure classes.
+- No business rules are expected inside integration classes.
 
 ## Execution workflow
 
@@ -60,12 +60,12 @@ Rules:
 ### 3) Implement `{Context}Client`
 
 Create or update:
-`{project-name}/{project-name}-common/src/main/java/{package-path}/common/infrastructure/{Context}Client.java`
+`{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/integration/{Context}Client.java`
 
 Template:
 
 ```java
-package {package-name}.common.infrastructure;
+package {project-name}-{domain}.integration;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -114,9 +114,9 @@ Rules:
 - Do not hardcode tokens, passwords, or endpoint secrets.
 - Do not create a standalone `config/` subdirectory for client configuration.
 
-### 5) Apply infrastructure conventions
+### 5) Apply integration conventions
 
-- Package: `{package-name}.common.infrastructure`
+- Package: `{project-name}-{domain}.integration`
 - Class naming: `{Context}Client`
 - Input type naming: `{Operation}Command`
 - Output type naming: `{Operation}Result`
@@ -125,18 +125,16 @@ Rules:
 
 ## Verification
 
-From repository root, run:
+From `{project-name}/` run:
 
 ```bash
-cd siyukio-studio-server
-./mvnw -pl siyukio-studio-server-common -DskipTests compile
+./mvnw -pl {project-name}-{domain} -DskipTests compile
 ```
 
 If related tests exist, run:
 
 ```bash
-cd siyukio-studio-server
-./mvnw -pl siyukio-studio-server-common test -Dtest={Context}ClientTest
+./mvnw -pl {project-name}-{domain} test -Dtest={Context}ClientTest
 ```
 
 Then confirm:

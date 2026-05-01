@@ -27,7 +27,7 @@ Write or update files under:
 
 - Work is domain entity/errors/policy design only. Use `$siyukio-model-creator`.
 - Work is controller/path/DTO exposure only. Use `$siyukio-api-creator`.
-- Work is external integration/infrastructure only. Use `$siyukio-create-infrastructure`.
+- Work is external integration only. Use `$siyukio-integration-creator`.
 
 ## Preconditions
 
@@ -130,17 +130,15 @@ Confirm:
 
 ## Verification
 
-From repository root, run:
+From `{project-name}/` run:
 
 ```bash
-cd siyukio-studio-server
 ./mvnw -pl {project-name}-{domain} -DskipTests compile
 ```
 
 If tests exist, run:
 
 ```bash
-cd siyukio-studio-server
 ./mvnw -pl {project-name}-{domain} test -Dtest={Context}ServiceTest
 ```
 

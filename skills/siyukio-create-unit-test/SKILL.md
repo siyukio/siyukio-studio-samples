@@ -1,6 +1,6 @@
 ---
 name: siyukio-create-unit-test
-description: Create or update integration-style unit tests for Siyukio Spring Boot domain modules by using @SpringBootTest, @ActiveProfiles("local"), and real Spring beans (no mocks). Use when adding controller/application/infrastructure test classes, test bootstrap classes, local test configuration, and CRUD/validation/authorization/edge-case assertions.
+description: Create or update integration-style unit tests for Siyukio Spring Boot domain modules by using @SpringBootTest, @ActiveProfiles("local"), and real Spring beans (no mocks). Use when adding controller/application test classes, test bootstrap classes, local test configuration, and CRUD/validation/authorization/edge-case assertions.
 ---
 
 # siyukio-create-unit-test
@@ -20,7 +20,7 @@ Create or update files under:
     │   └── {domain}/
     │       ├── api/{Context}ControllerTest.java
     │       ├── application/{Context}ServiceTest.java      (optional)
-    │       └── infrastructure/{Context}ClientTest.java    (optional)
+    │       └── integration/{Context}ClientTest.java    (optional)
     └── resources/
         ├── application.yml
         └── application-local.yml
@@ -30,7 +30,7 @@ Create or update files under:
 
 - Add tests for controller CRUD or query endpoints.
 - Add tests for application methods that are not covered by controller tests.
-- Add tests for infrastructure clients that call external dependencies.
+- Add tests for integration clients that call external dependencies.
 - Add or repair local test bootstrap and test profile configuration.
 
 ## Do not use this skill when
@@ -175,14 +175,14 @@ class {Context}ControllerTest {
 ### 7) Generate service/client tests only when needed
 
 Generate `application/{Context}ServiceTest.java` only for methods that are not exercised by controller tests.
-Generate `infrastructure/{Context}ClientTest.java` only when client behavior needs direct verification.
+Generate `integration/{Context}ClientTest.java` only when client behavior needs direct verification.
 
 ### 8) Run verification
 
-From `siyukio-studio-server/` run:
+From `{project-name}/` run:
 
 ```bash
-./mvnw test -pl {project-name}/{project-name}-{domain}
+./mvnw test -pl {project-name}-{domain}
 ```
 
 If test setup changes broader modules, run a wider verification sweep:

@@ -203,16 +203,16 @@ public class AcpSessionConfiguration {
 
 ## Verification
 
-From repository root:
+From `{project-name}/` run:
 
 ```bash
-./mvnw -pl {project-name}/{project-name}-agent -DskipTests compile
+./mvnw -pl {project-name}-agent -DskipTests compile
 ```
 
 If ACP handler tests exist:
 
 ```bash
-./mvnw -pl {project-name}/{project-name}-agent test -Dtest=AcpSessionHandler*Test
+./mvnw -pl {project-name}-agent test -Dtest=AcpSessionHandlerTest
 ```
 
 Then verify:

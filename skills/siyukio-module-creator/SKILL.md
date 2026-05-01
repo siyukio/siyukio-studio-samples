@@ -167,17 +167,15 @@ Minimum expected outputs:
 
 ## Verification
 
-From repository root:
+From `{project-name}/` run:
 
 ```bash
-cd {project-name}
 ./mvnw -pl {project-name}-{domain},{project-name}-bootstrap -DskipTests compile
 ```
 
 Optional (when tests exist):
 
 ```bash
-cd {project-name}
 ./mvnw -pl {project-name}-{domain} test
 ```
 
