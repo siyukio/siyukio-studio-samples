@@ -191,4 +191,4 @@ Before finishing, confirm:
 - `$siyukio-model-creator`
 - `$siyukio-application-creator`
 - `$siyukio-api-creator`
-- `$siyukio-create-unit-test` (after module generation, when test scaffolding is required)
+- `$siyukio-unit-test-creator` (after module generation, when test scaffolding is required)
