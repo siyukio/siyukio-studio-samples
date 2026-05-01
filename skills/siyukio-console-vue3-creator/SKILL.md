@@ -1,5 +1,5 @@
 ---
-name: siyukio-init-console-vue3
+name: siyukio-console-vue3-creator
 description: Initialize or sync a Siyukio Vue3 admin/console project from siyukio-tdesign-vue-next-starter using git clone, then apply project-name/project-version from AGENTS.md into package.json and .env files plus optional branding SVG replacements.
 ---
 
