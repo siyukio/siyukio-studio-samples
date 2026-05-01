@@ -1,23 +1,36 @@
 ---
 name: siyukio-springboot-creator
-description: "Initialize a new server-side Siyukio Spring Boot Maven project from an empty directory/repo by creating a parent module plus {project-name}-common and {project-name}-bootstrap, Maven wrapper, baseline application.yml, and .gitignore. Use when asked to start/bootstrap a fresh Siyukio backend project."
+description: "Create a new Siyukio Spring Boot Maven project or update configuration files in an existing Siyukio Spring Boot project. Use when asked to bootstrap a fresh backend skeleton, add missing Spring Boot baseline config, or merge/update `application.yml`, `application-local.yml`, and related Maven/gitignore config in an existing backend."
 ---
 
 # Goal
 
-Create a ready-to-build Siyukio Spring Boot multi-module project skeleton.
+Create or align a Siyukio Spring Boot backend with the expected baseline structure and configuration.
 
 # Scope
 
-Use this skill for **server-side project initialization only**.
+Use this skill for server-side Spring Boot work only.
 
 Do not use this skill for web/desktop/console tasks.
 
+# Modes
+
+## Mode A: Bootstrap
+
+Create a new multi-module Spring Boot skeleton in an empty target directory.
+
+## Mode B: Config update
+
+Update or backfill config files for an existing Spring Boot project without replacing user business code.
+
 # Required inputs
+
+## Common inputs
 
 - `{project-name}`: artifact/module prefix in kebab-case (example: `order-center`).
 - `{package-name}`: base Java package (example: `io.github.siyukio.samples`).
 - `{project-version}`: initial semantic version without `-SNAPSHOT` (example: `1.0.0`).
+- `{project-root}`: absolute or repo-relative path to the target project root (bootstrap default: `./{project-name}`).
 
 # Derived values
 
@@ -27,11 +40,18 @@ Do not use this skill for web/desktop/console tasks.
 
 # Preconditions
 
-- Target location is empty or contains only `.git` metadata.
 - Java 21 and Maven 3.9+ are available.
 - Output code/comments remain in English.
 
-# Output structure
+# Mode selection
+
+Select mode before editing:
+
+1. Choose **Mode A (Bootstrap)** when `{project-root}` is empty or only has VCS metadata.
+2. Choose **Mode B (Config update)** when `{project-root}` already contains a Spring Boot project (`pom.xml`, `src/main/resources`, or existing `application*.yml`).
+3. If uncertain, inspect files first and select the least destructive path.
+
+# Output structure (Mode A)
 
 ```text
 {project-name}/
@@ -52,19 +72,60 @@ Do not use this skill for web/desktop/console tasks.
 
 # Workflow
 
+## Mode A: Bootstrap workflow
+
 1. Validate inputs and derive `{package-path}` / `{ProjectName}` / `{main-class}`.
-2. Create `./{project-name}`.
-3. Create `./{project-name}/pom.xml` using the parent template.
-4. Create `./{project-name}/{project-name}-common/pom.xml`.
-5. Create `./{project-name}/{project-name}-bootstrap/pom.xml`.
-6. Create `./{project-name}/{project-name}-bootstrap/src/main/java/{package-path}/{main-class}.java`.
-7. Create `./{project-name}/{project-name}-bootstrap/src/main/resources/application.yml`.
-8. Create `{project-name}-bootstrap/src/main/resources/application-local.yml` with exactly four flat key-value entries.
-9. Create `./{project-name}/.gitignore`.
-10. Run `cd ./{project-name} && mvn -N wrapper:wrapper`.
+2. Create `{project-root}`.
+3. Create `{project-root}/pom.xml` using the parent template.
+4. Create `{project-root}/{project-name}-common/pom.xml`.
+5. Create `{project-root}/{project-name}-bootstrap/pom.xml`.
+6. Create `{project-root}/{project-name}-bootstrap/src/main/java/{package-path}/{main-class}.java`.
+7. Create `{project-root}/{project-name}-bootstrap/src/main/resources/application.yml`.
+8. Create `{project-root}/{project-name}-bootstrap/src/main/resources/application-local.yml` with exactly four flat key-value entries.
+9. Create `{project-root}/.gitignore`.
+10. Run `cd {project-root} && mvn -N wrapper:wrapper`.
 11. Verify with `./mvnw -q -DskipTests compile`.
 
-If files already exist, merge conservatively and keep existing user customizations unless they block the required structure.
+## Mode B: Config update workflow
+
+1. Inspect and confirm target files under `{project-root}`:
+   - `pom.xml`
+   - `{project-name}-bootstrap/pom.xml` or module-specific bootstrap `pom.xml`
+   - `src/main/resources/application.yml` (or module equivalent)
+   - `src/main/resources/application-local.yml` (or module equivalent)
+   - `.gitignore`
+2. Back up intent by reading existing file content first. Do not overwrite entire files.
+3. Merge baseline keys into `application.yml`:
+   - Add missing `management.endpoints.web.exposure.include`.
+   - Add missing `spring.siyukio.jwt.*`, `spring.siyukio.signature.salt`, `spring.siyukio.profiles.*`.
+   - Add missing `spring.datasource.postgres.*` tree.
+   - Add missing `server.port`.
+4. Merge or create `application-local.yml` as flat key-value entries:
+   - `SIYUKIO_DB_MASTER_KEY`
+   - `SIYUKIO_DB_MASTER_URL`
+   - `SIYUKIO_DB_MASTER_USERNAME`
+   - `SIYUKIO_DB_MASTER_PASSWORD`
+5. Merge `.gitignore` entries if missing:
+   - `**/target/`
+   - `/**/application-local.yml`
+   - `.mvn/wrapper/maven-wrapper.jar`
+6. Check Maven files:
+   - Keep existing versions unless user explicitly asks to upgrade.
+   - Ensure local module references remain consistent.
+   - Add missing `spring-boot-maven-plugin` only when the bootstrap module lacks build packaging support.
+7. Verify with project-local wrapper command:
+   - If `./mvnw` exists: `./mvnw -q -DskipTests compile`
+   - Otherwise: `mvn -q -DskipTests compile`
+
+# Merge policy (Mode B)
+
+Apply conservative merges:
+
+1. Preserve existing user keys unless they directly conflict with required baseline keys.
+2. Update only requested or baseline-owned keys; do not rewrite unrelated sections.
+3. Keep file format stable (YAML stays YAML, indentation stays two spaces unless project differs).
+4. If a key exists with a non-empty custom value, keep it unless the user explicitly asks to replace it.
+5. If a required key exists but is structurally incompatible, report and apply the minimal compatible fix.
 
 # Templates
 
@@ -250,7 +311,8 @@ server:
 
 - Source values from current repo `AGENTS.md` -> `Local Environment Configuration`
 - Do not nest under `spring:`
-- Do not duplicate `application.yml` content
+- Keep this file as flat environment-style overrides
+- In Mode B, preserve additional user-owned local keys unless asked to prune them
 
 Required keys:
 
@@ -288,6 +350,12 @@ Thumbs.db
 
 # Verification checklist
 
-1. Run `./mvnw -q -DskipTests compile` in `./{project-name}`.
+1. Run compile check in target root:
+   - `./mvnw -q -DskipTests compile` (preferred)
+   - `mvn -q -DskipTests compile` (fallback)
 2. Optionally run `./mvnw -q -pl {project-name}-bootstrap spring-boot:run`.
 3. Confirm startup logs show Spring Boot application started successfully.
+4. Confirm config merge result:
+   - No unrelated YAML sections removed.
+   - Required Siyukio keys exist after merge.
+   - Existing non-conflicting custom keys still exist.
