@@ -1,9 +1,9 @@
 ---
-name: siyukio-create-application
+name: siyukio-application-creator
 description: Create or update the Siyukio application service layer in Spring Boot domain modules. Use when implementing use-case orchestration between API and domain layers, adding query/command CRUD methods, enforcing domain policy checks, mapping DTOs and entities, or setting transaction boundaries.
 ---
 
-# siyukio-create-application
+# siyukio-application-creator
 
 Create or refine one application service in a Siyukio domain module.
 

@@ -31,7 +31,7 @@ Create or update files under:
 ## Do not use this skill when
 
 - Work is domain model or policy design only. Use `$siyukio-create-domain`.
-- Work is application service orchestration only. Use `$siyukio-create-application`.
+- Work is application service orchestration only. Use `$siyukio-application-creator`.
 
 ## Preconditions
 

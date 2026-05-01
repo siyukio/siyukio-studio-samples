@@ -26,7 +26,7 @@ Write or update files under:
 ## Do not use this skill when
 
 - Implement domain entities, policies, or invariants. Use `$siyukio-create-domain`.
-- Implement application orchestration/use-case logic. Use `$siyukio-create-application`.
+- Implement application orchestration/use-case logic. Use `$siyukio-application-creator`.
 - Expose API endpoints. Use `$siyukio-api-creator`.
 
 ## Preconditions

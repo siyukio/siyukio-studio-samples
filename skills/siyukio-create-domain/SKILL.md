@@ -168,7 +168,7 @@ public class {Entity}Policy {
 
 Load only when needed:
 - `references/pg-entity-reference.md` for full `@PgEntity`, `@PgColumn`, `@PgKey`, DAO API, and supported type details.
-- `../siyukio-create-application/SKILL.md` for service-layer orchestration patterns.
+- `../siyukio-application-creator/SKILL.md` for service-layer orchestration patterns.
 
 # Verification
 
