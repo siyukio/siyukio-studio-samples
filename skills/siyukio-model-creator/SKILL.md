@@ -1,19 +1,19 @@
 ---
-name: siyukio-domain-creator
-description: "Generate or modify Siyukio domain-layer PostgreSQL artifacts in server modules: Java record entities with @PgEntity/@PgColumn/@PgKey, optional {Entity}Policy and {Entity}Errors, indexes, nested records, encrypted fields, and timestamp conventions. Use when asked to add or update entity fields/indexes/policies/errors in a domain module."
+name: siyukio-model-creator
+description: "Create or modify Siyukio domain model-layer artifacts in server modules, including `{Entity}` in `model/entity`, `{Entity}Errors` in `model/errors`, and `{Entity}Policy` in `model/policy`. Use when asked to add or update entity/errors/policy fields, indexes, errors, or policies in a domain module."
 ---
 
 # Goal
 
-Create or update domain-model code for Siyukio Spring Boot modules using PostgreSQL.
+Create or modify the domain model layer for Siyukio Spring Boot modules using PostgreSQL, including entity, errors, and policy artifacts.
 
 # Scope
 
 Use this skill for:
 
-- Creating a new entity record.
-- Modifying entity fields/indexes.
-- Adding optional `{Entity}Errors` and `{Entity}Policy`.
+- Creating new domain model-layer files: `{Entity}`, `{Entity}Errors`, and `{Entity}Policy`.
+- Modifying existing entity fields/indexes and related errors/policy behavior.
+- Keeping `model/entity`, `model/errors`, and `model/policy` aligned and consistent.
 
 Do not use this skill for web/desktop/console tasks.
 
@@ -36,11 +36,11 @@ Do not use this skill for web/desktop/console tasks.
 # Output files
 
 - Entity:  
-  `{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/domain/model/{Entity}.java`
+  `{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/model/entity/{Entity}.java`
 - Optional errors:  
-  `{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/domain/errors/{Entity}Errors.java`
+  `{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/model/errors/{Entity}Errors.java`
 - Optional policy:  
-  `{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/domain/policy/{Entity}Policy.java`
+  `{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/model/policy/{Entity}Policy.java`
 
 # Workflow
 
@@ -61,7 +61,7 @@ Do not use this skill for web/desktop/console tasks.
 # Entity template
 
 ```java
-package {package-name}.{domain}.domain.model;
+package {package-name}.{domain}.model.entity;
 
 import io.github.siyukio.postgresql.entity.annotation.PgColumn;
 import io.github.siyukio.postgresql.entity.annotation.PgEntity;
@@ -105,7 +105,7 @@ public record {Entity}(
 # Errors template (optional)
 
 ```java
-package {package-name}.{domain}.domain.errors;
+package {package-name}.{domain}.model.errors;
 
 public interface {Entity}Errors {
 
@@ -118,10 +118,10 @@ public interface {Entity}Errors {
 # Policy template (optional)
 
 ```java
-package {package-name}.{domain}.domain.policy;
+package {package-name}.{domain}.model.policy;
 
-import {package-name}.{domain}.domain.errors.{Entity}Errors;
-import {package-name}.{domain}.domain.model.{Entity};
+import {package-name}.{domain}.model.errors.{Entity}Errors;
+import {package-name}.{domain}.model.entity.{Entity};
 import io.github.siyukio.tools.api.ApiException;
 import io.github.siyukio.tools.entity.postgresql.PgEntityDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -157,8 +157,8 @@ public class {Entity}Policy {
 
 # Conventions checklist
 
-- Package root: `{package-name}.{domain}.domain`.
-- Entity package: `.domain.model`; errors package: `.domain.errors`; policy package: `.domain.policy`.
+- Package root: `{package-name}.{domain}.model`.
+- Entity package: `.entity`; errors package: `.errors`; policy package: `.policy`.
 - Use Java `record` for entity DTO-style immutability.
 - Apply `@PgColumn(encrypted = true)` only for sensitive fields.
 - Use `*Ts` (long) fields for index-friendly time queries.

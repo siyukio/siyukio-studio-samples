@@ -25,17 +25,17 @@ Write or update files under:
 
 ## Do not use this skill when
 
-- Work is domain entity/policy design only. Use `$siyukio-domain-creator`.
+- Work is domain entity/errors/policy design only. Use `$siyukio-model-creator`.
 - Work is controller/path/DTO exposure only. Use `$siyukio-api-creator`.
 - Work is external integration/infrastructure only. Use `$siyukio-create-infrastructure`.
 
 ## Preconditions
 
 - Target domain module exists: `{project-name}/{project-name}-{domain}`.
-- Domain model exists: `{package-name}.{domain}.domain.model.{Entity}`.
+- Domain model entity exists: `{package-name}.{domain}.model.entity.{Entity}`.
 - Service context is clear: `{Context}` (PascalCase), `{context}` (camelCase), `{entity}` (camelCase).
 - API method contracts are known, or are created in the same task using `$siyukio-api-creator`.
-- Required policy checks exist, or are added first using `$siyukio-domain-creator`.
+- Required policy checks exist, or are added first using `$siyukio-model-creator`.
 
 ## Execution workflow
 
@@ -61,7 +61,7 @@ Define service methods from intended usage:
 ### 3) Ensure domain policy coverage
 
 Before writing service logic, ensure policy methods exist in:
-`{package-name}.{domain}.domain.policy.{Entity}Policy`
+`{package-name}.{domain}.model.policy.{Entity}Policy`
 
 Common policy methods:
 

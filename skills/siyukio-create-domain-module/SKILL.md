@@ -1,6 +1,6 @@
 ---
 name: siyukio-create-module
-description: Create or update a complete Siyukio server domain module (module pom, parent/bootstrap wiring, and API/Application/Domain layer scaffold) for Spring Boot. Use when adding a new business bounded context under `{project-name}-{domain}` and coordinating `$siyukio-domain-creator`, `$siyukio-application-creator`, and `$siyukio-api-creator`.
+description: Create or update a complete Siyukio server domain module (module pom, parent/bootstrap wiring, and API/Application/Model layer scaffold) for Spring Boot. Use when adding a new business bounded context under `{project-name}-{domain}` and coordinating `$siyukio-model-creator`, `$siyukio-application-creator`, and `$siyukio-api-creator`.
 ---
 
 # siyukio-create-module
@@ -17,8 +17,8 @@ Target module layout:
 ├── src/main/java/{package-path}/{domain}/
 │   ├── api/
 │   ├── application/
-│   └── domain/
-│       ├── model/
+│   └── model/
+│       ├── entity/
 │       ├── policy/
 │       └── errors/
 └── src/main/resources/{domain}/
@@ -38,7 +38,7 @@ Also update:
 ## Do not use this skill when
 
 - Work only touches one layer. Use the corresponding focused skill:
-  - `$siyukio-domain-creator`
+  - `$siyukio-model-creator`
   - `$siyukio-application-creator`
   - `$siyukio-api-creator`
 - Work is for web/desktop/console projects.
@@ -78,9 +78,9 @@ Create missing directories only:
 ```text
 {project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/api
 {project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/application
-{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/domain/model
-{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/domain/policy
-{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/domain/errors
+{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/model/entity
+{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/model/policy
+{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/model/errors
 {project-name}/{project-name}-{domain}/src/main/resources/{domain}
 ```
 
@@ -148,13 +148,13 @@ Update idempotently:
 
 Execute in this order and pass the same normalized variables:
 
-1. `$siyukio-domain-creator`
+1. `$siyukio-model-creator`
 2. `$siyukio-application-creator`
 3. `$siyukio-api-creator`
 
 Minimum expected outputs:
 
-- Domain: `{Entity}.java` (+ optional `{Entity}Policy.java`, `{Entity}Errors.java`)
+- Model: `{Entity}.java` (+ optional `{Entity}Policy.java`, `{Entity}Errors.java`)
 - Application: `{Context}Service.java`
 - API: `{Context}Controller.java`, `{Context}Paths.java`, `{Context}Request.java`, `{Context}Response.java`
 
@@ -190,7 +190,7 @@ Before finishing, confirm:
 
 ## Related skills
 
-- `$siyukio-domain-creator`
+- `$siyukio-model-creator`
 - `$siyukio-application-creator`
 - `$siyukio-api-creator`
 - `$siyukio-create-unit-test` (after module generation, when test scaffolding is required)
