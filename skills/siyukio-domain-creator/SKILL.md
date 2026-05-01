@@ -1,5 +1,5 @@
 ---
-name: siyukio-create-domain
+name: siyukio-domain-creator
 description: "Generate or modify Siyukio domain-layer PostgreSQL artifacts in server modules: Java record entities with @PgEntity/@PgColumn/@PgKey, optional {Entity}Policy and {Entity}Errors, indexes, nested records, encrypted fields, and timestamp conventions. Use when asked to add or update entity fields/indexes/policies/errors in a domain module."
 ---
 
