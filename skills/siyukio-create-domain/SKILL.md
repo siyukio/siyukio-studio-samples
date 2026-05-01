@@ -10,6 +10,7 @@ Create or update domain-model code for Siyukio Spring Boot modules using Postgre
 # Scope
 
 Use this skill for:
+
 - Creating a new entity record.
 - Modifying entity fields/indexes.
 - Adding optional `{Entity}Errors` and `{Entity}Policy`.
@@ -28,23 +29,23 @@ Do not use this skill for web/desktop/console tasks.
 
 # Preconditions
 
-- Target module exists: `{project-name}/{project-name}-domain-{domain}/`.
+- Target module exists: `{project-name}/{project-name}-{domain}/`.
 - Code stays in server modules only.
 - Generated code/comments stay in English.
 
 # Output files
 
 - Entity:  
-  `{project-name}/{project-name}-domain-{domain}/src/main/java/{package-path}/{domain}/domain/model/{Entity}.java`
+  `{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/domain/model/{Entity}.java`
 - Optional errors:  
-  `{project-name}/{project-name}-domain-{domain}/src/main/java/{package-path}/{domain}/domain/errors/{Entity}Errors.java`
+  `{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/domain/errors/{Entity}Errors.java`
 - Optional policy:  
-  `{project-name}/{project-name}-domain-{domain}/src/main/java/{package-path}/{domain}/domain/policy/{Entity}Policy.java`
+  `{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/domain/policy/{Entity}Policy.java`
 
 # Workflow
 
 1. Inspect target module and existing files.
-2. Ensure dependency exists in `{project-name}-domain-{domain}/pom.xml`:
+2. Ensure dependency exists in `{project-name}-{domain}/pom.xml`:
    ```xml
    <dependency>
        <groupId>io.github.siyukio</groupId>
@@ -167,6 +168,7 @@ public class {Entity}Policy {
 # Reference material
 
 Load only when needed:
+
 - `references/pg-entity-reference.md` for full `@PgEntity`, `@PgColumn`, `@PgKey`, DAO API, and supported type details.
 - `../siyukio-application-creator/SKILL.md` for service-layer orchestration patterns.
 

@@ -12,7 +12,7 @@ Generate test code for Siyukio server domain modules.
 Create or update files under:
 
 ```text
-{project-name}/{project-name}-domain-{domain}/
+{project-name}/{project-name}-{domain}/
 ├── pom.xml
 └── src/test/
     ├── java/{package-path}/
@@ -49,7 +49,7 @@ Create or update files under:
 
 ## Preconditions
 
-1. Ensure target module exists: `{project-name}/{project-name}-domain-{domain}`.
+1. Ensure target module exists: `{project-name}/{project-name}-{domain}`.
 2. Ensure local test environment variables are available from `AGENTS.md`:
    - `SIYUKIO_DB_MASTER_URL`
    - `SIYUKIO_DB_MASTER_USERNAME`
@@ -69,7 +69,7 @@ Extract and normalize:
 
 ### 2) Ensure test dependency
 
-Update `{project-name}/{project-name}-domain-{domain}/pom.xml`.
+Update `{project-name}/{project-name}-{domain}/pom.xml`.
 Add if missing:
 
 ```xml
@@ -83,7 +83,7 @@ Add if missing:
 ### 3) Ensure local test profile config
 
 Copy both files from `{project-name}-bootstrap/src/main/resources` to
-`{project-name}-domain-{domain}/src/test/resources`:
+`{project-name}-{domain}/src/test/resources`:
 
 - `application.yml`
 - `application-local.yml`
@@ -182,7 +182,7 @@ Generate `infrastructure/{Context}ClientTest.java` only when client behavior nee
 From `siyukio-studio-server/` run:
 
 ```bash
-./mvnw test -pl {project-name}/{project-name}-domain-{domain}
+./mvnw test -pl {project-name}/{project-name}-{domain}
 ```
 
 If test setup changes broader modules, run a wider verification sweep:

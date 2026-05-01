@@ -1,9 +1,9 @@
 ---
-name: siyukio-create-domain-module
-description: Create or update a complete Siyukio server domain module (module pom, parent/bootstrap wiring, and API/Application/Domain layer scaffold) for Spring Boot. Use when adding a new business bounded context under `{project-name}-domain-{domain}` and coordinating `$siyukio-create-domain`, `$siyukio-application-creator`, and `$siyukio-api-creator`.
+name: siyukio-create-module
+description: Create or update a complete Siyukio server domain module (module pom, parent/bootstrap wiring, and API/Application/Domain layer scaffold) for Spring Boot. Use when adding a new business bounded context under `{project-name}-{domain}` and coordinating `$siyukio-create-domain`, `$siyukio-application-creator`, and `$siyukio-api-creator`.
 ---
 
-# siyukio-create-domain-module
+# siyukio-create-module
 
 Create one domain module end-to-end in the Siyukio server project.
 
@@ -12,7 +12,7 @@ Create one domain module end-to-end in the Siyukio server project.
 Target module layout:
 
 ```text
-{project-name}/{project-name}-domain-{domain}/
+{project-name}/{project-name}-{domain}/
 ├── pom.xml
 ├── src/main/java/{package-path}/{domain}/
 │   ├── api/
@@ -54,7 +54,7 @@ Also update:
 
 Derived values:
 
-- Module artifact: `{project-name}-domain-{domain}`
+- Module artifact: `{project-name}-{domain}`
 - Java package root: `{package-name}.{domain}`
 
 ## Preconditions
@@ -76,24 +76,24 @@ Derived values:
 Create missing directories only:
 
 ```text
-{project-name}/{project-name}-domain-{domain}/src/main/java/{package-path}/{domain}/api
-{project-name}/{project-name}-domain-{domain}/src/main/java/{package-path}/{domain}/application
-{project-name}/{project-name}-domain-{domain}/src/main/java/{package-path}/{domain}/domain/model
-{project-name}/{project-name}-domain-{domain}/src/main/java/{package-path}/{domain}/domain/policy
-{project-name}/{project-name}-domain-{domain}/src/main/java/{package-path}/{domain}/domain/errors
-{project-name}/{project-name}-domain-{domain}/src/main/resources/{domain}
+{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/api
+{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/application
+{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/domain/model
+{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/domain/policy
+{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/domain/errors
+{project-name}/{project-name}-{domain}/src/main/resources/{domain}
 ```
 
 ### 3) Create or align module `pom.xml`
 
 File:
 
-`{project-name}/{project-name}-domain-{domain}/pom.xml`
+`{project-name}/{project-name}-{domain}/pom.xml`
 
 Rules:
 
 - Parent points to `{project-name}`.
-- `artifactId` is `{project-name}-domain-{domain}`.
+- `artifactId` is `{project-name}-{domain}`.
 - Keep existing dependencies; add missing required ones once:
 
 ```xml
@@ -119,13 +119,13 @@ File:
 
 Update idempotently:
 
-1. Add `<module>{project-name}-domain-{domain}</module>` under `<modules>` (once).
+1. Add `<module>{project-name}-{domain}</module>` under `<modules>` (once).
 2. Add managed dependency under `<dependencyManagement><dependencies>`:
 
 ```xml
 <dependency>
     <groupId>{package-name}</groupId>
-    <artifactId>{project-name}-domain-{domain}</artifactId>
+    <artifactId>{project-name}-{domain}</artifactId>
     <version>${project.version}</version>
 </dependency>
 ```
@@ -140,8 +140,8 @@ Update idempotently:
 
 - Ensure profile `{domain}` exists with:
   - `<deployment-profile>{domain}</deployment-profile>`
-  - dependency on `{project-name}-domain-{domain}`
-- Ensure profile `full` includes dependency on `{project-name}-domain-{domain}`.
+  - dependency on `{project-name}-{domain}`
+- Ensure profile `full` includes dependency on `{project-name}-{domain}`.
 - Do not duplicate dependencies if already present.
 
 ### 6) Generate layer code with sibling skills
@@ -171,14 +171,14 @@ From repository root:
 
 ```bash
 cd {project-name}
-./mvnw -pl {project-name}-domain-{domain},{project-name}-bootstrap -DskipTests compile
+./mvnw -pl {project-name}-{domain},{project-name}-bootstrap -DskipTests compile
 ```
 
 Optional (when tests exist):
 
 ```bash
 cd {project-name}
-./mvnw -pl {project-name}-domain-{domain} test
+./mvnw -pl {project-name}-{domain} test
 ```
 
 Before finishing, confirm:
