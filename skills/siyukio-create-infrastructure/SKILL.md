@@ -27,7 +27,7 @@ Write or update files under:
 
 - Implement domain entities, policies, or invariants. Use `$siyukio-create-domain`.
 - Implement application orchestration/use-case logic. Use `$siyukio-create-application`.
-- Expose API endpoints. Use `$siyukio-create-api`.
+- Expose API endpoints. Use `$siyukio-api-creator`.
 
 ## Preconditions
 

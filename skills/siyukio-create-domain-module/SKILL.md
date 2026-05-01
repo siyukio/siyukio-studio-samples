@@ -1,6 +1,6 @@
 ---
 name: siyukio-create-domain-module
-description: Create or update a complete Siyukio server domain module (module pom, parent/bootstrap wiring, and API/Application/Domain layer scaffold) for Spring Boot. Use when adding a new business bounded context under `{project-name}-domain-{domain}` and coordinating `$siyukio-create-domain`, `$siyukio-create-application`, and `$siyukio-create-api`.
+description: Create or update a complete Siyukio server domain module (module pom, parent/bootstrap wiring, and API/Application/Domain layer scaffold) for Spring Boot. Use when adding a new business bounded context under `{project-name}-domain-{domain}` and coordinating `$siyukio-create-domain`, `$siyukio-create-application`, and `$siyukio-api-creator`.
 ---
 
 # siyukio-create-domain-module
@@ -40,7 +40,7 @@ Also update:
 - Work only touches one layer. Use the corresponding focused skill:
   - `$siyukio-create-domain`
   - `$siyukio-create-application`
-  - `$siyukio-create-api`
+  - `$siyukio-api-creator`
 - Work is for web/desktop/console projects.
 
 ## Required inputs
@@ -150,7 +150,7 @@ Execute in this order and pass the same normalized variables:
 
 1. `$siyukio-create-domain`
 2. `$siyukio-create-application`
-3. `$siyukio-create-api`
+3. `$siyukio-api-creator`
 
 Minimum expected outputs:
 
@@ -192,5 +192,5 @@ Before finishing, confirm:
 
 - `$siyukio-create-domain`
 - `$siyukio-create-application`
-- `$siyukio-create-api`
+- `$siyukio-api-creator`
 - `$siyukio-create-unit-test` (after module generation, when test scaffolding is required)

@@ -26,7 +26,7 @@ Write or update files under:
 ## Do not use this skill when
 
 - Work is domain entity/policy design only. Use `$siyukio-create-domain`.
-- Work is controller/path/DTO exposure only. Use `$siyukio-create-api`.
+- Work is controller/path/DTO exposure only. Use `$siyukio-api-creator`.
 - Work is external integration/infrastructure only. Use `$siyukio-create-infrastructure`.
 
 ## Preconditions
@@ -34,7 +34,7 @@ Write or update files under:
 - Target domain module exists: `{project-name}/{project-name}-domain-{domain}`.
 - Domain model exists: `{package-name}.{domain}.domain.model.{Entity}`.
 - Service context is clear: `{Context}` (PascalCase), `{context}` (camelCase), `{entity}` (camelCase).
-- API method contracts are known, or are created in the same task using `$siyukio-create-api`.
+- API method contracts are known, or are created in the same task using `$siyukio-api-creator`.
 - Required policy checks exist, or are added first using `$siyukio-create-domain`.
 
 ## Execution workflow

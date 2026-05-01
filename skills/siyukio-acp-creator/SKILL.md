@@ -33,7 +33,7 @@ Optional supporting files when persistence is required:
 
 ## Do not use this skill when
 
-- Work is API endpoint exposure only. Use `$siyukio-create-api`.
+- Work is API endpoint exposure only. Use `$siyukio-api-creator`.
 - Work is domain model/policy design only. Use `$siyukio-create-domain`.
 - Work is application orchestration unrelated to ACP session lifecycle. Use `$siyukio-create-application`.
 

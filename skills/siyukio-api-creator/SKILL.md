@@ -1,9 +1,9 @@
 ---
-name: siyukio-create-api
+name: siyukio-api-creator
 description: Create or update the Siyukio API layer (controller, path constants, request/response DTOs) in Spring Boot domain modules. Use when adding endpoints, exposing application services through @ApiController/@ApiMapping, defining @ApiParameter DTO contracts, or enabling ACP access for specific APIs.
 ---
 
-# siyukio-create-api
+# siyukio-api-creator
 
 Generate or refine the API layer for one domain context in a Siyukio Spring Boot module.
 
