@@ -1,9 +1,9 @@
 ---
-name: siyukio-create-module
+name: siyukio-module-creator
 description: Create or update a complete Siyukio server domain module (module pom, parent/bootstrap wiring, and API/Application/Model layer scaffold) for Spring Boot. Use when adding a new business bounded context under `{project-name}-{domain}` and coordinating `$siyukio-model-creator`, `$siyukio-application-creator`, and `$siyukio-api-creator`.
 ---
 
-# siyukio-create-module
+# siyukio-module-creator
 
 Create one domain module end-to-end in the Siyukio server project.
 
