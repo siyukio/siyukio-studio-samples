@@ -1,5 +1,5 @@
 ---
-name: siyukio-init-springboot
+name: siyukio-springboot-creator
 description: "Initialize a new server-side Siyukio Spring Boot Maven project from an empty directory/repo by creating a parent module plus {project-name}-common and {project-name}-bootstrap, Maven wrapper, baseline application.yml, and .gitignore. Use when asked to start/bootstrap a fresh Siyukio backend project."
 ---
 
@@ -47,6 +47,7 @@ Do not use this skill for web/desktop/console tasks.
     └── src/main/
         ├── java/{package-path}/{main-class}.java
         └── resources/application.yml
+        └── resources/application-local.yml
 ```
 
 # Workflow
