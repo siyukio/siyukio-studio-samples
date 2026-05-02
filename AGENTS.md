@@ -49,31 +49,6 @@ watermark: Siyukio Studio
 #logo-full: assets/logo-full.svg
 ```
 
-## Task Execution Guidelines
-
-**Restriction**: Currently only Server is under development. Web / Desktop / Console technical details are not yet finalized - reject any related tasks.
-
-**PR Restriction**: All PRs must target `test/{project-version}` by default. PRs to `main` are not allowed unless explicitly approved.
-
-<Execution_Policy>
-
-- All tasks must follow the workflow described in this document.
-- When executing specific steps, prefer to use skills with `siyukio` prefix.
-
-</Execution_Policy>
-
-### Task Workflow
-
-**NOTE**: You may resume from any step during execution, but you MUST complete the remaining workflow from that step onwards. For example, if the current task is only to submit a PR, you can start from step 4 and continue to step 7.
-
-1. **Check test branch** - If `test/{project-version}` does not exist, create it from `main` and push
-2. **Create a feature branch** from `test/{project-version}` with appropriate prefix (e.g., `feat/`, `fix/`, `refactor/`)
-3. **Implement changes** following the applicable sub-project skill
-4. **Verify** using the sub-project's verification gates
-5. **Commit** with Lore-compliant message format: `<type>(<scope>): <intent>`
-6. **Push branch and create PR** to `test/{project-version}`
-7. **Cleanup**: Switch back to `test/{project-version}` and delete the submitted local branch
-
 ### Local Environment Configuration
 
 **Required Environment Variables for Local Test:**
@@ -99,6 +74,28 @@ Format: `<type>(<scope>): <description>`
 
 ### Scopes
 
-`server`, `sample`, `common`, `config`, `dependency`
+`server`, `console`, `web`, `desktop`
 
-## Notes
+# Esexecution Workflow
+
+## PR Target Policy
+
+- Default PR base branch is `test/{project-version}`.
+- PRs targeting `main` are prohibited unless explicitly approved by the user.
+
+### Standard Workflow
+
+1. **Ensure test base branch**: Check whether `test/{project-version}` exists. If not, create it from `main` and push it.
+2. **Create working branch**: Create a feature branch from `test/{project-version}` using a valid prefix such as `feat/`, `fix/`, or `refactor/`.
+3. **Implement**: Apply code changes under the relevant sub-project rules (Server only at this stage).
+4. **Verify**: Run the required verification gates for the sub-project before committing.
+5. **Commit**: Create a commit using the required format `<type>(<scope>): <intent>`, with Lore protocol trailers in the commit body.
+6. **Push and open PR**: Push the branch and create a PR targeting `test/{project-version}`.
+7. **Local cleanup**: Switch back to `test/{project-version}` and delete the submitted local feature branch.
+
+### Failure Handling
+
+- If verification fails, fix issues and repeat from Step 3.
+- If branch conflicts occur, rebase or merge from `test/{project-version}` and rerun verification.
+- Do not skip verification to accelerate PR submission.
+
