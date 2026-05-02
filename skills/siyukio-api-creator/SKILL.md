@@ -70,19 +70,16 @@ Rules:
 
 - Request DTO must implement `Validated`.
 - Every DTO field must declare `@ApiParameter`; fields without it are filtered.
-- Put Jakarta validation annotations on request fields (`@NotBlank`, `@Size`, etc.).
 - Keep DTO field names aligned with service method contracts.
 
 Request template:
 
 ```java
 public record {Context}Request(
-        @ApiParameter(description = "ID", required = true)
+        @ApiParameter(description = "ID")
         String id,
 
-        @ApiParameter(description = "Name", required = true)
-        @NotBlank(message = "Name is required")
-        @Size(max = 100, message = "Name must not exceed 100 characters")
+        @ApiParameter(description = "Name")
         String name
 ) implements Validated {
 }
