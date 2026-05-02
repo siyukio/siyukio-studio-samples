@@ -98,6 +98,10 @@ Rules:
 
 ```xml
 <dependency>
+    <groupId>{package-name}</groupId>
+    <artifactId>{project-name}-common</artifactId>
+</dependency>
+<dependency>
     <groupId>io.github.siyukio</groupId>
     <artifactId>spring-siyukio-application</artifactId>
 </dependency>
