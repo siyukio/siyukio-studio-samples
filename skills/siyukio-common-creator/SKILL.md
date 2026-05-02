@@ -42,7 +42,7 @@ Target directories:
 ## Workflow
 
 1. Normalize output paths and class names.
-2. Create or update constants under `common/constants` as Java `interface`.
+2. Create or update constants under `common/constants` as Java `interface calss`.
 3. Create or update utility classes under `common/utils` as Java `abstract class`.
 4. Keep utility methods static and stateless.
 5. Run module compile verification.
