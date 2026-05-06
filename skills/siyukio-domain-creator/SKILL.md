@@ -65,12 +65,12 @@ Responsibilities:
 
 Invoke:
 
-`$siyukio-api-creator`
+`$siyukio-role-based-api-creator`
 
 Responsibilities:
 
-- Create/update controller, paths, and request/response DTOs.
-- Keep endpoint contracts explicit for the target context.
+- Create/update role-based controllers, paths, and role-specific DTOs.
+- Keep endpoint contracts explicit for user, admin, and internal roles.
 
 ### 4) Create or update domain application service
 
@@ -121,6 +121,6 @@ Confirm before finishing:
 
 - `$siyukio-module-creator`
 - `$siyukio-model-creator`
-- `$siyukio-api-creator`
+- `$siyukio-role-based-api-creator`
 - `$siyukio-application-creator`
 - `$siyukio-unit-test-creator`
