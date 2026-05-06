@@ -1,0 +1,31 @@
+# Health check
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+# Siyukio configuration
+spring:
+  siyukio:
+    jwt:
+      public-key: ${SIYUKIO_JWT_PUBLIC_KEY:}
+      private-key: ${SIYUKIO_JWT_PRIVATE_KEY:}
+      password: ${SIYUKIO_JWT_PASSWORD:}
+    signature:
+      salt: ${SIYUKIO_SIGNATURE_SALT:siyukio}
+    profiles:
+      docs: ${SIYUKIO_PROFILES_DOCS:true}
+      active: ${SIYUKIO_PROFILES_ACTIVE:dev}
+  datasource:
+    postgres:
+      master-key: ${SIYUKIO_DB_MASTER_KEY:06CVrBQL+6VZzbXYhxfXYIm40I/cS4Ern2DW7beR5JU=}
+      hikari:
+        maximum-pool-size: 18
+        minimum-idle: 18
+        idle-timeout: 600000
+        max-lifetime: 1800000
+      master:
+        url: ${SIYUKIO_DB_MASTER_URL:jdbc:postgresql://localhost:5432/root}
+        username: ${SIYUKIO_DB_MASTER_USERNAME:root}
+        password: ${SIYUKIO_DB_MASTER_PASSWORD:FYm7JqaEcptxUTgy}

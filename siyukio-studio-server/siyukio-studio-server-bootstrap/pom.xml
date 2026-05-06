@@ -29,11 +29,27 @@
 
     <profiles>
         <profile>
+            <id>config</id>
+            <properties>
+                <deployment-profile>config</deployment-profile>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>io.github.siyukio.samples</groupId>
+                    <artifactId>siyukio-studio-server-config</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
             <id>full</id>
             <properties>
                 <deployment-profile>full</deployment-profile>
             </properties>
             <dependencies>
+                <dependency>
+                    <groupId>io.github.siyukio.samples</groupId>
+                    <artifactId>siyukio-studio-server-config</artifactId>
+                </dependency>
             </dependencies>
         </profile>
     </profiles>
