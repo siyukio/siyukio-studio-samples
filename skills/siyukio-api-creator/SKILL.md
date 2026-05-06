@@ -17,7 +17,11 @@ Create or update files under:
 ├── paths/
 │   └── {Context}Paths.java
 └── dto/
-    ├── {Context}Request.java
+    ├── {Context}CreateRequest.java
+    ├── {Context}UpdateRequest.java
+    ├── {Context}RemoveRequest.java
+    ├── {Context}DeleteRequest.java (optional, explicit hard delete only)
+    ├── {Context}QueryRequest.java (optional for query APIs)
     └── {Context}Response.java
 ```
 
@@ -58,8 +62,9 @@ Extract and normalize:
 - `{domain}`: kebab-case module domain (example: `user-management`)
 - `{Context}`: PascalCase business context (example: `User`)
 - `{context}`: camelCase variable name (example: `user`)
-- Operations: `get`, `create`, `update`, `list`, `remove` (select required subset)
-- DTO fields and validation constraints
+- Operations: `get`, `create`, `update`, `list`, `remove`, `delete` (select required subset; `delete` is explicit hard delete only)
+- Default deletion semantics: when requirements say "delete" without explicitly saying hard/physical delete, map it to `remove` (soft delete).
+- DTO fields and explicit validation constraints (only when business requirements specify them)
 - ACP requirement per endpoint (`acpAvailable = true` when needed)
 
 ### 2) Create or update DTOs
@@ -68,20 +73,108 @@ Write DTOs in `api/dto/` as Java records.
 
 Rules:
 
-- Request DTO must implement `Validated`.
-- Every DTO field must declare `@ApiParameter`; fields without it are filtered.
+- Every request DTO field must declare `@ApiParameter`; fields without it are filtered.
+- Use `@ApiParameter` default strategy by default; when business requirements do not explicitly request field-level validation constraints, keep the annotation minimal (for example, only `name`, and set `required = false` only for optional fields).
+- Add explicit constraints in `@ApiParameter` only when required by business requirements. Siyukio automatically enforces validation from `@ApiParameter` metadata (do not add extra `Validated` implementation or Bean Validation annotations on request DTO fields).
+- Use `minLength`/`maxLength` for string length constraints.
+- Use `pattern` for regex string constraints.
+- Use `minimum`/`maximum` for number range constraints.
+- Use `minItems`/`maxItems` for list size constraints.
 - Keep DTO field names aligned with service method contracts.
+- Command DTOs must be operation-specific and independent:
+  - `create` uses `{Context}CreateRequest` only.
+  - `update` uses `{Context}UpdateRequest` only.
+  - `remove` (soft delete) uses `{Context}RemoveRequest` only.
+  - `delete` (hard delete, explicit requirement only) uses `{Context}DeleteRequest` only.
+  - Do not reuse command DTOs across `create`, `update`, `remove`, and `delete` operations.
+  - Keep path constant name and command DTO name strictly aligned by operation:
+    - `{Context}Paths.REMOVE` <-> `{Context}RemoveRequest`
+    - `{Context}Paths.DELETE` <-> `{Context}DeleteRequest`
+- `create` request fields are required by default (do not write `required = true`) unless a field is explicitly optional by business design.
+- `update` request must include `id` as required; all non-id business fields are optional (`required = false`) and represent partial update intent.
+- `remove` request must contain only `id` (required) for soft-delete intent.
+- `delete` request must contain only `id` (required) and is used only when hard delete is explicitly requested.
+- If the requirement says "delete" but does not explicitly require hard/physical delete, implement `remove` and skip `delete`.
+- DTO reuse is only allowed for query APIs (`get`, `list`, `page`, `search`) when request shapes are truly the same.
 
-Request template:
+Create request template:
 
 ```java
-public record {Context}Request(
-        @ApiParameter(description = "ID")
+public record {Context}CreateRequest(
+        @ApiParameter(name = "name")
+        String string,
+
+        @ApiParameter(name = "remark", required = false)
+        String remark
+) {
+}
+```
+
+Create request template (explicit validation required):
+
+```java
+public record {Context}CreateRequest(
+        @ApiParameter(name = "string", maxLength = 10, minLength = 1)
+        String string,
+
+        @ApiParameter(name = "regex string", pattern = "^[a-zA-Z0-9]{1,10}$")
+        String regexString,
+
+        @ApiParameter(name = "number", maximum = 10, minimum = 1)
+        Integer number,
+
+        @ApiParameter(name = "list", maxItems = 10, minItems = 1)
+        List<String> list
+) {
+}
+```
+
+Update request template:
+
+```java
+public record {Context}UpdateRequest(
+        @ApiParameter(name = "ID")
         String id,
 
-        @ApiParameter(description = "Name")
-        String name
-) implements Validated {
+        @ApiParameter(name = "name", required = false)
+        String name,
+
+        @ApiParameter(name = "remark", required = false)
+        String remark
+) {
+}
+```
+
+Remove request template:
+
+```java
+public record {Context}RemoveRequest(
+        @ApiParameter(name = "ID")
+        String id
+) {
+}
+```
+
+Delete request template:
+
+```java
+public record {Context}DeleteRequest(
+        @ApiParameter(name = "ID")
+        String id
+) {
+}
+```
+
+Query request template (optional reusable DTO for query APIs):
+
+```java
+public record {Context}QueryRequest(
+        @ApiParameter(name = "ID", required = false)
+        String id,
+
+        @ApiParameter(name = "keyword", required = false)
+        String keyword
+) {
 }
 ```
 
@@ -107,6 +200,9 @@ Rules:
 - Keep controller methods free of raw path strings.
 - Use `/{domain}/{operation}` for simple single-context modules.
 - Use `/{domain}/{operation}{Context}` when disambiguation is needed.
+- Use `remove` path for soft delete semantics as the default deletion behavior.
+- Use `delete` path only for explicitly requested physical delete semantics.
+- Keep path constant names and command DTO names consistent for each operation (`REMOVE` + `RemoveRequest`, `DELETE` + `DeleteRequest`).
 
 Template:
 
@@ -117,6 +213,7 @@ public interface {Context}Paths {
     String GET = "/{domain}/get{Context}";
     String UPDATE = "/{domain}/update{Context}";
     String REMOVE = "/{domain}/remove{Context}";
+    String DELETE = "/{domain}/delete{Context}";
 }
 ```
 
@@ -129,7 +226,12 @@ Controller rules:
 - Inject `{Context}Service`.
 - Use `@ApiMapping(path = {Context}Paths.X, summary = "...")`.
 - Accept `Token token` when user context is required.
-- Use request DTOs for command-style operations.
+- Use operation-specific command DTOs:
+  - `create` -> `{Context}CreateRequest`
+  - `update` -> `{Context}UpdateRequest`
+  - `remove` (soft delete, default for unspecified delete requests) -> `{Context}RemoveRequest`
+  - `delete` (hard delete, explicit requirement only) -> `{Context}DeleteRequest`
+- Reuse DTOs only for query-style operations when request shapes are identical.
 - Use `PageRequest` / `PageResponse` for pagination endpoints.
 - Set `acpAvailable = true` only for endpoints that must be callable from ACP.
 
@@ -143,8 +245,28 @@ public class {Context}Controller {
     private {Context}Service {context}Service;
 
     @ApiMapping(path = {Context}Paths.GET, summary = "Get {Context} by ID")
-    public {Context}Response get(Token token, @ApiParameter(description = "Request") {Context}Request request) {
+    public {Context}Response get(Token token, @ApiParameter(description = "Request") {Context}QueryRequest request) {
         return {context}Service.getById(request.id());
+    }
+
+    @ApiMapping(path = {Context}Paths.CREATE, summary = "Create {Context}")
+    public String create(Token token, @ApiParameter(description = "Request") {Context}CreateRequest request) {
+        return {context}Service.create(request);
+    }
+
+    @ApiMapping(path = {Context}Paths.UPDATE, summary = "Update {Context}")
+    public void update(Token token, @ApiParameter(description = "Request") {Context}UpdateRequest request) {
+        {context}Service.update(request);
+    }
+
+    @ApiMapping(path = {Context}Paths.REMOVE, summary = "Soft remove {Context}")
+    public void remove(Token token, @ApiParameter(description = "Request") {Context}RemoveRequest request) {
+        {context}Service.remove(request.id());
+    }
+
+    @ApiMapping(path = {Context}Paths.DELETE, summary = "Delete {Context} permanently")
+    public void delete(Token token, @ApiParameter(description = "Request") {Context}DeleteRequest request) {
+        {context}Service.delete(request.id());
     }
 
     @ApiMapping(path = {Context}Paths.LIST, summary = "Query {Context} list")
@@ -164,7 +286,8 @@ public class {Context}Controller {
   - `authorization` default: `true`
   - `signature` default: `false`
   - `acpAvailable` default: `false`
-- `@ApiParameter`: define field visibility and API contract metadata.
+- `@ApiParameter`: define field visibility and API contract metadata; `required` defaults to `true`, so do not set `required = true`; set `required = false` only for optional fields. Validation constraints (`minLength`, `maxLength`, `pattern`, `minimum`, `maximum`, `minItems`, `maxItems`) are optional and should be added only when explicitly required.
+- Request DTO validation is automatically applied from `@ApiParameter`; no `Validated` interface implementation is required.
 
 ### 6) Verify implementation
 
@@ -185,6 +308,9 @@ Then confirm:
 - Controller method signatures match `{Context}Service` methods.
 - DTO fields and types match service expectations.
 - All mappings use constants from `{Context}Paths`.
+- Unspecified "delete" requirements are implemented as `remove` endpoints (soft delete) using `{Context}RemoveRequest`.
+- `delete` endpoints are created only when physical delete is explicitly requested and use `{Context}DeleteRequest`.
+- Path constants and command DTO names are operation-aligned (`REMOVE` + `RemoveRequest`, `DELETE` + `DeleteRequest`).
 - New endpoints are POST JSON contract compatible with current project conventions.
 - ACP-enabled endpoints are explicitly marked and intentional.
 
@@ -193,8 +319,14 @@ Then confirm:
 - Package: `{package-name}.{domain}.api`
 - Controller: `{Context}Controller`
 - Paths constants: `{Context}Paths` in `api/paths`
-- Request DTO: `{Context}Request` (record + `Validated`)
+- Create DTO: `{Context}CreateRequest` (record, fields required by default)
+- Update DTO: `{Context}UpdateRequest` (record, only `id` required)
+- Remove DTO: `{Context}RemoveRequest` (record, only `id`, soft delete; default for unspecified delete requirements)
+- Delete DTO: `{Context}DeleteRequest` (record, only `id`, physical delete; explicit requirement only)
+- Query DTO: `{Context}QueryRequest` (record, reusable only among query APIs)
 - Response DTO: `{Context}Response` (record)
+- Request DTO contract: all request DTO fields declare `@ApiParameter`; no `Validated` implementation
 - DTO field annotations: all fields use `@ApiParameter`
+- Validation strategy: use `@ApiParameter` default strategy unless business requirements explicitly define additional constraints
 - Pagination: use framework `PageRequest` / `PageResponse`
-- Operations vocabulary: `get`, `create`, `update`, `list`, `remove`
+- Operations vocabulary: `get`, `create`, `update`, `list`, `remove` (default delete), `delete` (explicit hard delete only)
