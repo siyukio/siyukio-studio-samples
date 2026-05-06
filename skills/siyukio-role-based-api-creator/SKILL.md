@@ -1,11 +1,11 @@
 ---
 name: siyukio-role-based-api-creator
-description: Create or update role-based APIs in Siyukio Spring Boot domain modules by combining shared role constants and role-scoped controllers. Use when a domain must expose different APIs for roles such as USER, ADMIN, and INTERNAL, and enforce access via @ApiController(roles = {...}).
+description: Create or update role-based APIs in Siyukio Spring Boot domain modules with the default role set user, admin, and internal. Use when a domain must expose separate role APIs with role-specific controller, paths class, and DTO naming, keep API files under {domain}/api, {domain}/api/dto, {domain}/api/paths, and enforce access via @ApiController(roles = {...}).
 ---
 
 # siyukio-role-based-api-creator
 
-Create or refine role-scoped controllers for one domain context, and enforce role authorization at controller level through shared constants.
+Create or refine role-based API classes for one domain context with fixed default roles: user, admin, and internal.
 
 ## Scope
 
@@ -16,20 +16,28 @@ Create or update files under:
 └── RolesConstants.java
 
 {project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/api/
-├── {role}/
-│   └── {Context}ApiController.java
+├── {Context}Controller.java
+├── {Context}AdminController.java
+├── {Context}InternalController.java
 ├── paths/
-│   └── {Context}Paths.java
+│   ├── {Context}Paths.java
+│   ├── {Context}AdminPaths.java
+│   └── {Context}InternalPaths.java
 └── dto/
     ├── {Context}Request.java
-    └── {Context}Response.java
+    ├── {Context}Response.java
+    ├── {Context}AdminRequest.java
+    ├── {Context}AdminResponse.java
+    ├── {Context}InternalRequest.java
+    └── {Context}InternalResponse.java
 ```
 
 ## Use this skill when
 
-- A domain needs separate APIs by role, such as user API, admin API, and internal API.
+- A domain needs default role APIs for user, admin, and internal.
 - You need to add role restrictions directly on controllers through `@ApiController(roles = {...})`.
-- You want role values centralized in a shared constants interface.
+- You need deterministic naming for role-specific controllers, paths classes, and DTOs in one shared `api` package tree.
+- You want role values centralized in `RolesConstants`.
 
 ## Do not use this skill when
 
@@ -43,21 +51,37 @@ Create or update files under:
 - `{domain}`: module domain in kebab-case, for example `user-management`
 - `{Context}`: business context in PascalCase, for example `User`
 - `{context}`: service variable name in camelCase, for example `user`
-- `{role}`: role package segment in lower-case, for example `user`, `admin`, `internal`
-- `{ROLE}`: role constant key in `UPPER_SNAKE_CASE`, for example `USER`, `ADMIN`, `INTERNAL`
 - Endpoint operations: `get`, `create`, `update`, `list`, `remove` (choose required subset)
 
 ## Execution workflow
 
-### 1) Normalize role inputs
+### 1) Normalize default role model
 
-- Map role names to both package and constant forms:
-  - package: `{role}` (lower-case)
-  - constant: `{ROLE}` (upper snake case)
-- Keep one source of truth for role constants: `RolesConstants`.
-- Confirm controller naming and package:
-  - Class: `{Context}ApiController`
-  - Package: `{package-name}.{domain}.api.{role}`
+Use fixed role categories and naming suffixes:
+
+- user:
+  - role constant: `RolesConstants.USER`
+  - controller: `{Context}Controller`
+  - paths class: `{Context}Paths`
+  - DTO: `{Context}Request`, `{Context}Response`
+- admin:
+  - role constant: `RolesConstants.ADMIN`
+  - controller: `{Context}AdminController`
+  - paths class: `{Context}AdminPaths`
+  - DTO: `{Context}AdminRequest`, `{Context}AdminResponse`
+- internal:
+  - role constant: `RolesConstants.INTERNAL`
+  - controller: `{Context}InternalController`
+  - paths class: `{Context}InternalPaths`
+  - DTO: `{Context}InternalRequest`, `{Context}InternalResponse`
+
+Keep controller package fixed to `{package-name}.{domain}.api`.
+
+Paths naming contract (mandatory):
+
+- user API paths class: `{Context}Paths`
+- admin API paths class: `{Context}AdminPaths`
+- internal API paths class: `{Context}InternalPaths`
 
 ### 2) Create or update role constants first
 
@@ -85,25 +109,35 @@ public interface RolesConstants {
 }
 ```
 
-### 3) Create or update role-scoped API controller
+### 3) Create or update role-based controllers in shared `api` package
 
-Use `$siyukio-api-creator` to generate or refine API layer artifacts, then place controller in role package:
+Use `$siyukio-api-creator` to generate or refine API layer artifacts, then place controllers directly under:
 
-`{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/api/{role}/{Context}ApiController.java`
+`{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/api/`
 
 Controller rules:
 
-- Annotate controller with explicit roles:
-  - `@ApiController(roles = {RolesConstants.{ROLE}})`
+- Use controller naming by role:
+  - user: `{Context}Controller`
+  - admin: `{Context}AdminController`
+  - internal: `{Context}InternalController`
+- Use paths class naming by role:
+  - user: `{Context}Paths`
+  - admin: `{Context}AdminPaths`
+  - internal: `{Context}InternalPaths`
+- Annotate each controller with explicit role:
+  - user: `@ApiController(roles = {RolesConstants.USER})`
+  - admin: `@ApiController(roles = {RolesConstants.ADMIN})`
+  - internal: `@ApiController(roles = {RolesConstants.INTERNAL})`
 - Prefer constants, never hard-coded role strings in annotations.
-- Keep endpoint mappings on `{Context}Paths` constants.
-- Reuse `api/dto` and `api/paths` conventions from `$siyukio-api-creator`.
+- Keep endpoint mappings on role-specific paths constants only.
+- Keep files inside `api`, `api/dto`, `api/paths` only.
 - Inject `{Context}Service` from application layer.
 
 Template:
 
 ```java
-package {package-name}.{domain}.api.{role};
+package {package-name}.{domain}.api;
 
 import {package-name}.common.constants.RolesConstants;
 import {package-name}.{domain}.api.paths.{Context}Paths;
@@ -111,10 +145,10 @@ import io.github.siyukio.spring.annotations.api.ApiController;
 import io.github.siyukio.spring.annotations.api.ApiMapping;
 
 @ApiController(
-        summary = "{Context} {ROLE} API",
-        roles = {RolesConstants.{ROLE}}
+        summary = "{Context} user API",
+        roles = {RolesConstants.USER}
 )
-public class {Context}ApiController {
+public class {Context}Controller {
 
     @ApiMapping(path = {Context}Paths.LIST, summary = "Query {Context} list")
     public void list() {
@@ -123,13 +157,29 @@ public class {Context}ApiController {
 }
 ```
 
-### 4) Handle multi-role controller access when needed
+For admin and internal controllers, import and use their corresponding path classes:
 
-- For shared access, declare multiple role constants:
+- `{Context}AdminController` -> `{Context}AdminPaths`
+- `{Context}InternalController` -> `{Context}InternalPaths`
+
+### 4) Create or update DTO naming by role
+
+Under `{domain}/api/dto`, keep role-specific DTO names:
+
+- user: `{Context}Request`, `{Context}Response`
+- admin: `{Context}AdminRequest`, `{Context}AdminResponse`
+- internal: `{Context}InternalRequest`, `{Context}InternalResponse`
+
+Keep request/response classes aligned with controller endpoints and application service contracts.
+
+### 5) Handle multi-role controller access when needed
+
+- Keep one default role per controller class.
+- If a controller must support multiple roles, declare multiple constants explicitly:
   - `roles = {RolesConstants.ADMIN, RolesConstants.INTERNAL}`
-- Keep roles on controller annotation unless endpoint-level override is explicitly required by project conventions.
+- Keep this as an exception, not the default mode.
 
-### 5) Verify implementation
+### 6) Verify implementation
 
 From `{project-name}/` run:
 
@@ -146,7 +196,14 @@ If controller tests exist, run:
 Then confirm:
 
 - `RolesConstants` exists in common module and includes requested roles.
-- Role-based controller exists under `api/{role}/`.
-- `@ApiController` has `roles = {...}` using `RolesConstants`.
-- API path strings are not hard-coded; they come from `{Context}Paths`.
+- Role-based controllers exist under `api/` with names:
+  - `{Context}Controller`
+  - `{Context}AdminController`
+  - `{Context}InternalController`
+- `@ApiController` roles use `RolesConstants` and match each controller role.
+- API path strings are not hard-coded; they come from role-specific classes:
+  - user: `{Context}Paths`
+  - admin: `{Context}AdminPaths`
+  - internal: `{Context}InternalPaths`
+- DTO names follow the role convention in `api/dto`.
 - DTO and service signatures remain aligned with the application layer.
