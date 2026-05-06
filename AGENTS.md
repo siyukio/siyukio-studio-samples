@@ -16,7 +16,7 @@ understand how to use various features of the framework.
 siyukio-studio-samples/
 ├── siyukio-studio-web/       # Web frontend (TBD)
 ├── siyukio-studio-desktop/   # Desktop application (TBD)
-├── siyukio-studio-console/   # Admin console frontend (TBD)
+├── siyukio-studio-console/   # Admin console frontend (Vue3 + TDesign)
 └── siyukio-studio-server/    # Server project (Spring Boot)
 ```
 

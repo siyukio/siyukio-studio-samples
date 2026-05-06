@@ -1,0 +1,43 @@
+import { appName } from '@/config/global';
+
+export default {
+  loginTitle: 'Login in',
+  noAccount: 'No Account?',
+  createAccount: 'Create Account',
+  remember: 'Remember Account',
+  forget: 'Forget Account',
+  signIn: 'Sign in',
+  register: 'Sign up',
+  existAccount: 'Exist Account?',
+  refresh: 'refresh',
+  wechatLogin: 'Login with WeChat',
+  accountLogin: 'Login with Account',
+  phoneLogin: 'Login with Mobile Phone',
+  input: {
+    account: 'please enter account',
+    password: 'please enter password',
+    phone: 'please enter phone',
+    verification: 'please enter verification code',
+    email: 'please enter email',
+  },
+  required: {
+    account: 'account is required',
+    phone: 'phone is required',
+    password: 'password is required',
+    verification: 'verification code is require',
+    email: 'email is required',
+  },
+  invalid: {
+    email: 'please enter a valid email',
+    agreement: `Please agree to ${appName} Terms of Service and Privacy Policy`,
+  },
+  sendVerification: 'send',
+  resendAfter: ' seconds',
+  signUpWithEmail: 'Sign up with Email',
+  signUpWithPhone: 'Sign up with Phone',
+  agreeToTerms: 'I agree to the',
+  termsOfService: 'Terms of Service',
+  privacyPolicy: 'Privacy Policy',
+  loginSuccess: 'Login Successful',
+  registerSuccess: 'Registration Successful',
+};
