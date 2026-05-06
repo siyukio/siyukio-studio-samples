@@ -83,6 +83,12 @@ Paths naming contract (mandatory):
 - admin API paths class: `{Context}AdminPaths`
 - internal API paths class: `{Context}InternalPaths`
 
+Path value contract (mandatory):
+
+- in `{Context}Paths`, each path value must be under `/{context}/*`
+- in `{Context}AdminPaths`, each path value must be under `/admin/{context}/*`
+- in `{Context}InternalPaths`, each path value must be under `/internal/{context}/*`
+
 ### 2) Create or update role constants first
 
 Use `$siyukio-common-creator` to create or update:
@@ -205,5 +211,9 @@ Then confirm:
   - user: `{Context}Paths`
   - admin: `{Context}AdminPaths`
   - internal: `{Context}InternalPaths`
+- Path values in each role-specific paths class follow the required base pattern:
+  - `{Context}Paths` -> `/{context}/*`
+  - `{Context}AdminPaths` -> `/admin/{context}/*`
+  - `{Context}InternalPaths` -> `/internal/{context}/*`
 - DTO names follow the role convention in `api/dto`.
 - DTO and service signatures remain aligned with the application layer.
