@@ -12,10 +12,10 @@ Create or refine role-based API classes for one domain context with fixed defaul
 Create or update files under:
 
 ```
-{project-name}/{project-name}-common/src/main/java/{package-path}/common/constants/
+{server-project-name}/{server-project-name}-common/src/main/java/{package-path}/common/constants/
 └── RolesConstants.java
 
-{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/api/
+{server-project-name}/{server-project-name}-{domain}/src/main/java/{package-path}/{domain}/api/
 ├── {Context}Controller.java
 ├── Admin{Context}Controller.java
 ├── Internal{Context}Controller.java
@@ -47,7 +47,7 @@ Create or update files under:
 
 ## Required inputs
 
-- `{project-name}`, `{package-name}`, and `{package-path}`
+- `{server-project-name}`, `{package-name}`, and `{package-path}`
 - `{domain}`: module domain in kebab-case, for example `user-management`
 - `{Context}`: business context in PascalCase, for example `User`
 - `{context}`: service variable name in camelCase, for example `user`
@@ -93,7 +93,7 @@ Path value contract (mandatory):
 
 Use `$siyukio-common-creator` to create or update:
 
-`{project-name}/{project-name}-common/src/main/java/{package-path}/common/constants/RolesConstants.java`
+`{server-project-name}/{server-project-name}-common/src/main/java/{package-path}/common/constants/RolesConstants.java`
 
 Rules:
 
@@ -119,7 +119,7 @@ public interface RolesConstants {
 
 Use `$siyukio-api-creator` to generate or refine API layer artifacts, then place controllers directly under:
 
-`{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/api/`
+`{server-project-name}/{server-project-name}-{domain}/src/main/java/{package-path}/{domain}/api/`
 
 Controller rules:
 
@@ -186,16 +186,16 @@ Keep request/response classes aligned with controller endpoints and application 
 
 ### 5) Verify implementation
 
-From `{project-name}/` run:
+From `{server-project-name}/` run:
 
 ```bash
-./mvnw -pl {project-name}-common,{project-name}-{domain} -DskipTests compile
+./mvnw -pl {server-project-name}-common,{server-project-name}-{domain} -DskipTests compile
 ```
 
 If controller tests exist, run:
 
 ```bash
-./mvnw -pl {project-name}-{domain} test -Dtest={Context}ApiControllerTest
+./mvnw -pl {server-project-name}-{domain} test -Dtest={Context}ApiControllerTest
 ```
 
 Then confirm:

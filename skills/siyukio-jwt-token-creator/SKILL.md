@@ -25,8 +25,8 @@ String accessAuthorization = tokenProvider.createAuthorization(accessToken);
 Create or update code under:
 
 ```
-{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/application/
-{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/api/
+{server-project-name}/{server-project-name}-{domain}/src/main/java/{package-path}/{domain}/application/
+{server-project-name}/{server-project-name}-{domain}/src/main/java/{package-path}/{domain}/api/
 ```
 
 Typical files:
@@ -168,16 +168,16 @@ Use `token.roles()` to apply endpoint-specific access control, and keep role con
 
 ## Verification
 
-From `{project-name}/` run:
+From `{server-project-name}/` run:
 
 ```bash
-./mvnw -pl {project-name}-{domain} -DskipTests compile
+./mvnw -pl {server-project-name}-{domain} -DskipTests compile
 ```
 
 If tests exist for auth flows:
 
 ```bash
-./mvnw -pl {project-name}-{domain} test -Dtest=*Auth*Test,*Token*Test,*Login*Test
+./mvnw -pl {server-project-name}-{domain} test -Dtest=*Auth*Test,*Token*Test,*Login*Test
 ```
 
 Then confirm:

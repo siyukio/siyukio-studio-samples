@@ -12,7 +12,7 @@ Create integration-layer integration components that can be reused by applicatio
 Write or update files under:
 
 ```
-{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/integration/
+{server-project-name}/{server-project-name}-{domain}/src/main/java/{package-path}/{domain}/integration/
 └── {Context}Client.java
 ```
 
@@ -31,8 +31,8 @@ Write or update files under:
 
 ## Preconditions
 
-- Module exists: `{project-name}/{project-name}-{domain}`.
-- Package base exists: `{project-name}-{domain}.integration`.
+- Module exists: `{server-project-name}/{server-project-name}-{domain}`.
+- Package base exists: `{server-project-name}-{domain}.integration`.
 - External service contract is known: endpoints/protocol, auth mode, and required operations.
 - No business rules are expected inside integration classes.
 
@@ -60,12 +60,12 @@ Rules:
 ### 3) Implement `{Context}Client`
 
 Create or update:
-`{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/integration/{Context}Client.java`
+`{server-project-name}/{server-project-name}-{domain}/src/main/java/{package-path}/{domain}/integration/{Context}Client.java`
 
 Template:
 
 ```java
-package {project-name}-{domain}.integration;
+package {server-project-name}-{domain}.integration;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -116,7 +116,7 @@ Rules:
 
 ### 5) Apply integration conventions
 
-- Package: `{project-name}-{domain}.integration`
+- Package: `{server-project-name}-{domain}.integration`
 - Class naming: `{Context}Client`
 - Input type naming: `{Operation}Command`
 - Output type naming: `{Operation}Result`
@@ -125,16 +125,16 @@ Rules:
 
 ## Verification
 
-From `{project-name}/` run:
+From `{server-project-name}/` run:
 
 ```bash
-./mvnw -pl {project-name}-{domain} -DskipTests compile
+./mvnw -pl {server-project-name}-{domain} -DskipTests compile
 ```
 
 If related tests exist, run:
 
 ```bash
-./mvnw -pl {project-name}-{domain} test -Dtest={Context}ClientTest
+./mvnw -pl {server-project-name}-{domain} test -Dtest={Context}ClientTest
 ```
 
 Then confirm:

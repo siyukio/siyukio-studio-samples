@@ -1,6 +1,6 @@
 ---
 name: siyukio-internal-api-client-creator
-description: Create or update Siyukio internal API client code for server domain modules. Use when internal API callers need typed client interfaces, synchronized DTO/path contracts, or when adding/updating `{Context}` internal endpoints and corresponding `@ApiClient` interfaces under `{project-name}-{domain}-client`.
+description: Create or update Siyukio internal API client code for server domain modules. Use when internal API callers need typed client interfaces, synchronized DTO/path contracts, or when adding/updating `{Context}` internal endpoints and corresponding `@ApiClient` interfaces under `{server-project-name}-{domain}-client`.
 ---
 
 # siyukio-internal-api-client-creator
@@ -12,7 +12,7 @@ Create or update one internal API client module and its client interface for a d
 Work on these module pairs:
 
 ```text
-{project-name}/{project-name}-{domain}/
+{server-project-name}/{server-project-name}-{domain}/
 └── src/main/java/{package-path}/{domain}/api/
     ├── {Context}InternalController.java
     ├── dto/
@@ -20,7 +20,7 @@ Work on these module pairs:
     └── paths/
         └── {Context}InternalPaths.java
 
-{project-name}/{project-name}-{domain}-client/
+{server-project-name}/{server-project-name}-{domain}-client/
 └── src/main/java/{package-path}/{domain}/client/
     ├── {Context}Client.java
     ├── dto/   (copied from internal API dto when needed)
@@ -32,7 +32,7 @@ Work on these module pairs:
 ## Use this skill when
 
 - Add or update internal API clients for cross-module/service calls.
-- Keep `{Context}` internal API DTO/path contracts synchronized into `{project-name}-{domain}-client`.
+- Keep `{Context}` internal API DTO/path contracts synchronized into `{server-project-name}-{domain}-client`.
 - Generate interface-style API clients using `@ApiClient` + `@PostExchange` from internal controller signatures.
 
 ## Do not use this skill when
@@ -43,7 +43,7 @@ Work on these module pairs:
 
 ## Required inputs
 
-- `{project-name}`: server aggregator artifact, for example `siyukio-studio-server`.
+- `{server-project-name}`: server aggregator artifact, for example `siyukio-studio-server`.
 - `{package-name}`: Java base package.
 - `{package-path}`: slash package path, for example `io/github/siyukio/samples`.
 - `{domain}`: module suffix in kebab-case, for example `user-management`.
@@ -51,13 +51,13 @@ Work on these module pairs:
 
 Derived:
 
-- Internal module artifact: `{project-name}-{domain}`
-- Client module artifact: `{project-name}-{domain}-client`
+- Internal module artifact: `{server-project-name}-{domain}`
+- Client module artifact: `{server-project-name}-{domain}-client`
 - Internal controller source: `{Context}InternalController`
 
 ## Preconditions
 
-- `{project-name}/{project-name}-{domain}` exists.
+- `{server-project-name}/{server-project-name}-{domain}` exists.
 - Generate all code/comments in English only.
 
 ## Execution workflow
@@ -66,7 +66,7 @@ Derived:
 
 Check under:
 
-`{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/api`
+`{server-project-name}/{server-project-name}-{domain}/src/main/java/{package-path}/{domain}/api`
 
 Rules:
 
@@ -83,11 +83,11 @@ Expected minimum source artifacts:
 
 Target module:
 
-`{project-name}/{project-name}-{domain}-client`
+`{server-project-name}/{server-project-name}-{domain}-client`
 
 Rules:
 
-- If missing, call `$siyukio-module-creator` to scaffold module structure for `{project-name}-{domain}-client`.
+- If missing, call `$siyukio-module-creator` to scaffold module structure for `{server-project-name}-{domain}-client`.
 - Then align module `pom.xml` to include these dependencies (add if missing, do not duplicate):
 
 ```xml
@@ -127,7 +127,7 @@ Rules:
 
 Create or update:
 
-`{project-name}/{project-name}-{domain}-client/src/main/java/{package-path}/{domain}/client/{Context}Client.java`
+`{server-project-name}/{server-project-name}-{domain}-client/src/main/java/{package-path}/{domain}/client/{Context}Client.java`
 
 Rules:
 
@@ -165,7 +165,7 @@ Method-mapping checklist:
 
 Create or update:
 
-`{project-name}/{project-name}-{domain}-client/src/test/resources/application.yml`
+`{server-project-name}/{server-project-name}-{domain}-client/src/test/resources/application.yml`
 
 Required YAML keys:
 
@@ -194,16 +194,16 @@ Confirm:
 
 ## Verification
 
-From `{project-name}/` run:
+From `{server-project-name}/` run:
 
 ```bash
-./mvnw -pl {project-name}-{domain},{project-name}-{domain}-client -DskipTests compile
+./mvnw -pl {server-project-name}-{domain},{server-project-name}-{domain}-client -DskipTests compile
 ```
 
 If client tests exist:
 
 ```bash
-./mvnw -pl {project-name}-{domain}-client test
+./mvnw -pl {server-project-name}-{domain}-client test
 ```
 
 Before finishing, confirm:

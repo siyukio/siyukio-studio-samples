@@ -1,6 +1,6 @@
 ---
 name: siyukio-module-creator
-description: Create or update a complete Siyukio server domain module (module pom, parent/bootstrap wiring, and API/Application/Model layer scaffold) for Spring Boot. Use when adding a new business bounded context under `{project-name}-{domain}` and coordinating `$siyukio-model-creator`, `$siyukio-application-creator`, and `$siyukio-api-creator`.
+description: Create or update a complete Siyukio server domain module (module pom, parent/bootstrap wiring, and API/Application/Model layer scaffold) for Spring Boot. Use when adding a new business bounded context under `{server-project-name}-{domain}` and coordinating `$siyukio-model-creator`, `$siyukio-application-creator`, and `$siyukio-api-creator`.
 ---
 
 # siyukio-module-creator
@@ -12,7 +12,7 @@ Create one domain module end-to-end in the Siyukio server project.
 Target module layout:
 
 ```text
-{project-name}/{project-name}-{domain}/
+{server-project-name}/{server-project-name}-{domain}/
 ├── pom.xml
 ├── src/main/java/{package-path}/{domain}/
 │   ├── api/
@@ -26,8 +26,8 @@ Target module layout:
 
 Also update:
 
-- `{project-name}/pom.xml`
-- `{project-name}/{project-name}-bootstrap/pom.xml`
+- `{server-project-name}/pom.xml`
+- `{server-project-name}/{server-project-name}-bootstrap/pom.xml`
 
 ## Use this skill when
 
@@ -45,7 +45,7 @@ Also update:
 
 ## Required inputs
 
-- `{project-name}`: Maven aggregator artifact (kebab-case).
+- `{server-project-name}`: Maven aggregator artifact (kebab-case).
 - `{package-name}`: base Java package.
 - `{package-path}`: slash package path (example: `io/github/siyukio/samples`).
 - `{domain}`: module suffix in kebab-case (example: `user-management`).
@@ -54,13 +54,13 @@ Also update:
 
 Derived values:
 
-- Module artifact: `{project-name}-{domain}`
+- Module artifact: `{server-project-name}-{domain}`
 - Java package root: `{package-name}.{domain}`
 
 ## Preconditions
 
-- `{project-name}/pom.xml` exists and is a packaging `pom` aggregator.
-- `{project-name}/{project-name}-bootstrap/pom.xml` exists.
+- `{server-project-name}/pom.xml` exists and is a packaging `pom` aggregator.
+- `{server-project-name}/{server-project-name}-bootstrap/pom.xml` exists.
 - Generate all code/comments in English only.
 
 ## Execution workflow
@@ -76,30 +76,30 @@ Derived values:
 Create missing directories only:
 
 ```text
-{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/api
-{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/application
-{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/model/entity
-{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/model/policy
-{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/model/errors
-{project-name}/{project-name}-{domain}/src/main/resources/{domain}
+{server-project-name}/{server-project-name}-{domain}/src/main/java/{package-path}/{domain}/api
+{server-project-name}/{server-project-name}-{domain}/src/main/java/{package-path}/{domain}/application
+{server-project-name}/{server-project-name}-{domain}/src/main/java/{package-path}/{domain}/model/entity
+{server-project-name}/{server-project-name}-{domain}/src/main/java/{package-path}/{domain}/model/policy
+{server-project-name}/{server-project-name}-{domain}/src/main/java/{package-path}/{domain}/model/errors
+{server-project-name}/{server-project-name}-{domain}/src/main/resources/{domain}
 ```
 
 ### 3) Create or align module `pom.xml`
 
 File:
 
-`{project-name}/{project-name}-{domain}/pom.xml`
+`{server-project-name}/{server-project-name}-{domain}/pom.xml`
 
 Rules:
 
-- Parent points to `{project-name}`.
-- `artifactId` is `{project-name}-{domain}`.
+- Parent points to `{server-project-name}`.
+- `artifactId` is `{server-project-name}-{domain}`.
 - Keep existing dependencies; add missing required ones once:
 
 ```xml
 <dependency>
     <groupId>{package-name}</groupId>
-    <artifactId>{project-name}-common</artifactId>
+    <artifactId>{server-project-name}-common</artifactId>
 </dependency>
 <dependency>
     <groupId>io.github.siyukio</groupId>
@@ -119,17 +119,17 @@ Rules:
 
 File:
 
-`{project-name}/pom.xml`
+`{server-project-name}/pom.xml`
 
 Update idempotently:
 
-1. Add `<module>{project-name}-{domain}</module>` under `<modules>` (once).
+1. Add `<module>{server-project-name}-{domain}</module>` under `<modules>` (once).
 2. Add managed dependency under `<dependencyManagement><dependencies>`:
 
 ```xml
 <dependency>
     <groupId>{package-name}</groupId>
-    <artifactId>{project-name}-{domain}</artifactId>
+    <artifactId>{server-project-name}-{domain}</artifactId>
     <version>${project.version}</version>
 </dependency>
 ```
@@ -138,14 +138,14 @@ Update idempotently:
 
 File:
 
-`{project-name}/{project-name}-bootstrap/pom.xml`
+`{server-project-name}/{server-project-name}-bootstrap/pom.xml`
 
 Update idempotently:
 
 - Ensure profile `{domain}` exists with:
   - `<deployment-profile>{domain}</deployment-profile>`
-  - dependency on `{project-name}-{domain}`
-- Ensure profile `full` includes dependency on `{project-name}-{domain}`.
+  - dependency on `{server-project-name}-{domain}`
+- Ensure profile `full` includes dependency on `{server-project-name}-{domain}`.
 - Do not duplicate dependencies if already present.
 
 ### 6) Generate layer code with sibling skills
@@ -171,16 +171,16 @@ Minimum expected outputs:
 
 ## Verification
 
-From `{project-name}/` run:
+From `{server-project-name}/` run:
 
 ```bash
-./mvnw -pl {project-name}-{domain},{project-name}-bootstrap -DskipTests compile
+./mvnw -pl {server-project-name}-{domain},{server-project-name}-bootstrap -DskipTests compile
 ```
 
 Optional (when tests exist):
 
 ```bash
-./mvnw -pl {project-name}-{domain} test
+./mvnw -pl {server-project-name}-{domain} test
 ```
 
 Before finishing, confirm:

@@ -12,7 +12,7 @@ Generate or refine the API layer for one domain context in a Siyukio Spring Boot
 Create or update files under:
 
 ```
-{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/api/
+{server-project-name}/{server-project-name}-{domain}/src/main/java/{package-path}/{domain}/api/
 ├── {Context}Controller.java
 ├── paths/
 │   └── {Context}Paths.java
@@ -39,7 +39,7 @@ Create or update files under:
 
 ## Preconditions
 
-- Target module exists: `{project-name}/{project-name}-{domain}`.
+- Target module exists: `{server-project-name}/{server-project-name}-{domain}`.
 - Target service exists or is being created: `{package-name}.{domain}.application.{Context}Service`.
 - Module has dependency:
 
@@ -291,16 +291,16 @@ public class {Context}Controller {
 
 ### 6) Verify implementation
 
-From `{project-name}/` run:
+From `{server-project-name}/` run:
 
 ```bash
-./mvnw -pl {project-name}-{domain} -DskipTests compile
+./mvnw -pl {server-project-name}-{domain} -DskipTests compile
 ```
 
 If controller tests exist, run:
 
 ```bash
-./mvnw -pl {project-name}-{domain} test -Dtest={Context}ControllerTest
+./mvnw -pl {server-project-name}-{domain} test -Dtest={Context}ControllerTest
 ```
 
 Then confirm:

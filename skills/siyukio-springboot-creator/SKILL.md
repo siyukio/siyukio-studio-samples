@@ -27,15 +27,15 @@ Update or backfill config files for an existing Spring Boot project without repl
 
 ## Common inputs
 
-- `{project-name}`: artifact/module prefix in kebab-case (example: `order-center`).
+- `{server-project-name}`: artifact/module prefix in kebab-case (example: `order-center`).
 - `{package-name}`: base Java package (example: `io.github.siyukio.samples`).
 - `{project-version}`: initial semantic version without `-SNAPSHOT` (example: `1.0.0`).
-- `{project-root}`: absolute or repo-relative path to the target project root (bootstrap default: `./{project-name}`).
+- `{project-root}`: absolute or repo-relative path to the target project root (bootstrap default: `./{server-project-name}`).
 
 # Derived values
 
 - `{package-path}`: `{package-name}` with dots replaced by `/`.
-- `{ProjectName}`: PascalCase from `{project-name}` (example: `order-center` -> `OrderCenter`).
+- `{ProjectName}`: PascalCase from `{server-project-name}` (example: `order-center` -> `OrderCenter`).
 - `{main-class}`: `{ProjectName}Main`.
 
 # Preconditions
@@ -54,15 +54,15 @@ Select mode before editing:
 # Output structure (Mode A)
 
 ```text
-{project-name}/
+{server-project-name}/
 ├── pom.xml
 ├── mvnw
 ├── mvnw.cmd
 ├── .mvn/
 ├── .gitignore
-├── {project-name}-common/
+├── {server-project-name}-common/
 │   └── pom.xml
-└── {project-name}-bootstrap/
+└── {server-project-name}-bootstrap/
     ├── pom.xml
     └── src/main/
         ├── java/{package-path}/{main-class}.java
@@ -77,11 +77,11 @@ Select mode before editing:
 1. Validate inputs and derive `{package-path}` / `{ProjectName}` / `{main-class}`.
 2. Create `{project-root}`.
 3. Create `{project-root}/pom.xml` using the parent template.
-4. Create `{project-root}/{project-name}-common/pom.xml`.
-5. Create `{project-root}/{project-name}-bootstrap/pom.xml`.
-6. Create `{project-root}/{project-name}-bootstrap/src/main/java/{package-path}/{main-class}.java`.
-7. Create `{project-root}/{project-name}-bootstrap/src/main/resources/application.yml`.
-8. Create `{project-root}/{project-name}-bootstrap/src/main/resources/application-local.yml` with exactly four flat key-value entries.
+4. Create `{project-root}/{server-project-name}-common/pom.xml`.
+5. Create `{project-root}/{server-project-name}-bootstrap/pom.xml`.
+6. Create `{project-root}/{server-project-name}-bootstrap/src/main/java/{package-path}/{main-class}.java`.
+7. Create `{project-root}/{server-project-name}-bootstrap/src/main/resources/application.yml`.
+8. Create `{project-root}/{server-project-name}-bootstrap/src/main/resources/application-local.yml` with exactly four flat key-value entries.
 9. Create `{project-root}/.gitignore`.
 10. Run `cd {project-root} && mvn -N wrapper:wrapper`.
 11. Verify with `./mvnw -q -DskipTests compile`.
@@ -90,7 +90,7 @@ Select mode before editing:
 
 1. Inspect and confirm target files under `{project-root}`:
    - `pom.xml`
-   - `{project-name}-bootstrap/pom.xml` or module-specific bootstrap `pom.xml`
+   - `{server-project-name}-bootstrap/pom.xml` or module-specific bootstrap `pom.xml`
    - `src/main/resources/application.yml` (or module equivalent)
    - `src/main/resources/application-local.yml` (or module equivalent)
    - `.gitignore`
@@ -145,10 +145,10 @@ Apply conservative merges:
     </parent>
 
     <groupId>{package-name}</groupId>
-    <artifactId>{project-name}</artifactId>
+    <artifactId>{server-project-name}</artifactId>
     <version>{project-version}-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>{ProjectName}</name>
+    <name>{ServerProjectName}</name>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
@@ -157,20 +157,20 @@ Apply conservative merges:
     </properties>
 
     <modules>
-        <module>{project-name}-common</module>
-        <module>{project-name}-bootstrap</module>
+        <module>{server-project-name}-common</module>
+        <module>{server-project-name}-bootstrap</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>{package-name}</groupId>
-                <artifactId>{project-name}-common</artifactId>
+                <artifactId>{server-project-name}-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>{package-name}</groupId>
-                <artifactId>{project-name}-bootstrap</artifactId>
+                <artifactId>{server-project-name}-bootstrap</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
@@ -178,7 +178,7 @@ Apply conservative merges:
 </project>
 ```
 
-## `{project-name}-common/pom.xml`
+## `{server-project-name}-common/pom.xml`
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -189,16 +189,16 @@ Apply conservative merges:
 
     <parent>
         <groupId>{package-name}</groupId>
-        <artifactId>{project-name}</artifactId>
+        <artifactId>{server-project-name}</artifactId>
         <version>{project-version}-SNAPSHOT</version>
     </parent>
 
-    <artifactId>{project-name}-common</artifactId>
+    <artifactId>{server-project-name}-common</artifactId>
     <name>{ProjectName} Common</name>
 </project>
 ```
 
-## `{project-name}-bootstrap/pom.xml`
+## `{server-project-name}-bootstrap/pom.xml`
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -209,17 +209,17 @@ Apply conservative merges:
 
     <parent>
         <groupId>{package-name}</groupId>
-        <artifactId>{project-name}</artifactId>
+        <artifactId>{server-project-name}</artifactId>
         <version>{project-version}-SNAPSHOT</version>
     </parent>
 
-    <artifactId>{project-name}-bootstrap</artifactId>
+    <artifactId>{server-project-name}-bootstrap</artifactId>
     <name>{ProjectName} Bootstrap</name>
 
     <dependencies>
         <dependency>
             <groupId>{package-name}</groupId>
-            <artifactId>{project-name}-common</artifactId>
+            <artifactId>{server-project-name}-common</artifactId>
         </dependency>
         <dependency>
             <groupId>io.github.siyukio</groupId>
@@ -240,7 +240,7 @@ Apply conservative merges:
     </profiles>
 
     <build>
-        <finalName>{project-name}-${deployment-profile}</finalName>
+        <finalName>{server-project-name}-${deployment-profile}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -353,7 +353,7 @@ Thumbs.db
 1. Run compile check in target root:
    - `./mvnw -q -DskipTests compile` (preferred)
    - `mvn -q -DskipTests compile` (fallback)
-2. Optionally run `./mvnw -q -pl {project-name}-bootstrap spring-boot:run`.
+2. Optionally run `./mvnw -q -pl {server-project-name}-bootstrap spring-boot:run`.
 3. Confirm startup logs show Spring Boot application started successfully.
 4. Confirm config merge result:
    - No unrelated YAML sections removed.

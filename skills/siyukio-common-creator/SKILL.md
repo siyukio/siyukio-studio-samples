@@ -11,14 +11,14 @@ Create or update shared constants and utility helpers for the Siyukio common mod
 
 Working directory:
 
-`{project-name}/{project-name}-common`
+`{server-project-name}/{server-project-name}-common`
 
 Target directories:
 
 - Constants:
-  `{project-name}/{project-name}-common/src/main/java/{package-path}/common/constants/`
+  `{server-project-name}/{server-project-name}-common/src/main/java/{package-path}/common/constants/`
 - Utilities:
-  `{project-name}/{project-name}-common/src/main/java/{package-path}/common/utils/`
+  `{server-project-name}/{server-project-name}-common/src/main/java/{package-path}/common/utils/`
 
 ## Use this skill when
 
@@ -33,7 +33,7 @@ Target directories:
 
 ## Required inputs
 
-- `{project-name}`: root server project name.
+- `{server-project-name}`: root server project name.
 - `{package-name}` and `{package-path}`.
 - `{ConstantClass}`: constant type name in PascalCase (example: `UserConstants`).
 - `{UtilityClass}`: utility type name in PascalCase (example: `DateTimeUtils`).
@@ -92,10 +92,10 @@ public abstract class {UtilityClass} {
 
 ## Verification
 
-From `{project-name}/` run:
+From `{server-project-name}/` run:
 
 ```bash
-./mvnw -pl {project-name}-common -DskipTests compile
+./mvnw -pl {server-project-name}-common -DskipTests compile
 ```
 
 Then confirm:

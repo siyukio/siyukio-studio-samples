@@ -12,7 +12,7 @@ Create or refine ACP session handler implementations with safe ownership checks 
 Create or update files under:
 
 ```
-{project-name}/{project-name}-agent/src/main/java/{package-path}/agent/application/acp/
+{server-project-name}/{server-project-name}-agent/src/main/java/{package-path}/agent/application/acp/
 ├── AcpSessionHandlerImpl.java
 └── AcpSessionConfiguration.java (optional, for @Bean acpSessionHandler)
 ```
@@ -20,7 +20,7 @@ Create or update files under:
 Optional supporting files when persistence is required:
 
 ```
-{project-name}/{project-name}-agent/src/main/java/{package-path}/agent/domain/... (services/repositories)
+{server-project-name}/{server-project-name}-agent/src/main/java/{package-path}/agent/domain/... (services/repositories)
 ```
 
 ## Use this skill when
@@ -40,8 +40,8 @@ Optional supporting files when persistence is required:
 ## Preconditions
 
 - Use server modules only.
-- Ensure target module exists: `{project-name}/{project-name}-agent/`.
-- Ensure dependency exists in `{project-name}-agent/pom.xml`:
+- Ensure target module exists: `{server-project-name}/{server-project-name}-agent/`.
+- Ensure dependency exists in `{server-project-name}-agent/pom.xml`:
 
 ```xml
 <dependency>
@@ -203,16 +203,16 @@ public class AcpSessionConfiguration {
 
 ## Verification
 
-From `{project-name}/` run:
+From `{server-project-name}/` run:
 
 ```bash
-./mvnw -pl {project-name}-agent -DskipTests compile
+./mvnw -pl {server-project-name}-agent -DskipTests compile
 ```
 
 If ACP handler tests exist:
 
 ```bash
-./mvnw -pl {project-name}-agent test -Dtest=AcpSessionHandlerTest
+./mvnw -pl {server-project-name}-agent test -Dtest=AcpSessionHandlerTest
 ```
 
 Then verify:

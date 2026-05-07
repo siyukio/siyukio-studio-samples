@@ -31,7 +31,7 @@ project-version: 1.0.1
 ### Server
 
 ```yaml
-project-name: siyukio-studio-server
+server-project-name: siyukio-studio-server
 package-name: io.github.siyukio.samples
 package-path: /io/github/siyukio/samples
 java-version: 21
@@ -41,7 +41,7 @@ maven-version: 3.9
 ### Console
 
 ```yaml
-project-name: siyukio-studio-console
+console-project-name: siyukio-studio-console
 app-name: Siyukio Studio
 watermark: Siyukio Studio
 #favicon: assets/favicon.ico

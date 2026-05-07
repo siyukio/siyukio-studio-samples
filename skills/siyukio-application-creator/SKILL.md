@@ -12,7 +12,7 @@ Create or refine one application service in a Siyukio domain module.
 Write or update files under:
 
 ```
-{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/application/
+{server-project-name}/{server-project-name}-{domain}/src/main/java/{package-path}/{domain}/application/
 └── {Context}Service.java
 ```
 
@@ -31,7 +31,7 @@ Write or update files under:
 
 ## Preconditions
 
-- Target domain module exists: `{project-name}/{project-name}-{domain}`.
+- Target domain module exists: `{server-project-name}/{server-project-name}-{domain}`.
 - Domain model entity exists: `{package-name}.{domain}.model.entity.{Entity}`.
 - Service context is clear: `{Context}` (PascalCase), `{context}` (camelCase), `{entity}` (camelCase).
 - API method contracts are known, or are created in the same task using `$siyukio-api-creator`.
@@ -77,7 +77,7 @@ Rules:
 ### 4) Implement `{Context}Service`
 
 Create or update:
-`{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/application/{Context}Service.java`
+`{server-project-name}/{server-project-name}-{domain}/src/main/java/{package-path}/{domain}/application/{Context}Service.java`
 
 Implementation rules:
 
@@ -130,16 +130,16 @@ Confirm:
 
 ## Verification
 
-From `{project-name}/` run:
+From `{server-project-name}/` run:
 
 ```bash
-./mvnw -pl {project-name}-{domain} -DskipTests compile
+./mvnw -pl {server-project-name}-{domain} -DskipTests compile
 ```
 
 If tests exist, run:
 
 ```bash
-./mvnw -pl {project-name}-{domain} test -Dtest={Context}ServiceTest
+./mvnw -pl {server-project-name}-{domain} test -Dtest={Context}ServiceTest
 ```
 
 Then verify:

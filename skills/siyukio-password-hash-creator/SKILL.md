@@ -42,7 +42,7 @@ Inspect service flows that:
 
 Typical files:
 
-- `{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/application/*Service.java`(only when password checks happen here)
+- `{server-project-name}/{server-project-name}-{domain}/src/main/java/{package-path}/{domain}/application/*Service.java`(only when password checks happen here)
 
 ### 2) Inject PasswordEncoder
 
@@ -101,13 +101,13 @@ if (!this.passwordEncoder.matches(request.password(), user.password())) {
 Run module compile:
 
 ```bash
-./mvnw -pl {project-name}-{domain} -DskipTests compile
+./mvnw -pl {server-project-name}-{domain} -DskipTests compile
 ```
 
 If auth tests exist, run targeted tests:
 
 ```bash
-./mvnw -pl {project-name}-{domain} test -Dtest=*Auth*Test,*User*ServiceTest
+./mvnw -pl {server-project-name}-{domain} test -Dtest=*Auth*Test,*User*ServiceTest
 ```
 
 Then confirm:

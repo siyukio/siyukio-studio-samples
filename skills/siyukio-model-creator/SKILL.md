@@ -29,23 +29,23 @@ Do not use this skill for web/desktop/console tasks.
 
 # Preconditions
 
-- Target module exists: `{project-name}/{project-name}-{domain}/`.
+- Target module exists: `{server-project-name}/{server-project-name}-{domain}/`.
 - Code stays in server modules only.
 - Generated code/comments stay in English.
 
 # Output files
 
 - Entity:  
-  `{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/model/entity/{Entity}.java`
+  `{server-project-name}/{server-project-name}-{domain}/src/main/java/{package-path}/{domain}/model/entity/{Entity}.java`
 - Optional errors:  
-  `{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/model/errors/{Entity}Errors.java`
+  `{server-project-name}/{server-project-name}-{domain}/src/main/java/{package-path}/{domain}/model/errors/{Entity}Errors.java`
 - Optional policy:  
-  `{project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/model/policy/{Entity}Policy.java`
+  `{server-project-name}/{server-project-name}-{domain}/src/main/java/{package-path}/{domain}/model/policy/{Entity}Policy.java`
 
 # Workflow
 
 1. Inspect target module and existing files.
-2. Ensure dependency exists in `{project-name}-{domain}/pom.xml`:
+2. Ensure dependency exists in `{server-project-name}-{domain}/pom.xml`:
    ```xml
    <dependency>
        <groupId>io.github.siyukio</groupId>

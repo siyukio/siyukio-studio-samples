@@ -19,7 +19,7 @@ Support two workflows:
 Create or update files under:
 
 ```text
-{project-name}/{project-name}-{domain}/
+{server-project-name}/{server-project-name}-{domain}/
 ├── pom.xml
 └── src/test/
     ├── java/{package-path}/
@@ -60,7 +60,7 @@ Create or update files under:
 
 ## Preconditions
 
-1. Ensure target module exists: `{project-name}/{project-name}-{domain}`.
+1. Ensure target module exists: `{server-project-name}/{server-project-name}-{domain}`.
 2. Ensure local test environment variables are available from `AGENTS.md`:
    - `SIYUKIO_DB_MASTER_URL`
    - `SIYUKIO_DB_MASTER_USERNAME`
@@ -95,7 +95,7 @@ Use the discovered conventions to keep changes minimal and consistent.
 
 ### 3) Ensure test dependency
 
-Update `{project-name}/{project-name}-{domain}/pom.xml`.
+Update `{server-project-name}/{server-project-name}-{domain}/pom.xml`.
 Add if missing:
 
 ```xml
@@ -108,8 +108,8 @@ Add if missing:
 
 ### 4) Ensure local test profile config (when using SpringBootTest)
 
-Copy both files from `{project-name}-bootstrap/src/main/resources` to
-`{project-name}-{domain}/src/test/resources`:
+Copy both files from `{server-project-name}-bootstrap/src/main/resources` to
+`{server-project-name}-{domain}/src/test/resources`:
 
 - `application.yml`
 - `application-local.yml`
@@ -228,15 +228,15 @@ Generate `integration/{Context}ClientTest.java` only when client behavior needs 
 Run targeted tests first:
 
 ```bash
-./mvnw test -pl {project-name}-{domain} -Dtest={Context}*Test
+./mvnw test -pl {server-project-name}-{domain} -Dtest={Context}*Test
 ```
 
 Then run full module tests:
 
-From `{project-name}/` run:
+From `{server-project-name}/` run:
 
 ```bash
-./mvnw test -pl {project-name}-{domain}
+./mvnw test -pl {server-project-name}-{domain}
 ```
 
 If test setup changes broader modules, run a wider verification sweep:

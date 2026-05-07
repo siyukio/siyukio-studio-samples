@@ -15,7 +15,7 @@ Do not use this skill for web, desktop, or console projects.
 
 ## Required inputs
 
-- `{project-name}`: server Maven aggregator artifact (example: `siyukio-studio-server`).
+- `{server-project-name}`: server Maven aggregator artifact (example: `siyukio-studio-server`).
 - `{package-name}`: Java base package (example: `io.github.siyukio.samples`).
 - `{package-path}`: slash format of package (example: `io/github/siyukio/samples`).
 - `{domain}`: domain module suffix in kebab-case (example: `user-management`).
@@ -30,7 +30,7 @@ Do not use this skill for web, desktop, or console projects.
 
 ## Preconditions
 
-- Work inside `{project-name}` only.
+- Work inside `{server-project-name}` only.
 - Target branch and task flow must follow project `AGENTS.md`.
 - Keep generated code and comments in English.
 
@@ -46,7 +46,7 @@ Invoke:
 
 Responsibilities:
 
-- Create/update `{project-name}-{domain}` module.
+- Create/update `{server-project-name}-{domain}` module.
 - Keep parent/aggregate and bootstrap profile wiring consistent.
 - Prepare API/Application/Model layer locations.
 
@@ -106,9 +106,9 @@ Responsibilities:
 After all five steps complete, run:
 
 ```bash
-cd {project-name}
-./mvnw -pl {project-name}-{domain} -DskipTests compile
-./mvnw test -pl {project-name}-{domain} -Dtest={Context}*Test
+cd {server-project-name}
+./mvnw -pl {server-project-name}-{domain} -DskipTests compile
+./mvnw test -pl {server-project-name}-{domain} -Dtest={Context}*Test
 ```
 
 Confirm before finishing:
