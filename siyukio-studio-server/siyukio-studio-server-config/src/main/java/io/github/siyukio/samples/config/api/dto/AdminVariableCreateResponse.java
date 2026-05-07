@@ -4,7 +4,7 @@ import io.github.siyukio.tools.api.annotation.ApiParameter;
 
 import java.time.LocalDateTime;
 
-public record VariableAdminCreateResponse(
+public record AdminVariableCreateResponse(
 
         @ApiParameter(description = "Variable id")
         String id,

@@ -1,6 +1,6 @@
 package io.github.siyukio.samples.config.api.paths;
 
-public interface VariableAdminPaths {
+public interface AdminVariablePaths {
 
     String LIST = "/admin/variable/listVariable";
 

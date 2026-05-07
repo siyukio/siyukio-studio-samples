@@ -2,7 +2,7 @@ package io.github.siyukio.samples.config.api.dto;
 
 import io.github.siyukio.tools.api.annotation.ApiParameter;
 
-public record VariableAdminUpdateRequest(
+public record AdminVariableUpdateRequest(
 
         @ApiParameter(description = "Variable id", required = true)
         String id,

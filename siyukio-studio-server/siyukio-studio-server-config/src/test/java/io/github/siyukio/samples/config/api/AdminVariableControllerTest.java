@@ -1,15 +1,15 @@
 package io.github.siyukio.samples.config.api;
 
 import io.github.siyukio.samples.TestApplication;
-import io.github.siyukio.samples.config.api.dto.VariableAdminCreateRequest;
-import io.github.siyukio.samples.config.api.dto.VariableAdminCreateResponse;
-import io.github.siyukio.samples.config.api.dto.VariableAdminFilter;
-import io.github.siyukio.samples.config.api.dto.VariableAdminGetRequest;
-import io.github.siyukio.samples.config.api.dto.VariableAdminGetResponse;
-import io.github.siyukio.samples.config.api.dto.VariableAdminListResponse;
-import io.github.siyukio.samples.config.api.dto.VariableAdminUpdateRequest;
-import io.github.siyukio.samples.config.api.dto.VariableAdminUpdateResponse;
-import io.github.siyukio.samples.config.api.dto.VariableAdminRemoveRequest;
+import io.github.siyukio.samples.config.api.dto.AdminVariableCreateRequest;
+import io.github.siyukio.samples.config.api.dto.AdminVariableCreateResponse;
+import io.github.siyukio.samples.config.api.dto.AdminVariableFilter;
+import io.github.siyukio.samples.config.api.dto.AdminVariableGetRequest;
+import io.github.siyukio.samples.config.api.dto.AdminVariableGetResponse;
+import io.github.siyukio.samples.config.api.dto.AdminVariableListResponse;
+import io.github.siyukio.samples.config.api.dto.AdminVariableUpdateRequest;
+import io.github.siyukio.samples.config.api.dto.AdminVariableUpdateResponse;
+import io.github.siyukio.samples.config.api.dto.AdminVariableRemoveRequest;
 import io.github.siyukio.tools.api.ApiException;
 import io.github.siyukio.tools.api.dto.PageRequest;
 import io.github.siyukio.tools.api.dto.PageResponse;
@@ -25,18 +25,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = TestApplication.class)
 @ActiveProfiles("local")
-class VariableAdminControllerTest {
+class AdminVariableControllerTest {
 
     @Autowired
-    private VariableAdminController variableAdminController;
+    private AdminVariableController adminVariableController;
 
     @Test
     void createGetListUpdateAndRemoveShouldSucceed() {
         String suffix = String.valueOf(System.currentTimeMillis());
         String key = "key-" + suffix;
 
-        VariableAdminCreateResponse created = this.variableAdminController.create(
-                new VariableAdminCreateRequest(
+        AdminVariableCreateResponse created = this.adminVariableController.create(
+                new AdminVariableCreateRequest(
                         "system",
                         "description-" + suffix,
                         key,
@@ -48,21 +48,21 @@ class VariableAdminControllerTest {
         assertEquals("system", created.category());
         assertEquals(key, created.key());
 
-        VariableAdminGetResponse loaded = this.variableAdminController.get(
-                new VariableAdminGetRequest(created.id())
+        AdminVariableGetResponse loaded = this.adminVariableController.get(
+                new AdminVariableGetRequest(created.id())
         );
         assertEquals(created.id(), loaded.id());
         assertEquals("value-" + suffix, loaded.value());
 
-        PageResponse<VariableAdminListResponse> page = this.variableAdminController.list(
-                new PageRequest<>(1, 20, new VariableAdminFilter("system", key))
+        PageResponse<AdminVariableListResponse> page = this.adminVariableController.list(
+                new PageRequest<>(1, 20, new AdminVariableFilter("system", key))
         );
         assertNotNull(page);
         assertTrue(page.total() >= 1);
         assertNotNull(page.items());
 
-        VariableAdminUpdateResponse updated = this.variableAdminController.update(
-                new VariableAdminUpdateRequest(
+        AdminVariableUpdateResponse updated = this.adminVariableController.update(
+                new AdminVariableUpdateRequest(
                         created.id(),
                         "system",
                         "updated-" + suffix,
@@ -73,11 +73,11 @@ class VariableAdminControllerTest {
         assertEquals("updated-" + suffix, updated.description());
         assertEquals("value-updated-" + suffix, updated.value());
 
-        this.variableAdminController.remove(new VariableAdminRemoveRequest(created.id()));
+        this.adminVariableController.remove(new AdminVariableRemoveRequest(created.id()));
 
         assertThrows(
                 ApiException.class,
-                () -> this.variableAdminController.get(new VariableAdminGetRequest(created.id()))
+                () -> this.adminVariableController.get(new AdminVariableGetRequest(created.id()))
         );
     }
 
@@ -85,17 +85,17 @@ class VariableAdminControllerTest {
     void createShouldRejectDuplicateCategoryAndKey() {
         String suffix = String.valueOf(System.nanoTime());
         String key = "dup-key-" + suffix;
-        VariableAdminCreateRequest request = new VariableAdminCreateRequest(
+        AdminVariableCreateRequest request = new AdminVariableCreateRequest(
                 "system",
                 "duplicate",
                 key,
                 "value-1"
         );
-        this.variableAdminController.create(request);
+        this.adminVariableController.create(request);
         assertThrows(
                 ApiException.class,
-                () -> this.variableAdminController.create(
-                        new VariableAdminCreateRequest(
+                () -> this.adminVariableController.create(
+                        new AdminVariableCreateRequest(
                                 request.category(),
                                 "duplicate-2",
                                 request.key(),

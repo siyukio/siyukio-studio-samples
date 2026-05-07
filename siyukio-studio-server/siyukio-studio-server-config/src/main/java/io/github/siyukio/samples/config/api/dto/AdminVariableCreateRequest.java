@@ -2,7 +2,7 @@ package io.github.siyukio.samples.config.api.dto;
 
 import io.github.siyukio.tools.api.annotation.ApiParameter;
 
-public record VariableAdminCreateRequest(
+public record AdminVariableCreateRequest(
 
         @ApiParameter(description = "Variable category", required = true)
         String category,
