@@ -1,6 +1,6 @@
 ---
 name: siyukio-role-based-api-creator
-description: Create or update role-based APIs in Siyukio Spring Boot domain modules with the default role set user, admin, and internal. Use when a domain must expose separate role APIs with role-specific controller, paths class, and DTO naming, keep API files under {domain}/api, {domain}/api/dto, {domain}/api/paths, and enforce access via @ApiController(roles = {...}).
+description: Create or update role-based APIs in Siyukio Spring Boot domain modules with the default role set user, admin, and internal. Use when a domain must expose separate role APIs with role-specific controller, paths class, and DTO naming, keep API files under {domain}/api, {domain}/api/dto, {domain}/api/paths, enforce access via @ApiController(roles = {...}), and auto-invoke $siyukio-console-api-creator when admin API contracts change.
 ---
 
 # siyukio-role-based-api-creator
@@ -38,6 +38,7 @@ Create or update files under:
 - You need to add role restrictions directly on controllers through `@ApiController(roles = {...})`.
 - You need deterministic naming for role-specific controllers, paths classes, and DTOs in one shared `api` package tree.
 - You want role values centralized in `RolesConstants`.
+- You need admin API changes to stay synchronized with console TypeScript API contracts.
 
 ## Do not use this skill when
 
@@ -216,6 +217,7 @@ Then confirm:
   - `Internal{Context}Paths` -> `/internal/{context}/*`
 - DTO names follow the role convention in `api/dto`.
 - DTO and service signatures remain aligned with the application layer.
+- If admin API contracts changed, the matching console API files are updated in the same task run.
 
 ### 6) Sync console API for admin endpoint changes (conditional, final step)
 
@@ -237,3 +239,8 @@ If admin API changes exist:
 If no admin API changes exist:
 
 - Skip console API sync and state explicitly in the completion report that no admin endpoint contract changes were detected.
+
+## Acceptance criteria (mandatory)
+
+- If admin API contracts change, console API must be synchronized via `$siyukio-console-api-creator` before task completion.
+- Any result with admin API contract changes but without corresponding console API sync is incomplete.
