@@ -20,7 +20,10 @@ public class VariablePolicy {
         if (!StringUtils.hasText(id)) {
             throw new ApiException(VariableErrors.VARIABLE_ID_REQUIRED);
         }
-        Variable variable = this.variablePgEntityDao.queryById(id.trim());
+        Variable variable = this.variablePgEntityDao.queryOne(
+                QueryBuilders.boolQuery()
+                        .must(QueryBuilders.termQuery("id", id.trim()))
+        );
         if (variable == null) {
             throw new ApiException(String.format(VariableErrors.VARIABLE_NOT_FOUND, id));
         }

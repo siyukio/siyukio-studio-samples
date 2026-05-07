@@ -7,12 +7,12 @@ export const AdminVariableApi = {
   Create: '/admin/variable/createVariable',
   Get: '/admin/variable/getVariable',
   Update: '/admin/variable/updateVariable',
-  Remove: '/admin/variable/removeVariable',
 };
 
 export interface AdminVariableFilter {
   category?: string;
   key?: string;
+  enabled?: boolean;
 }
 
 export interface AdminVariableListResponse {
@@ -21,6 +21,7 @@ export interface AdminVariableListResponse {
   description: string;
   key: string;
   value: string;
+  enabled: boolean;
   createdAt: string;
   createdAtTs: number;
   updatedAt: string;
@@ -40,6 +41,7 @@ export interface AdminVariableCreateResponse {
   description: string;
   key: string;
   value: string;
+  enabled: boolean;
   createdAt: string;
   createdAtTs: number;
   updatedAt: string;
@@ -56,6 +58,7 @@ export interface AdminVariableGetResponse {
   description: string;
   key: string;
   value: string;
+  enabled: boolean;
   createdAt: string;
   createdAtTs: number;
   updatedAt: string;
@@ -68,6 +71,7 @@ export interface AdminVariableUpdateRequest {
   description?: string;
   key?: string;
   value?: string;
+  enabled?: boolean;
 }
 
 export interface AdminVariableUpdateResponse {
@@ -76,14 +80,11 @@ export interface AdminVariableUpdateResponse {
   description: string;
   key: string;
   value: string;
+  enabled: boolean;
   createdAt: string;
   createdAtTs: number;
   updatedAt: string;
   updatedAtTs: number;
-}
-
-export interface AdminVariableRemoveRequest {
-  id: string;
 }
 
 export const list = (request: PageRequest<AdminVariableFilter>) => {
@@ -100,8 +101,4 @@ export const get = (request: AdminVariableGetRequest) => {
 
 export const update = (request: AdminVariableUpdateRequest) => {
   return postRequestWithAuth<AdminVariableUpdateResponse>(AdminVariableApi.Update, request);
-};
-
-export const remove = (request: AdminVariableRemoveRequest) => {
-  return postRequestWithAuth<void>(AdminVariableApi.Remove, request);
 };

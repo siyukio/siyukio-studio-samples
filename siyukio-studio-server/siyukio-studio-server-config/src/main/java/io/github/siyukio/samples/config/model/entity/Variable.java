@@ -14,8 +14,7 @@ import java.time.LocalDateTime;
 @PgEntity(
         comment = "Configuration variables",
         indexes = {
-                @PgIndex(columns = {"category", "key"}, unique = true),
-                @PgIndex(columns = {"updatedAtTs"})
+                @PgIndex(columns = {"category", "key"}, unique = true)
         }
 )
 public record Variable(
@@ -37,6 +36,9 @@ public record Variable(
 
         @PgColumn
         String salt,
+
+        @PgColumn
+        boolean enabled,
 
         @PgColumn
         LocalDateTime createdAt,

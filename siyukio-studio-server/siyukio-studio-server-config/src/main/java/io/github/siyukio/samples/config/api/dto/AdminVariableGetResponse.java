@@ -21,6 +21,9 @@ public record AdminVariableGetResponse(
         @ApiParameter(description = "Variable value", password = true)
         String value,
 
+        @ApiParameter(description = "Variable enabled status")
+        boolean enabled,
+
         @ApiParameter(description = "Created at")
         LocalDateTime createdAt,
 

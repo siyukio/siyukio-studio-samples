@@ -6,7 +6,6 @@ import io.github.siyukio.samples.config.api.dto.AdminVariableFilter;
 import io.github.siyukio.samples.config.api.dto.AdminVariableGetRequest;
 import io.github.siyukio.samples.config.api.dto.AdminVariableGetResponse;
 import io.github.siyukio.samples.config.api.dto.AdminVariableListResponse;
-import io.github.siyukio.samples.config.api.dto.AdminVariableRemoveRequest;
 import io.github.siyukio.samples.config.api.dto.AdminVariableUpdateRequest;
 import io.github.siyukio.samples.config.api.dto.AdminVariableUpdateResponse;
 import io.github.siyukio.samples.config.model.entity.Variable;
@@ -54,7 +53,10 @@ public class VariableService {
         QueryBuilder queryBuilder = this.buildFilterQuery(request.filter());
         Page<Variable> page = this.variablePgEntityDao.queryPage(
                 queryBuilder,
-                SortBuilders.fieldSort("updatedAtTs").order(SortOrder.DESC),
+                SortBuilders.fieldSort(
+                        SortBuilders.fieldSort("enabled").order(SortOrder.DESC),
+                        SortBuilders.fieldSort("updatedAtTs").order(SortOrder.DESC)
+                ),
                 this.normalizePage(request.page()),
                 this.normalizeSize(request.size())
         );
@@ -73,20 +75,18 @@ public class VariableService {
         String category = this.requireText(request.category(), VariableErrors.VARIABLE_CATEGORY_REQUIRED);
         String key = this.requireText(request.key(), VariableErrors.VARIABLE_KEY_REQUIRED);
         String value = this.requireText(request.value(), VariableErrors.VARIABLE_VALUE_REQUIRED);
+        String description = this.trimToNull(request.description());
 
         this.variablePolicy.checkVariableUnique(category, key, null);
-        Variable created = this.variablePgEntityDao.insert(new Variable(
-                null,
-                category,
-                this.trimToNull(request.description()),
-                key,
-                value,
-                null,
-                null,
-                0L,
-                null,
-                0L
-        ));
+        Variable created = this.variablePgEntityDao.insert(Variable.builder()
+                .id(null)
+                .category(category)
+                .description(description)
+                .key(key)
+                .value(value)
+                .salt(null)
+                .enabled(true)
+                .build());
         return XDataUtils.copy(created, AdminVariableCreateResponse.class);
     }
 
@@ -113,45 +113,38 @@ public class VariableService {
         String nextDescription = request.description() == null
                 ? current.description()
                 : this.trimToNull(request.description());
+        boolean nextEnabled = request.enabled() == null
+                ? current.enabled()
+                : request.enabled();
 
         this.variablePolicy.checkVariableUnique(nextCategory, nextKey, id);
-        Variable updated = this.variablePgEntityDao.update(new Variable(
-                current.id(),
-                nextCategory,
-                nextDescription,
-                nextKey,
-                nextValue,
-                current.salt(),
-                current.createdAt(),
-                current.createdAtTs(),
-                current.updatedAt(),
-                current.updatedAtTs()
-        ));
+        Variable updated = this.variablePgEntityDao.update(Variable.builder()
+                .id(current.id())
+                .category(nextCategory)
+                .description(nextDescription)
+                .key(nextKey)
+                .value(nextValue)
+                .salt(current.salt())
+                .enabled(nextEnabled)
+                .build());
         return XDataUtils.copy(updated, AdminVariableUpdateResponse.class);
     }
 
-    @Transactional
-    public void removeVariable(AdminVariableRemoveRequest request) {
-        String id = this.requireText(request.id(), VariableErrors.VARIABLE_ID_REQUIRED);
-        this.variablePolicy.checkVariableExists(id);
-        this.variablePgEntityDao.deleteById(id);
-    }
-
     private QueryBuilder buildFilterQuery(AdminVariableFilter filter) {
-        if (filter == null) {
-            return null;
-        }
         BoolQueryBuilder queryBuilder = QueryBuilders.boolQuery();
-        boolean hasQuery = false;
+        if (filter == null) {
+            return queryBuilder;
+        }
         if (StringUtils.hasText(filter.category())) {
             queryBuilder.must(QueryBuilders.termQuery("category", filter.category().trim()));
-            hasQuery = true;
         }
         if (StringUtils.hasText(filter.key())) {
             queryBuilder.must(QueryBuilders.termQuery("key", filter.key().trim()));
-            hasQuery = true;
         }
-        return hasQuery ? queryBuilder : null;
+        if (filter.enabled() != null) {
+            queryBuilder.must(QueryBuilders.termQuery("enabled", filter.enabled()));
+        }
+        return queryBuilder;
     }
 
     private int normalizePage(Integer page) {

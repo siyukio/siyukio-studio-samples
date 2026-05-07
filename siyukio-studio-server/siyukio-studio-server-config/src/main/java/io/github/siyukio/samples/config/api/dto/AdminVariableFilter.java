@@ -8,7 +8,10 @@ public record AdminVariableFilter(
         String category,
 
         @ApiParameter(description = "Variable key", required = false)
-        String key
+        String key,
+
+        @ApiParameter(description = "Variable enabled status", required = false)
+        Boolean enabled
 
 ) {
 }

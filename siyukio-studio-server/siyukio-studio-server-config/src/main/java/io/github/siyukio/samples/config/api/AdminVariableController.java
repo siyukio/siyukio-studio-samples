@@ -7,7 +7,6 @@ import io.github.siyukio.samples.config.api.dto.AdminVariableFilter;
 import io.github.siyukio.samples.config.api.dto.AdminVariableGetRequest;
 import io.github.siyukio.samples.config.api.dto.AdminVariableGetResponse;
 import io.github.siyukio.samples.config.api.dto.AdminVariableListResponse;
-import io.github.siyukio.samples.config.api.dto.AdminVariableRemoveRequest;
 import io.github.siyukio.samples.config.api.dto.AdminVariableUpdateRequest;
 import io.github.siyukio.samples.config.api.dto.AdminVariableUpdateResponse;
 import io.github.siyukio.samples.config.api.paths.AdminVariablePaths;
@@ -53,12 +52,5 @@ public class AdminVariableController {
             AdminVariableUpdateRequest request
     ) {
         return this.variableService.updateVariable(request);
-    }
-
-    @ApiMapping(path = AdminVariablePaths.REMOVE, summary = "Remove variable by id")
-    public void remove(
-            AdminVariableRemoveRequest request
-    ) {
-        this.variableService.removeVariable(request);
     }
 }

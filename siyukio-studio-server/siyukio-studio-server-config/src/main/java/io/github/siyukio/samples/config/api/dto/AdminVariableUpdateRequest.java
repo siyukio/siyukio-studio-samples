@@ -17,7 +17,10 @@ public record AdminVariableUpdateRequest(
         String key,
 
         @ApiParameter(description = "Variable value", required = false)
-        String value
+        String value,
+
+        @ApiParameter(description = "Variable enabled status", required = false)
+        Boolean enabled
 
 ) {
 }

@@ -9,6 +9,4 @@ public interface AdminVariablePaths {
     String GET = "/admin/variable/getVariable";
 
     String UPDATE = "/admin/variable/updateVariable";
-
-    String REMOVE = "/admin/variable/removeVariable";
 }
