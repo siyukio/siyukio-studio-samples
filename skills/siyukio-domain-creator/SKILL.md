@@ -1,6 +1,6 @@
 ---
 name: siyukio-domain-creator
-description: "Create or modify a complete Siyukio server domain feature through a fixed workflow that orchestrates module, model, API, application, and API test updates, with conditional console TypeScript API sync when admin APIs are involved. Use when implementing a new domain context or extending an existing domain end-to-end in project."
+description: "Create or modify a complete Siyukio server domain feature through a fixed workflow that orchestrates module, model, API, application, and API test updates. Use when implementing a new domain context or extending an existing domain end-to-end in project."
 ---
 
 # siyukio-domain-creator
@@ -11,14 +11,11 @@ Create or update one Siyukio server domain with a fixed, full-stack domain workf
 
 Use this skill for server domain work as the primary lane.
 
-If the task includes admin API changes, also sync the corresponding console TypeScript API module.
-
 Do not use this skill for unrelated web, desktop, or pure console-only tasks.
 
 ## Required inputs
 
 - `{server-project-name}`: server Maven aggregator artifact (example: `siyukio-studio-server`).
-- `{console-project-name}`: console project root for API sync (example: `siyukio-studio-console`).
 - `{package-name}`: Java base package (example: `io.github.siyukio.samples`).
 - `{package-path}`: slash format of package (example: `io/github/siyukio/samples`).
 - `{domain}`: domain module suffix in kebab-case (example: `user-management`).
@@ -97,7 +94,7 @@ Responsibilities:
 - Create/update API test cases for the domain context.
 - Prioritize `api/{Context}ControllerTest.java` coverage, then add service/integration tests only when required.
 
-### 6) Verify server domain implementation before console sync
+### 6) Verify server domain implementation
 
 Run:
 
@@ -109,40 +106,22 @@ cd {server-project-name}
 
 Requirements:
 
-- Complete this verification before syncing console API.
 - If verification fails, continue fixing server domain code and tests until it passes.
-
-### 7) Sync console API for admin endpoint changes (conditional, final step)
-
-Invoke:
-
-`$siyukio-console-api-creator`
-
-Run this step only when either condition is true:
-
-- Current task explicitly includes admin API work.
-- This workflow modifies any admin controller/path/DTO contract.
-
-Responsibilities:
-
-- Sync corresponding `{Context}Api.ts` in `{console-project-name}/src/api/`.
-- Keep generated TypeScript request/response interfaces aligned with verified admin endpoint contracts.
 
 ## Orchestration rules
 
-- Keep one shared variable set across all seven steps (`{domain}`, `{Context}`, `{Entity}`, and package coordinates).
+- Keep one shared variable set across all six steps (`{domain}`, `{Context}`, `{Entity}`, and package coordinates).
 - Apply additive updates; avoid rewriting unrelated files.
 - Preserve existing naming and test style unless user requests migration.
 - If a target file already exists, update incrementally instead of recreating it.
 
 ## Verification
 
-After step 6 server verification passes and step 7 (if required) completes, confirm:
+After step 6 server verification passes, confirm:
 
 - Module registration is correct.
 - Model/API/Application artifacts are aligned on field names and method contracts.
-- Server compile and `{Context}`-related tests passed before console API sync.
-- If admin API changed, corresponding console `{Context}Api.ts` is synced.
+- Server compile and `{Context}`-related tests passed.
 - API tests for the target context are present and passing.
 
 ## Related skills
@@ -150,6 +129,5 @@ After step 6 server verification passes and step 7 (if required) completes, conf
 - `$siyukio-module-creator`
 - `$siyukio-model-creator`
 - `$siyukio-role-based-api-creator`
-- `$siyukio-console-api-creator`
 - `$siyukio-application-creator`
 - `$siyukio-unit-test-creator`

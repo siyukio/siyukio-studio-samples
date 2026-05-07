@@ -216,3 +216,24 @@ Then confirm:
   - `Internal{Context}Paths` -> `/internal/{context}/*`
 - DTO names follow the role convention in `api/dto`.
 - DTO and service signatures remain aligned with the application layer.
+
+### 6) Sync console API for admin endpoint changes (conditional, final step)
+
+At the end of the task, detect whether this task introduced or changed admin role API contracts.
+
+Treat any of the following as admin API changes:
+
+- Added or modified `Admin{Context}Controller.java`
+- Added or modified `Admin{Context}Paths.java`
+- Added, removed, or modified admin DTOs under `api/dto/` (for example `Admin{Context}*Request` and `Admin{Context}*Response`)
+- Added, removed, or modified `@ApiMapping` methods, request/response DTO types, or path constant bindings in admin controllers
+
+If admin API changes exist:
+
+- Invoke `$siyukio-console-api-creator`.
+- Sync only the changed admin controller contracts to corresponding console TypeScript API files under:
+  - `{console-project-name}/src/api/{Context}Api.ts`
+
+If no admin API changes exist:
+
+- Skip console API sync and state explicitly in the completion report that no admin endpoint contract changes were detected.
