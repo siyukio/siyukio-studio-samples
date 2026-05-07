@@ -23,7 +23,7 @@ Do not use this skill for web/desktop/console tasks.
 - `{Entity}`: entity name in PascalCase (example: `User`).
 - `{entity}`: entity variable name in camelCase (example: `user`).
 - Entity fields: name, type, constraints, encrypted flag, nested record/enum needs.
-- Indexes: column list and uniqueness.
+- Indexes (only when explicitly required): column list and uniqueness.
 - Optional table options: `schema`, `table`.
 - Whether to generate Policy and Errors files.
 
@@ -52,7 +52,7 @@ Do not use this skill for web/desktop/console tasks.
        <artifactId>spring-siyukio-postgresql</artifactId>
    </dependency>
    ```
-3. Create or update `{Entity}` as a Java `record` with `@Builder`, `@With`, `@PgEntity`, `@PgKey`, `@PgColumn`, and needed `@PgIndex` entries.
+3. Create or update `{Entity}` as a Java `record` with `@Builder`, `@With`, `@PgEntity`, `@PgKey`, `@PgColumn`, and `@PgIndex` entries only when explicitly required by the task.
 4. Keep required timestamp fields: `createdAt`, `createdAtTs`, `updatedAt`, `updatedAtTs`.
 5. If requested, create `{Entity}Errors` interface with constant names using `{ENTITY_UPPER}` pattern.
 6. If requested, create `{Entity}Policy` component using `PgEntityDao<{Entity}>` for `checkExists` / `checkEnabled` / `findById`-style methods.
@@ -161,6 +161,8 @@ public class {Entity}Policy {
 - Entity package: `.entity`; errors package: `.errors`; policy package: `.policy`.
 - Use Java `record` for entity DTO-style immutability.
 - Apply `@PgColumn(encrypted = true)` only for sensitive fields.
+- Omit `@PgColumn(comment = "...")` when the DTO field name is already clear and self-explanatory.
+- Do not proactively create `@PgIndex` unless the current task explicitly requires it.
 - Use `*Ts` (long) fields for index-friendly time queries.
 - Unless explicitly required, do not create indexes on standalone time fields.
 - Keep nested record types inside entity with `@Builder` and `@With`.
