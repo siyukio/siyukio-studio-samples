@@ -84,7 +84,6 @@ public class VariableService {
                 .description(description)
                 .key(key)
                 .value(value)
-                .salt(null)
                 .enabled(true)
                 .build());
         return XDataUtils.copy(created, AdminVariableCreateResponse.class);
@@ -101,32 +100,10 @@ public class VariableService {
         String id = this.requireText(request.id(), VariableErrors.VARIABLE_ID_REQUIRED);
         Variable current = this.variablePolicy.checkVariableExists(id);
 
-        String nextCategory = request.category() == null
-                ? current.category()
-                : this.requireText(request.category(), VariableErrors.VARIABLE_CATEGORY_REQUIRED);
-        String nextKey = request.key() == null
-                ? current.key()
-                : this.requireText(request.key(), VariableErrors.VARIABLE_KEY_REQUIRED);
-        String nextValue = request.value() == null
-                ? current.value()
-                : this.requireText(request.value(), VariableErrors.VARIABLE_VALUE_REQUIRED);
-        String nextDescription = request.description() == null
-                ? current.description()
-                : this.trimToNull(request.description());
-        boolean nextEnabled = request.enabled() == null
-                ? current.enabled()
-                : request.enabled();
+        Variable merged = XDataUtils.mergeNotNul(request, current);
 
-        this.variablePolicy.checkVariableUnique(nextCategory, nextKey, id);
-        Variable updated = this.variablePgEntityDao.update(Variable.builder()
-                .id(current.id())
-                .category(nextCategory)
-                .description(nextDescription)
-                .key(nextKey)
-                .value(nextValue)
-                .salt(current.salt())
-                .enabled(nextEnabled)
-                .build());
+        this.variablePolicy.checkVariableUnique(merged.category(), merged.key(), id);
+        Variable updated = this.variablePgEntityDao.update(merged);
         return XDataUtils.copy(updated, AdminVariableUpdateResponse.class);
     }
 
