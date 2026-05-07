@@ -63,17 +63,17 @@ Use fixed role categories and naming suffixes:
   - role constant: `RolesConstants.USER`
   - controller: `{Context}Controller`
   - paths class: `{Context}Paths`
-  - DTO: `{Context}Request`, `{Context}Response`
+  - DTO (operation-based examples): `{Context}CreateRequest`, `{Context}UpdateRequest`, `{Context}Response`
 - admin:
   - role constant: `RolesConstants.ADMIN`
   - controller: `{Context}AdminController`
   - paths class: `{Context}AdminPaths`
-  - DTO: `{Context}AdminRequest`, `{Context}AdminResponse`
+  - DTO (operation-based examples): `{Context}AdminCreateRequest`, `{Context}AdminUpdateRequest`, `{Context}AdminResponse`
 - internal:
   - role constant: `RolesConstants.INTERNAL`
   - controller: `{Context}InternalController`
   - paths class: `{Context}InternalPaths`
-  - DTO: `{Context}InternalRequest`, `{Context}InternalResponse`
+  - DTO (operation-based examples): `{Context}InternalCreateRequest`, `{Context}InternalUpdateRequest`, `{Context}InternalResponse`
 
 Keep controller package fixed to `{package-name}.{domain}.api`.
 
@@ -172,9 +172,15 @@ For admin and internal controllers, import and use their corresponding path clas
 
 Under `{domain}/api/dto`, keep role-specific DTO names:
 
-- user: `{Context}Request`, `{Context}Response`
-- admin: `{Context}AdminRequest`, `{Context}AdminResponse`
-- internal: `{Context}InternalRequest`, `{Context}InternalResponse`
+- user examples: `{Context}CreateRequest`, `{Context}UpdateRequest`, `{Context}Response`
+- admin examples: `{Context}AdminCreateRequest`, `{Context}AdminUpdateRequest`, `{Context}AdminResponse`
+- internal examples: `{Context}InternalCreateRequest`, `{Context}InternalUpdateRequest`, `{Context}InternalResponse`
+
+For operation-specific DTOs, keep the same role prefix rule:
+
+- user APIs: `{Context}{Operation}Request` / `{Context}{Operation}Response`
+- admin APIs: `{Context}Admin{Operation}Request` / `{Context}Admin{Operation}Response`
+- internal APIs: `{Context}Internal{Operation}Request` / `{Context}Internal{Operation}Response`
 
 Keep request/response classes aligned with controller endpoints and application service contracts.
 
