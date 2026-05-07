@@ -24,7 +24,7 @@ Do not use this skill for web/desktop/console tasks.
 - `{entity}`: entity variable name in camelCase (example: `user`).
 - Entity fields: name, type, constraints, encrypted flag, nested record/enum needs.
 - Indexes (only when explicitly required): column list and uniqueness.
-- Optional table options: `schema`, `table`.
+- Optional table options (only when explicitly required): `dbName`, `schema`, `table`.
 - Whether to generate Policy and Errors files.
 
 # Preconditions
@@ -161,6 +161,7 @@ public class {Entity}Policy {
 - Entity package: `.entity`; errors package: `.errors`; policy package: `.policy`.
 - Use Java `record` for entity DTO-style immutability.
 - Apply `@PgColumn(encrypted = true)` only for sensitive fields.
+- Unless explicitly required by the task, leave `@PgEntity` `dbName`, `schema`, and `table` unset.
 - Omit `@PgColumn(comment = "...")` when the DTO field name is already clear and self-explanatory.
 - Do not proactively create `@PgIndex` unless the current task explicitly requires it.
 - Use `*Ts` (long) fields for index-friendly time queries.
