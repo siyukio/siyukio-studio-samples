@@ -1,8 +1,14 @@
 package io.github.siyukio.samples.config.application;
 
+import io.github.siyukio.samples.config.api.dto.VariableAdminCreateRequest;
+import io.github.siyukio.samples.config.api.dto.VariableAdminCreateResponse;
 import io.github.siyukio.samples.config.api.dto.VariableAdminFilter;
-import io.github.siyukio.samples.config.api.dto.VariableAdminRequest;
-import io.github.siyukio.samples.config.api.dto.VariableAdminResponse;
+import io.github.siyukio.samples.config.api.dto.VariableAdminGetRequest;
+import io.github.siyukio.samples.config.api.dto.VariableAdminGetResponse;
+import io.github.siyukio.samples.config.api.dto.VariableAdminListResponse;
+import io.github.siyukio.samples.config.api.dto.VariableAdminRemoveRequest;
+import io.github.siyukio.samples.config.api.dto.VariableAdminUpdateRequest;
+import io.github.siyukio.samples.config.api.dto.VariableAdminUpdateResponse;
 import io.github.siyukio.samples.config.model.entity.Variable;
 import io.github.siyukio.samples.config.model.errors.VariableErrors;
 import io.github.siyukio.samples.config.model.policy.VariablePolicy;
@@ -38,7 +44,7 @@ public class VariableService {
     @Autowired
     private VariablePolicy variablePolicy;
 
-    public PageResponse<VariableAdminResponse> queryVariablePage(PageRequest<VariableAdminFilter> request) {
+    public PageResponse<VariableAdminListResponse> queryVariablePage(PageRequest<VariableAdminFilter> request) {
         if (request == null) {
             request = PageRequest.<VariableAdminFilter>builder()
                     .page(DEFAULT_PAGE)
@@ -53,17 +59,17 @@ public class VariableService {
                 this.normalizeSize(request.size())
         );
 
-        List<VariableAdminResponse> items = page.items() == null
+        List<VariableAdminListResponse> items = page.items() == null
                 ? Collections.emptyList()
-                : XDataUtils.copy(page.items(), List.class, VariableAdminResponse.class);
-        return PageResponse.<VariableAdminResponse>builder()
+                : XDataUtils.copy(page.items(), List.class, VariableAdminListResponse.class);
+        return PageResponse.<VariableAdminListResponse>builder()
                 .total(page.total())
                 .items(items)
                 .build();
     }
 
     @Transactional
-    public VariableAdminResponse createVariable(VariableAdminRequest request) {
+    public VariableAdminCreateResponse createVariable(VariableAdminCreateRequest request) {
         String category = this.requireText(request.category(), VariableErrors.VARIABLE_CATEGORY_REQUIRED);
         String key = this.requireText(request.key(), VariableErrors.VARIABLE_KEY_REQUIRED);
         String value = this.requireText(request.value(), VariableErrors.VARIABLE_VALUE_REQUIRED);
@@ -81,17 +87,17 @@ public class VariableService {
                 null,
                 0L
         ));
-        return XDataUtils.copy(created, VariableAdminResponse.class);
+        return XDataUtils.copy(created, VariableAdminCreateResponse.class);
     }
 
-    public VariableAdminResponse getVariable(VariableAdminRequest request) {
+    public VariableAdminGetResponse getVariable(VariableAdminGetRequest request) {
         String id = this.requireText(request.id(), VariableErrors.VARIABLE_ID_REQUIRED);
         Variable variable = this.variablePolicy.checkVariableExists(id);
-        return XDataUtils.copy(variable, VariableAdminResponse.class);
+        return XDataUtils.copy(variable, VariableAdminGetResponse.class);
     }
 
     @Transactional
-    public VariableAdminResponse updateVariable(VariableAdminRequest request) {
+    public VariableAdminUpdateResponse updateVariable(VariableAdminUpdateRequest request) {
         String id = this.requireText(request.id(), VariableErrors.VARIABLE_ID_REQUIRED);
         Variable current = this.variablePolicy.checkVariableExists(id);
 
@@ -121,11 +127,11 @@ public class VariableService {
                 current.updatedAt(),
                 current.updatedAtTs()
         ));
-        return XDataUtils.copy(updated, VariableAdminResponse.class);
+        return XDataUtils.copy(updated, VariableAdminUpdateResponse.class);
     }
 
     @Transactional
-    public void removeVariable(VariableAdminRequest request) {
+    public void removeVariable(VariableAdminRemoveRequest request) {
         String id = this.requireText(request.id(), VariableErrors.VARIABLE_ID_REQUIRED);
         this.variablePolicy.checkVariableExists(id);
         this.variablePgEntityDao.deleteById(id);

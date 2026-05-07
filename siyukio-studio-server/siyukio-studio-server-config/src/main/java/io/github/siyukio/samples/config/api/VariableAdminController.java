@@ -1,9 +1,15 @@
 package io.github.siyukio.samples.config.api;
 
 import io.github.siyukio.samples.common.constants.RolesConstants;
+import io.github.siyukio.samples.config.api.dto.VariableAdminCreateRequest;
+import io.github.siyukio.samples.config.api.dto.VariableAdminCreateResponse;
 import io.github.siyukio.samples.config.api.dto.VariableAdminFilter;
-import io.github.siyukio.samples.config.api.dto.VariableAdminRequest;
-import io.github.siyukio.samples.config.api.dto.VariableAdminResponse;
+import io.github.siyukio.samples.config.api.dto.VariableAdminGetRequest;
+import io.github.siyukio.samples.config.api.dto.VariableAdminGetResponse;
+import io.github.siyukio.samples.config.api.dto.VariableAdminListResponse;
+import io.github.siyukio.samples.config.api.dto.VariableAdminRemoveRequest;
+import io.github.siyukio.samples.config.api.dto.VariableAdminUpdateRequest;
+import io.github.siyukio.samples.config.api.dto.VariableAdminUpdateResponse;
 import io.github.siyukio.samples.config.api.paths.VariableAdminPaths;
 import io.github.siyukio.samples.config.application.VariableService;
 import io.github.siyukio.tools.api.annotation.ApiController;
@@ -22,36 +28,36 @@ public class VariableAdminController {
     private VariableService variableService;
 
     @ApiMapping(path = VariableAdminPaths.LIST, summary = "Query variable list")
-    public PageResponse<VariableAdminResponse> list(
+    public PageResponse<VariableAdminListResponse> list(
             PageRequest<VariableAdminFilter> request
     ) {
         return this.variableService.queryVariablePage(request);
     }
 
     @ApiMapping(path = VariableAdminPaths.CREATE, summary = "Create variable")
-    public VariableAdminResponse create(
-            VariableAdminRequest request
+    public VariableAdminCreateResponse create(
+            VariableAdminCreateRequest request
     ) {
         return this.variableService.createVariable(request);
     }
 
     @ApiMapping(path = VariableAdminPaths.GET, summary = "Get variable by id")
-    public VariableAdminResponse get(
-            VariableAdminRequest request
+    public VariableAdminGetResponse get(
+            VariableAdminGetRequest request
     ) {
         return this.variableService.getVariable(request);
     }
 
     @ApiMapping(path = VariableAdminPaths.UPDATE, summary = "Update variable by id")
-    public VariableAdminResponse update(
-            VariableAdminRequest request
+    public VariableAdminUpdateResponse update(
+            VariableAdminUpdateRequest request
     ) {
         return this.variableService.updateVariable(request);
     }
 
     @ApiMapping(path = VariableAdminPaths.REMOVE, summary = "Remove variable by id")
     public void remove(
-            VariableAdminRequest request
+            VariableAdminRemoveRequest request
     ) {
         this.variableService.removeVariable(request);
     }
