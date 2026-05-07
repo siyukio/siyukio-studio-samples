@@ -162,6 +162,7 @@ public class {Entity}Policy {
 - Use Java `record` for entity DTO-style immutability.
 - Apply `@PgColumn(encrypted = true)` only for sensitive fields.
 - Use `*Ts` (long) fields for index-friendly time queries.
+- Unless explicitly required, do not create indexes on standalone time fields.
 - Keep nested record types inside entity with `@Builder` and `@With`.
 - Keep Policy focused on validation/query helpers; business workflows belong to Application layer.
 
