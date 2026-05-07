@@ -17,19 +17,19 @@ Create or update files under:
 
 {project-name}/{project-name}-{domain}/src/main/java/{package-path}/{domain}/api/
 ├── {Context}Controller.java
-├── {Context}AdminController.java
-├── {Context}InternalController.java
+├── Admin{Context}Controller.java
+├── Internal{Context}Controller.java
 ├── paths/
 │   ├── {Context}Paths.java
-│   ├── {Context}AdminPaths.java
-│   └── {Context}InternalPaths.java
+│   ├── Admin{Context}Paths.java
+│   └── Internal{Context}Paths.java
 └── dto/
     ├── {Context}Request.java
     ├── {Context}Response.java
-    ├── {Context}AdminRequest.java
-    ├── {Context}AdminResponse.java
-    ├── {Context}InternalRequest.java
-    └── {Context}InternalResponse.java
+    ├── Admin{Context}Request.java
+    ├── Admin{Context}Response.java
+    ├── Internal{Context}Request.java
+    └── Internal{Context}Response.java
 ```
 
 ## Use this skill when
@@ -57,7 +57,7 @@ Create or update files under:
 
 ### 1) Normalize default role model
 
-Use fixed role categories and naming suffixes:
+Use fixed role categories and naming prefixes:
 
 - user:
   - role constant: `RolesConstants.USER`
@@ -66,28 +66,28 @@ Use fixed role categories and naming suffixes:
   - DTO (operation-based examples): `{Context}CreateRequest`, `{Context}UpdateRequest`, `{Context}Response`
 - admin:
   - role constant: `RolesConstants.ADMIN`
-  - controller: `{Context}AdminController`
-  - paths class: `{Context}AdminPaths`
-  - DTO (operation-based examples): `{Context}AdminCreateRequest`, `{Context}AdminUpdateRequest`, `{Context}AdminResponse`
+  - controller: `Admin{Context}Controller`
+  - paths class: `Admin{Context}Paths`
+  - DTO (operation-based examples): `Admin{Context}CreateRequest`, `Admin{Context}UpdateRequest`, `Admin{Context}Response`
 - internal:
   - role constant: `RolesConstants.INTERNAL`
-  - controller: `{Context}InternalController`
-  - paths class: `{Context}InternalPaths`
-  - DTO (operation-based examples): `{Context}InternalCreateRequest`, `{Context}InternalUpdateRequest`, `{Context}InternalResponse`
+  - controller: `Internal{Context}Controller`
+  - paths class: `Internal{Context}Paths`
+  - DTO (operation-based examples): `Internal{Context}CreateRequest`, `Internal{Context}UpdateRequest`, `Internal{Context}Response`
 
 Keep controller package fixed to `{package-name}.{domain}.api`.
 
 Paths naming contract (mandatory):
 
 - user API paths class: `{Context}Paths`
-- admin API paths class: `{Context}AdminPaths`
-- internal API paths class: `{Context}InternalPaths`
+- admin API paths class: `Admin{Context}Paths`
+- internal API paths class: `Internal{Context}Paths`
 
 Path value contract (mandatory):
 
 - in `{Context}Paths`, each path value must be under `/{context}/*`
-- in `{Context}AdminPaths`, each path value must be under `/admin/{context}/*`
-- in `{Context}InternalPaths`, each path value must be under `/internal/{context}/*`
+- in `Admin{Context}Paths`, each path value must be under `/admin/{context}/*`
+- in `Internal{Context}Paths`, each path value must be under `/internal/{context}/*`
 
 ### 2) Create or update role constants first
 
@@ -125,12 +125,12 @@ Controller rules:
 
 - Use controller naming by role:
   - user: `{Context}Controller`
-  - admin: `{Context}AdminController`
-  - internal: `{Context}InternalController`
+  - admin: `Admin{Context}Controller`
+  - internal: `Internal{Context}Controller`
 - Use paths class naming by role:
   - user: `{Context}Paths`
-  - admin: `{Context}AdminPaths`
-  - internal: `{Context}InternalPaths`
+  - admin: `Admin{Context}Paths`
+  - internal: `Internal{Context}Paths`
 - Annotate each controller with explicit role:
   - user: `@ApiController(roles = {RolesConstants.USER})`
   - admin: `@ApiController(roles = {RolesConstants.ADMIN})`
@@ -165,22 +165,22 @@ public class {Context}Controller {
 
 For admin and internal controllers, import and use their corresponding path classes:
 
-- `{Context}AdminController` -> `{Context}AdminPaths`
-- `{Context}InternalController` -> `{Context}InternalPaths`
+- `Admin{Context}Controller` -> `Admin{Context}Paths`
+- `Internal{Context}Controller` -> `Internal{Context}Paths`
 
 ### 4) Create or update DTO naming by role
 
 Under `{domain}/api/dto`, keep role-specific DTO names:
 
 - user examples: `{Context}CreateRequest`, `{Context}UpdateRequest`, `{Context}Response`
-- admin examples: `{Context}AdminCreateRequest`, `{Context}AdminUpdateRequest`, `{Context}AdminResponse`
-- internal examples: `{Context}InternalCreateRequest`, `{Context}InternalUpdateRequest`, `{Context}InternalResponse`
+- admin examples: `Admin{Context}CreateRequest`, `Admin{Context}UpdateRequest`, `Admin{Context}Response`
+- internal examples: `Internal{Context}CreateRequest`, `Internal{Context}UpdateRequest`, `Internal{Context}Response`
 
 For operation-specific DTOs, keep the same role prefix rule:
 
 - user APIs: `{Context}{Operation}Request` / `{Context}{Operation}Response`
-- admin APIs: `{Context}Admin{Operation}Request` / `{Context}Admin{Operation}Response`
-- internal APIs: `{Context}Internal{Operation}Request` / `{Context}Internal{Operation}Response`
+- admin APIs: `Admin{Context}{Operation}Request` / `Admin{Context}{Operation}Response`
+- internal APIs: `Internal{Context}{Operation}Request` / `Internal{Context}{Operation}Response`
 
 Keep request/response classes aligned with controller endpoints and application service contracts.
 
@@ -203,16 +203,16 @@ Then confirm:
 - `RolesConstants` exists in common module and includes requested roles.
 - Role-based controllers exist under `api/` with names:
   - `{Context}Controller`
-  - `{Context}AdminController`
-  - `{Context}InternalController`
+  - `Admin{Context}Controller`
+  - `Internal{Context}Controller`
 - `@ApiController` roles use `RolesConstants` and match each controller role.
 - API path strings are not hard-coded; they come from role-specific classes:
   - user: `{Context}Paths`
-  - admin: `{Context}AdminPaths`
-  - internal: `{Context}InternalPaths`
+  - admin: `Admin{Context}Paths`
+  - internal: `Internal{Context}Paths`
 - Path values in each role-specific paths class follow the required base pattern:
   - `{Context}Paths` -> `/{context}/*`
-  - `{Context}AdminPaths` -> `/admin/{context}/*`
-  - `{Context}InternalPaths` -> `/internal/{context}/*`
+  - `Admin{Context}Paths` -> `/admin/{context}/*`
+  - `Internal{Context}Paths` -> `/internal/{context}/*`
 - DTO names follow the role convention in `api/dto`.
 - DTO and service signatures remain aligned with the application layer.
