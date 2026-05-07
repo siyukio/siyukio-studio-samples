@@ -178,14 +178,7 @@ Under `{domain}/api/dto`, keep role-specific DTO names:
 
 Keep request/response classes aligned with controller endpoints and application service contracts.
 
-### 5) Handle multi-role controller access when needed
-
-- Keep one default role per controller class.
-- If a controller must support multiple roles, declare multiple constants explicitly:
-  - `roles = {RolesConstants.ADMIN, RolesConstants.INTERNAL}`
-- Keep this as an exception, not the default mode.
-
-### 6) Verify implementation
+### 5) Verify implementation
 
 From `{project-name}/` run:
 
