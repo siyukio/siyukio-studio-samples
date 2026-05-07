@@ -75,6 +75,7 @@ Rules:
 
 - Every request DTO field must declare `@ApiParameter`; fields without it are filtered.
 - Use `@ApiParameter` default strategy by default; when business requirements do not explicitly request field-level validation constraints, keep the annotation minimal (for example, only `name`, and set `required = false` only for optional fields).
+- If a DTO field name is already self-explanatory, omit `description` in `@ApiParameter`.
 - Add explicit constraints in `@ApiParameter` only when required by business requirements. Siyukio automatically enforces validation from `@ApiParameter` metadata (do not add extra `Validated` implementation or Bean Validation annotations on request DTO fields).
 - Use `minLength`/`maxLength` for string length constraints.
 - Use `pattern` for regex string constraints.
@@ -286,7 +287,7 @@ public class {Context}Controller {
   - `authorization` default: `true`
   - `signature` default: `false`
   - `acpAvailable` default: `false`
-- `@ApiParameter`: define field visibility and API contract metadata; `required` defaults to `true`, so do not set `required = true`; set `required = false` only for optional fields. Validation constraints (`minLength`, `maxLength`, `pattern`, `minimum`, `maximum`, `minItems`, `maxItems`) are optional and should be added only when explicitly required.
+- `@ApiParameter`: define field visibility and API contract metadata; `required` defaults to `true`, so do not set `required = true`; set `required = false` only for optional fields. Omit `description` when the DTO field name is already clear. Validation constraints (`minLength`, `maxLength`, `pattern`, `minimum`, `maximum`, `minItems`, `maxItems`) are optional and should be added only when explicitly required.
 - Request DTO validation is automatically applied from `@ApiParameter`; no `Validated` interface implementation is required.
 
 ### 6) Verify implementation
