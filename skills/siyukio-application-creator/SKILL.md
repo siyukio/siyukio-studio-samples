@@ -89,6 +89,8 @@ Implementation rules:
 - Inject `{Entity}Policy` for business validation/invariants.
 - Use `XDataUtils.copy(...)` for entity/DTO transformation.
 - Use `XDataUtils.mergeNotNul(source, target)` for partial updates.
+- Treat `{Entity}` as a record class annotated with Lombok `@Builder`.
+- Construct `{Entity}` instances via `{Entity}.builder()...build()` for readability; do not instantiate with `new {Entity}(...)`.
 - Build list filters with `QueryBuilders.boolQuery()` and `termQuery/rangeQuery` as needed.
 - Add default enabled filter for list/page queries unless requirements explicitly include disabled records.
 - Build sort with `SortBuilders.fieldSort(...).order(SortOrder.XXX)`.
@@ -139,6 +141,7 @@ Confirm:
 - Method names/params/returns match API contracts.
 - Validation logic is policy-first.
 - Conversion style uses `XDataUtils` consistently.
+- `{Entity}` creation uses `{Entity}.builder()...build()` and never `new {Entity}(...)`.
 - Query/list methods return `PageResponse<T>` where pagination is required.
 - Remove-by-default behavior is soft delete (`remove`), not physical delete (`delete`).
 - List/page methods use default sort `updatedAtTs` descending when no explicit sort rule is provided.
