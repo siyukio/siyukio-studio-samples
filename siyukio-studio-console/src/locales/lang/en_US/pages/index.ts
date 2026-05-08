@@ -1,4 +1,5 @@
 import common from './common';
+import variable from './config/variable';
 import dashboardBase from './dashboard-base';
 import dashboardDetail from './dashboard-detail';
 import detailBase from './detail-base';
@@ -15,7 +16,6 @@ import listTree from './list-tree';
 import login from './login';
 import result from './result';
 import user from './user';
-import variable from './variable';
 
 export default {
   dashboardBase,
@@ -32,8 +32,8 @@ export default {
   formCode,
   formStep,
   user,
-  variable,
   login,
   result,
+  variable,
   common,
 };
