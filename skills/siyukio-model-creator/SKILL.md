@@ -53,6 +53,8 @@ Do not use this skill for web/desktop/console tasks.
    </dependency>
    ```
 3. Create or update `{Entity}` as a Java `record` with `@Builder`, `@With`, `@PgEntity`, `@PgKey`, `@PgColumn`, and `@PgIndex` entries only when explicitly required by the task.
+   - Entity fields support enum types.
+   - If a field needs fixed constants, define an internal `enum` inside `{Entity}` and use that enum as the field type.
 4. Keep required timestamp fields: `createdAt`, `createdAtTs`, `updatedAt`, `updatedAtTs`.
 5. If requested, create `{Entity}Errors` interface with constant names using `{ENTITY_UPPER}` pattern.
 6. If requested, create `{Entity}Policy` component using `PgEntityDao<{Entity}>` for `checkExists` / `checkEnabled` / `findById`-style methods.
@@ -87,6 +89,9 @@ public record {Entity}(
         String name,
 
         @PgColumn
+        Status status,
+
+        @PgColumn
         LocalDateTime createdAt,
 
         @PgColumn
@@ -99,6 +104,10 @@ public record {Entity}(
         long updatedAtTs
 
 ) {
+    public enum Status {
+        ENABLED,
+        DISABLED
+    }
 }
 ```
 
@@ -167,6 +176,7 @@ public class {Entity}Policy {
 - Use `*Ts` (long) fields for index-friendly time queries.
 - Unless explicitly required, do not create indexes on standalone time fields.
 - Keep nested record types inside entity with `@Builder` and `@With`.
+- For constant-like fields, prefer internal `enum` in `{Entity}` and use that enum as the field type.
 - Keep Policy focused on validation/query helpers; business workflows belong to Application layer.
 
 # Reference material
