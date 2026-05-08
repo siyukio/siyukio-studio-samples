@@ -1,6 +1,6 @@
 ---
 name: siyukio-console-i18n-creator
-description: Create or update Siyukio console page i18n files from admin API controller, DTO, and paths definitions. Use when adding or changing Admin*Controller contracts and you need synchronized zh_CN and en_US locale files under src/locales/lang/*/pages, including context file creation and pages index.ts registration.
+description: Create or update Siyukio console page i18n files from admin API controller, DTO, and paths definitions. Use when adding or changing Admin*Controller contracts and you need synchronized zh_CN and en_US locale files under src/locales/lang/*/pages/{domain}, including context file creation and pages index.ts registration.
 ---
 
 # Siyukio Console I18n Creator
@@ -18,11 +18,13 @@ Write files into:
 {console-project-name}/src/locales/lang
 ├── zh_CN/pages/
 │   ├── index.ts
-│   ├── {context}.ts
+│   ├── {domain}/
+│   │   ├── {context}.ts
 │   └── ...
 └── en_US/pages/
     ├── index.ts
-    ├── {context}.ts
+    ├── {domain}/
+    │   ├── {context}.ts
     └── ...
 ```
 
@@ -58,7 +60,7 @@ export default {
 Register in `pages/index.ts` when `{context}.ts` is newly created:
 
 ```typescript
-import {context} from './{context}';
+import {context} from './{domain}/{context}';
 
 export default {
   ...,
@@ -87,13 +89,22 @@ For each `Admin{Context}Controller`:
 1. `rawContext` = class name without `Controller` suffix, for example `AdminVariable`.
 2. `baseContext` = remove leading `Admin`, for example `Variable`.
 3. `{context}` = lower camel of `baseContext`, for example `variable`.
-4. Target i18n files:
-   - `.../zh_CN/pages/{context}.ts`
-   - `.../en_US/pages/{context}.ts`
+4. `{domain}` = module suffix from `{server-project-name}-{domain}` in the controller path, for example `config`.
+5. Target i18n files:
+   - `.../zh_CN/pages/{domain}/{context}.ts`
+   - `.../en_US/pages/{domain}/{context}.ts`
 
 If a controller does not use the `Admin` prefix, still convert class name to lower camel and use it as `{context}`.
 
 ## Extraction rules
+
+### Label brevity rule
+
+Apply to all generated labels in `fields`, `queryFields`, and `operations`:
+
+- Keep labels as short as possible while preserving meaning.
+- Prefer a single core noun/verb phrase; avoid redundant qualifiers.
+- Avoid repeating obvious context words (for example the resource name) when the page context already makes them clear.
 
 ### 1) fields
 
@@ -194,9 +205,9 @@ Message format:
 2. Resolve each controller's paths class and endpoint methods.
 3. Resolve DTO contracts and collect fields, optionality, and descriptions.
 4. Create or update:
-   - `zh_CN/pages/{context}.ts`
-   - `en_US/pages/{context}.ts`
-5. If `{context}.ts` is newly created, register it into both language `pages/index.ts` files.
+   - `zh_CN/pages/{domain}/{context}.ts`
+   - `en_US/pages/{domain}/{context}.ts`
+5. If `{domain}/{context}.ts` is newly created, register it into both language `pages/index.ts` files.
 6. Keep existing unrelated entries untouched. Do not reorder unrelated exports unless needed for lint/format consistency.
 
 ## Quality gates
