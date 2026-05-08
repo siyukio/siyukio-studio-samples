@@ -61,11 +61,11 @@ export const useUserStore = defineStore('user', {
     },
   },
   persist: {
-    afterRestore: () => {
+    afterHydrate: () => {
       const permissionStore = usePermissionStore();
       permissionStore.initRoutes();
     },
     key: 'user',
-    paths: ['token'],
+    pick: ['token'],
   },
 });

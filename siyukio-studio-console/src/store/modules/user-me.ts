@@ -68,10 +68,10 @@ export const useUserStore = defineStore('user-me', {
     },
   },
   persist: {
-    afterRestore: async (ctx) => {
+    afterHydrate: async (ctx) => {
       await ctx.store.initAuthProvider();
     },
     key: 'user-me',
-    paths: ['refreshToken'],
+    pick: ['refreshToken'],
   },
 });
