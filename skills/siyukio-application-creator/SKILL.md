@@ -85,6 +85,7 @@ Create or update:
 Implementation rules:
 
 - Annotate class with `@Service` (and `@Slf4j` when logging is needed).
+- If requirements ask to run specific business logic when service starts, implement `CommandLineRunner` in the service class.
 - Inject `PgEntityDao<{Entity}>` for persistence operations.
 - Inject `{Entity}Policy` for business validation/invariants.
 - Use `XDataUtils.copy(...)` for entity/DTO transformation.
@@ -100,6 +101,18 @@ Implementation rules:
 - Implement `remove` as soft delete by setting entity `enabled` to `false` and persisting via `pgEntityData.update(...)` (or equivalent project DAO update call).
 - Implement `delete` only when physical deletion is explicitly required.
 - Add `@Transactional` on methods that perform multi-step write operations.
+
+Startup-runner template:
+
+```java
+@Service
+public class {Context}Service implements CommandLineRunner {
+    @Override
+    public void run(String... args) throws Exception {
+        // Run business code once
+    }
+}
+```
 
 Minimal template:
 
