@@ -1,6 +1,5 @@
+import type { PageRequest, PageResponse } from '@/api/model/commonModel';
 import { postRequestWithAuth } from '@/utils/acp';
-
-import type { PageRequest, PageResponse } from './model/commonModel';
 
 export const AdminVariableApi = {
   List: '/admin/variable/listVariable',
@@ -13,19 +12,6 @@ export interface AdminVariableFilter {
   category?: string;
   key?: string;
   enabled?: boolean;
-}
-
-export interface AdminVariableListResponse {
-  id: string;
-  category: string;
-  description: string;
-  key: string;
-  value: string;
-  enabled: boolean;
-  createdAt: string;
-  createdAtTs: number;
-  updatedAt: string;
-  updatedAtTs: number;
 }
 
 export interface AdminVariableCreateRequest {
@@ -53,6 +39,19 @@ export interface AdminVariableGetRequest {
 }
 
 export interface AdminVariableGetResponse {
+  id: string;
+  category: string;
+  description: string;
+  key: string;
+  value: string;
+  enabled: boolean;
+  createdAt: string;
+  createdAtTs: number;
+  updatedAt: string;
+  updatedAtTs: number;
+}
+
+export interface AdminVariableListResponse {
   id: string;
   category: string;
   description: string;
