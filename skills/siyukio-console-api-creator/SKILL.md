@@ -1,6 +1,6 @@
 ---
 name: siyukio-console-api-creator
-description: Generate or update TypeScript API modules in the Siyukio console project from server domain API definitions, by controller granularity. Use when mapping `{server-project-name}/{server-project-name}-{domain}/src/main/java/.../api/{Context}Controller.java` plus `paths/{Context}Paths.java` and DTO records into `{console-project-name}/src/api/{Context}Api.ts`, including API path constants, request/response interfaces, and `postRequestWithAuth` functions.
+description: Generate or update TypeScript API modules in the Siyukio console project from server domain API definitions, by controller granularity. Use when mapping `{server-project-name}/{server-project-name}-{domain}/src/main/java/.../api/{Context}Controller.java` plus `paths/{Context}Paths.java` and DTO records into `{console-project-name}/src/api/{domain}/{Context}Api.ts`, including API path constants, request/response interfaces, and `postRequestWithAuth` functions.
 ---
 
 # siyukio-console-api-creator
@@ -14,13 +14,13 @@ This skill is fully self-contained in this `SKILL.md` file. Do not rely on exter
 For each server controller:
 
 - Source: `{server-project-name}/{server-project-name}-{domain}/src/main/java/{package-path}/{domain}/api/{Context}Controller.java`
-- Target: `{console-project-name}/src/api/{Context}Api.ts`
+- Target: `{console-project-name}/src/api/{domain}/{Context}Api.ts`
 
 Generate TypeScript code in this shape:
 
 ```typescript
 import { postRequestWithAuth } from '@/utils/acp';
-import type { PageRequest, PageResponse } from './model/commonModel';
+import type { PageRequest, PageResponse } from '@/api/model/commonModel';
 
 export const {Context}Api = {
   Create: '/path/create',
@@ -114,7 +114,7 @@ If annotation is absent, keep required by default.
 
 Detect paging usage from controller signatures:
 
-- Request type `PageRequest<T>` requires `import type { PageRequest, PageResponse } from './model/commonModel';`
+- Request type `PageRequest<T>` requires `import type { PageRequest, PageResponse } from '@/api/model/commonModel';`
 - Response type `PageResponse<T>` requires the same import
 
 If neither appears in any endpoint within the controller, do not import page models.
