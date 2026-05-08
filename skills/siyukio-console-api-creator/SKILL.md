@@ -1,6 +1,6 @@
 ---
 name: siyukio-console-api-creator
-description: Generate or update TypeScript API modules in the Siyukio console project from server domain API definitions, by controller granularity. Use when mapping `{server-project-name}/{server-project-name}-{domain}/src/main/java/.../api/{Context}Controller.java` plus `paths/{Context}Paths.java` and DTO records into `{console-project-name}/src/api/{domain}/{Context}Api.ts`, including API path constants, request/response interfaces, and `postRequestWithAuth` functions.
+description: Generate or update console TypeScript API modules per admin controller. Use when converting server `Admin{Context}Controller` + `Admin{Context}Paths` and related DTO contracts into `{console-project-name}/src/api/{domain}/{context}.ts`, resolving path constants and generating `postRequestWithAuth` functions plus request/response interfaces, with `Admin` treated as a fixed prefix and excluded from generated `{Context}` names.
 ---
 
 # siyukio-console-api-creator
@@ -11,10 +11,10 @@ This skill is fully self-contained in this `SKILL.md` file. Do not rely on exter
 
 ## Required output contract
 
-For each server controller:
+For each admin controller:
 
-- Source: `{server-project-name}/{server-project-name}-{domain}/src/main/java/{package-path}/{domain}/api/{Context}Controller.java`
-- Target: `{console-project-name}/src/api/{domain}/{Context}Api.ts`
+- Source: `{server-project-name}/{server-project-name}-{domain}/src/main/java/{package-path}/{domain}/api/Admin{Context}Controller.java`
+- Target: `{console-project-name}/src/api/{domain}/{context}.ts`
 
 Generate TypeScript code in this shape:
 
@@ -54,9 +54,12 @@ Read and normalize from the workspace `AGENTS.md`:
 
 Then normalize per controller:
 
-- `{Context}` = controller class name without `Controller` suffix
-- `{context}` = lower camel variant of `{Context}` for helper names when needed
+- `rawContext` = controller class name without `Controller` suffix (for example `AdminVariable`)
+- `{Context}` = remove fixed `Admin` prefix from `rawContext` (for example `Variable`)
+- `{context}` = lower camel variant of `{Context}` (for example `variable`)
 - Domain module = `{server-project-name}-{domain}` from controller file path
+
+`Admin` is a fixed prefix and is not part of `{Context}`.
 
 ## Discovery workflow
 
@@ -65,13 +68,13 @@ Then normalize per controller:
 Find all domain controllers:
 
 ```bash
-find {server-project-name} -type f -path '*/src/main/java/*/api/*Controller.java'
+find {server-project-name} -type f -path '*/src/main/java/*/api/Admin*Controller.java'
 ```
 
 For each controller, read:
 
-- Controller source (`api/{Context}Controller.java`)
-- Path constants source (`api/paths/{Context}Paths.java`), resolved from controller imports
+- Controller source (`api/Admin{Context}Controller.java`)
+- Path constants source (`api/paths/Admin{Context}Paths.java`), resolved from controller imports
 - DTO records under `api/dto/*.java` that are used by controller method request/response types
 
 ### 2) Extract endpoint contract from controller
@@ -87,13 +90,14 @@ Preserve method declaration order as the output function order.
 
 ### 3) Resolve concrete path strings
 
-From `{Context}Paths.java`, resolve path constant values.
+From `Admin{Context}Paths.java`, resolve path constant values.
 
 Example:
 
 - `AdminVariablePaths.CREATE` -> `"/admin/variable/createVariable"`
 
 Use resolved strings in `export const {Context}Api`.
+Example: `AdminVariableController` -> `VariableApi` and output file `variable.ts`.
 
 ### 4) Resolve DTO shapes
 
@@ -119,7 +123,7 @@ Detect paging usage from controller signatures:
 
 If neither appears in any endpoint within the controller, do not import page models.
 
-### 6) Generate `{Context}Api.ts`
+### 6) Generate `{context}.ts`
 
 Write one file per controller with these sections in order:
 
@@ -135,16 +139,16 @@ Function rule:
 - For non-void response:
 
 ```typescript
-export const create = (request: AdminVariableCreateRequest) => {
-  return postRequestWithAuth<AdminVariableCreateResponse>(AdminVariableApi.Create, request);
+export const create = (request: {Context}CreateRequest) => {
+  return postRequestWithAuth<{Context}CreateResponse>({Context}Api.Create, request);
 };
 ```
 
 - For `void` response:
 
 ```typescript
-export const remove = (request: AdminVariableRemoveRequest) => {
-  return postRequestWithAuth<void>(AdminVariableApi.Remove, request);
+export const remove = (request: {Context}RemoveRequest) => {
+  return postRequestWithAuth<void>({Context}Api.Remove, request);
 };
 ```
 
@@ -163,13 +167,13 @@ Convert path constant names to PascalCase keys:
 
 ### Type Mapping
 
-| Java Type | TypeScript Type |
-|-----------|-----------------|
-| String | string |
-| int / Integer / long / Long | number |
-| boolean / Boolean | boolean |
-| List<T> | T[] |
-| LocalDateTime | string |
+| Java Type                   | TypeScript Type |
+| --------------------------- | --------------- |
+| String                      | string          |
+| int / Integer / long / Long | number          |
+| boolean / Boolean           | boolean         |
+| List<T>                     | T[]             |
+| LocalDateTime               | string          |
 
 Additional practical mappings for Siyukio APIs:
 
@@ -187,12 +191,13 @@ Apply recursively:
 
 ### DTO to interface name mapping
 
-Use Java DTO name as TypeScript interface name directly.
+Use TypeScript interface names without the fixed `Admin` prefix.
+If Java DTO name starts with `Admin`, remove that prefix for generated TypeScript names.
 
 Examples:
 
-- `AdminVariableCreateRequest` -> `export interface AdminVariableCreateRequest`
-- `AdminVariableListResponse` -> `export interface AdminVariableListResponse`
+- `AdminVariableCreateRequest` -> `export interface VariableCreateRequest`
+- `AdminVariableListResponse` -> `export interface VariableListResponse`
 
 ## Generation constraints
 
