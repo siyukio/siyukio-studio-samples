@@ -83,7 +83,7 @@ Menu route shape:
 {
   path: '/{domain}',
   name: '{Domain}',
-  component: 'LAYOUT',
+  component: 'Layout',
   redirect: '/{domain}/{context}',
   meta: {
     title: {
