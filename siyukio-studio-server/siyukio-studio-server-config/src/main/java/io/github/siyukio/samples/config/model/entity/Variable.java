@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 @With
 @PgEntity(
+        schema = "siyukiostudio",
         comment = "Configuration variables",
         indexes = {
                 @PgIndex(columns = {"category", "key"}, unique = true)
