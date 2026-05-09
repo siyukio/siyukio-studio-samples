@@ -1,0 +1,30 @@
+{
+  "list": [
+    {
+      "path": "/config",
+      "name": "config",
+      "component": "LAYOUT",
+      "redirect": "/config/variable",
+      "meta": {
+        "title": {
+          "zh_CN": "配置",
+          "en_US": "Config"
+        },
+        "icon": "setting"
+      },
+      "children": [
+        {
+          "path": "variable",
+          "name": "VariableList",
+          "component": "/config/variable/index",
+          "meta": {
+            "title": {
+              "zh_CN": "变量",
+              "en_US": "Variable"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
