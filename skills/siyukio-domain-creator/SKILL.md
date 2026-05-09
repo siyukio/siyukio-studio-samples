@@ -60,6 +60,7 @@ Responsibilities:
 
 - Create/update entity, errors, and policy artifacts.
 - Apply table fields, indexes, constraints, and domain invariants.
+- If project `AGENTS.md` defines `{pg-schema}`, ensure entity annotation uses `@PgEntity(schema = "{pg-schema}")`.
 
 ### 3) Create or update domain controller (API layer)
 

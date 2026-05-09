@@ -34,6 +34,7 @@ project-version: 1.0.1
 server-project-name: siyukio-studio-server
 package-name: io.github.siyukio.samples
 package-path: /io/github/siyukio/samples
+pg-schema: siyukiostudio
 java-version: 21
 maven-version: 3.9
 ```
