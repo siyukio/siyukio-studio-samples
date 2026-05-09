@@ -62,7 +62,7 @@ watermark: Siyukio Studio
 
 ## Language Policy
 
-- All generated code, comments must be in English only.
+- All files must use English only.
 
 ## Commit Convention
 
@@ -98,4 +98,3 @@ Format: `<type>(<scope>): <description>`
 - If verification fails, fix issues and repeat from Step 3.
 - If branch conflicts occur, rebase or merge from `test/{project-version}` and rerun verification.
 - Do not skip verification to accelerate PR submission.
-
