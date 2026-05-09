@@ -136,6 +136,34 @@ const handleValidateSuccess = async (params: any) => {
 </script>
 ```
 
+Available `<t-form-item>` field component templates:
+
+```vue
+<template>
+  <!-- Text input -->
+  <t-input />
+  <!-- Multi-line text input -->
+  <t-textarea />
+  <!-- True/false switch -->
+  <t-switch />
+  <!-- Number input -->
+  <t-input-number />
+  <!-- Select -->
+  <t-select />
+  <!-- Date picker -->
+  <t-date-picker />
+  <!-- Code input, supported format values: json (default), markdown, groovy -->
+  <code-input format="json" />
+</template>
+```
+
+```vue
+<script setup lang="ts">
+// Import CodeInput when using <code-input>
+import CodeInput from '@/components/code-input/index.vue';
+</script>
+```
+
 ### 2) Integrate or update drawer wiring in page `index.vue`
 
 Update `src/pages/{domain}/{context}/index.vue` in two places.
