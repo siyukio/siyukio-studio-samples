@@ -25,6 +25,7 @@ siyukio-studio-samples/
 ### Global
 
 ```yaml
+project-name: Siyukio Studio
 project-version: 1.0.1
 ```
 
