@@ -4,8 +4,7 @@
   "type": "module",
   "scripts": {
     "dev:mock": "vite --open --mode mock",
-    "dev": "vite --open --mode development",
-    "dev:linux": "vite --mode development",
+    "dev": "vite --open --mode dev",
     "build:test": "vite build --mode test",
     "build": "vite build --mode release",
     "build:type": "vue-tsc --noEmit",
