@@ -1,6 +1,6 @@
 ---
 name: siyukio-console-vue3-creator
-description: Initialize or sync a Siyukio Vue3 admin/console project from siyukio-tdesign-vue-next-starter using git clone, then apply project-name/project-version from AGENTS.md into package.json and .env files plus optional branding SVG replacements.
+description: Initialize or sync a Siyukio Vue3 admin/console project from siyukio-tdesign-vue-next-starter using git clone, then apply project-name/project-version from AGENTS.md into package.json and set all `.env.{suffix}` `VITE_APP_NAME` and `VITE_WATERMARK` to `{project-name} {Suffix}`, plus optional branding SVG replacements.
 ---
 
 # Goal
@@ -9,12 +9,9 @@ Initialize or refresh a Siyukio Vue3 console project with repeatable metadata an
 
 # Inputs
 
-- `target-dir` (derived): must equal Console `project-name` resolved from `AGENTS.md` (no default value and no manual fallback)
+- `target-dir` (derived): must equal Console `console-project-name` resolved from `AGENTS.md` (no default value and no manual fallback)
 - `template-url` (optional): default `https://github.com/siyukio/siyukio-tdesign-vue-next-starter.git`
 - `template-branch` (optional): default `main`
-- Optional override values:
-  - `app-name` for `VITE_APP_NAME`
-  - `watermark` for `VITE_WATERMARK`
 
 # Rules
 
@@ -25,10 +22,11 @@ Initialize or refresh a Siyukio Vue3 console project with repeatable metadata an
 
 1. Resolve repository and metadata.
    - Locate repo root and `AGENTS.md`.
+   - Extract `{project-name}` from the first level-1 heading in `AGENTS.md`.
    - Extract `project-version` from the Global YAML block.
-   - Extract console `project-name` from the Console YAML block.
-   - Set `target-dir = <console project-name>`.
-   - Stop with a clear error if either value is missing.
+   - Extract `console-project-name` from the Console YAML block.
+   - Set `target-dir = <console-project-name>`.
+   - Stop with a clear error if any required value is missing.
 
 2. Sync starter code with git clone.
    - Create a temporary working directory.
@@ -39,12 +37,18 @@ Initialize or refresh a Siyukio Vue3 console project with repeatable metadata an
      - Missing: create `<target-dir>` and copy `<temp-dir>/` into it.
 
 3. Update `<target-dir>/package.json`.
-   - Set `name = <console project-name>`.
+   - Set `name = <console-project-name>`.
    - Set `version = <project-version>`.
 
-4. Update every `<target-dir>/.env*` file.
-   - Set `VITE_APP_NAME` to `<app-name>` when provided; otherwise use `<console project-name>`.
-   - Set `VITE_WATERMARK` to `<watermark>` when provided; otherwise use `"<console project-name> <project-version>"`.
+4. Update every `<target-dir>/.env.{suffix}` file.
+   - Derive `{suffix}` from the segment after `.env.`.
+   - Convert `{suffix}` to `{Suffix}` in title form:
+     - `dev` -> `Dev`
+     - `mock` -> `Mock`
+     - `site` -> `Site`
+     - `test` -> `Test`
+   - Set `VITE_APP_NAME` to `"{project-name} {Suffix}"`.
+   - Set `VITE_WATERMARK` to `"{project-name} {Suffix}"`.
    - Replace existing keys when present; append keys when missing.
 
 5. Remove starter repository metadata files.
@@ -61,7 +65,9 @@ Initialize or refresh a Siyukio Vue3 console project with repeatable metadata an
 7. Verify results.
    - Confirm clone and sync action completed.
    - Confirm `<target-dir>/package.json` has expected `name` and `version`.
-   - Confirm all `.env*` files contain updated `VITE_APP_NAME` and `VITE_WATERMARK`.
+   - Confirm all `.env.{suffix}` files contain:
+     - `VITE_APP_NAME="{project-name} {Suffix}"`
+     - `VITE_WATERMARK="{project-name} {Suffix}"`
    - Confirm `<target-dir>/LICENSE`, `<target-dir>/README.md`, and `<target-dir>/README-zh_CN.md` are absent.
    - Confirm optional SVG replacements when source files were provided.
 
