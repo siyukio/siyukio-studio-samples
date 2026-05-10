@@ -1,12 +1,11 @@
 <template>
   <t-form
-    ref="form"
+    ref="loginForm"
     class="item-container"
     :class="[`login-${type}`]"
     :data="formData"
     :rules="FORM_RULES"
     label-width="0"
-    @submit="onSubmit"
   >
     <template v-if="type === 'password'">
       <t-form-item name="account">
@@ -35,7 +34,7 @@
       </t-form-item>
 
       <div class="check-container remember-pwd">
-        <t-checkbox>{{ t('pages.login.remember') }}</t-checkbox>
+        <t-checkbox v-model="rememberAccount">{{ t('pages.login.remember') }}</t-checkbox>
         <span class="tip">{{ t('pages.login.forget') }}</span>
       </div>
     </template>
@@ -68,7 +67,9 @@
     </template>
 
     <t-form-item v-if="type !== 'qrcode'" class="btn-container">
-      <t-button block size="large" type="submit"> {{ t('pages.login.signIn') }} </t-button>
+      <loading-button block size="large" @click="handleAccountPasswordLogin">
+        {{ t('pages.login.signIn') }}
+      </loading-button>
     </t-form-item>
 
     <div class="switch-container">
@@ -81,9 +82,10 @@
   </t-form>
 </template>
 <script setup lang="ts">
-import type { FormInstanceFunctions, FormRule, SubmitContext } from 'tdesign-vue-next';
+import { sha256 } from 'js-sha256';
+import type { FormInstanceFunctions, FormRule } from 'tdesign-vue-next';
 import { MessagePlugin } from 'tdesign-vue-next';
-import { ref } from 'vue';
+import { onActivated, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 import { useCounter } from '@/hooks';
@@ -109,9 +111,12 @@ const FORM_RULES: Record<string, FormRule[]> = {
 
 const type = ref('password');
 
-const form = ref<FormInstanceFunctions>();
+const loginForm = ref<FormInstanceFunctions>();
 const formData = ref({ ...INITIAL_DATA });
 const showPsw = ref(false);
+const rememberAccount = ref(false);
+
+const REMEMBER_ACCOUNT_STORAGE_KEY = 'remember-account';
 
 const [countDown, handleCounter] = useCounter();
 
@@ -122,21 +127,38 @@ const switchType = (val: string) => {
 const router = useRouter();
 const route = useRoute();
 
+const loadRememberedAccount = () => {
+  const rememberedAccount = localStorage.getItem(REMEMBER_ACCOUNT_STORAGE_KEY);
+  if (rememberedAccount) {
+    formData.value.account = rememberedAccount;
+    rememberAccount.value = true;
+  }
+};
+
 /**
  * 发送验证码
  */
 const sendCode = () => {
-  form.value.validate({ fields: ['phone'] }).then((e) => {
+  loginForm.value.validate({ fields: ['phone'] }).then((e) => {
     if (e === true) {
       handleCounter();
     }
   });
 };
 
-const onSubmit = async (ctx: SubmitContext) => {
-  if (ctx.validateResult === true) {
+const handleAccountPasswordLogin = async () => {
+  const validateResult = await loginForm.value.validate();
+  if (validateResult === true) {
     try {
+      // hash password
+      const password = sha256(formData.value.password);
+      formData.value.password = password;
       await userStore.login(formData.value);
+      if (rememberAccount.value) {
+        localStorage.setItem(REMEMBER_ACCOUNT_STORAGE_KEY, formData.value.account);
+      } else {
+        localStorage.removeItem(REMEMBER_ACCOUNT_STORAGE_KEY);
+      }
 
       MessagePlugin.success(t('pages.login.loginSuccess'));
       const redirect = route.query.redirect as string;
@@ -148,6 +170,9 @@ const onSubmit = async (ctx: SubmitContext) => {
     }
   }
 };
+
+onMounted(loadRememberedAccount);
+onActivated(loadRememberedAccount);
 </script>
 <style lang="less" scoped>
 @import '../index.less';
