@@ -54,7 +54,8 @@ Create or update files under:
   - Prefer `@SpringBootTest(classes = TestApplication.class)`.
   - Prefer `@ActiveProfiles("local")`.
   - Prefer real Spring beans via `@Autowired`.
-  - Avoid mocks unless the existing test suite for the same context already relies on Mockito.
+- Never use any form of mock test (`Mockito`, mock beans, stubs/fakes used as mock replacements for business dependencies, etc.).
+- Even if existing tests use mocks, new or modified tests must be converted to real-bean integration style.
 - Keep assertions deterministic and scenario-focused.
 - Do not rely on test execution order.
 
@@ -92,6 +93,7 @@ Inspect existing tests under `src/test/java/{package-path}/{domain}` and record:
 - Fixture conventions (factory methods, builders, setup/teardown).
 
 Use the discovered conventions to keep changes minimal and consistent.
+If existing tests contain mock patterns, mark them for migration to non-mock, real-bean test style during this task.
 
 ### 3) Ensure test dependency
 
@@ -102,6 +104,20 @@ Add if missing:
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-test</artifactId>
+    <scope>test</scope>
+</dependency>
+```
+
+If the current module depends on `{server-project-name}-{domain}-client`, ensure the following dependencies are present (add if missing, do not duplicate):
+
+```xml
+<dependency>
+    <groupId>{package-name}</groupId>
+    <artifactId>{server-project-name}-{domain}-client</artifactId>
+</dependency>
+<dependency>
+    <groupId>{package-name}</groupId>
+    <artifactId>{server-project-name}-{domain}</artifactId>
     <scope>test</scope>
 </dependency>
 ```
@@ -244,6 +260,15 @@ If test setup changes broader modules, run a wider verification sweep:
 ```bash
 ./mvnw test
 ```
+
+API unit-test retry rule:
+
+- If API unit tests fail, fix and rerun.
+- Maximum retry attempts: 3.
+- If still not passing after 3 attempts, stop execution and output clear reasons:
+  - failing command(s)
+  - key error messages
+  - why the issue could not be resolved within 3 attempts
 
 ## Output checklist
 
