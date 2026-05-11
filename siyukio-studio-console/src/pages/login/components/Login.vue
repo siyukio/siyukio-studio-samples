@@ -82,7 +82,6 @@
   </t-form>
 </template>
 <script setup lang="ts">
-import { sha256 } from 'js-sha256';
 import type { FormInstanceFunctions, FormRule } from 'tdesign-vue-next';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { onActivated, onMounted, ref } from 'vue';
@@ -150,9 +149,6 @@ const handleAccountPasswordLogin = async () => {
   const validateResult = await loginForm.value.validate();
   if (validateResult === true) {
     try {
-      // hash password
-      const password = sha256(formData.value.password);
-      formData.value.password = password;
       await userStore.login(formData.value);
       if (rememberAccount.value) {
         localStorage.setItem(REMEMBER_ACCOUNT_STORAGE_KEY, formData.value.account);
