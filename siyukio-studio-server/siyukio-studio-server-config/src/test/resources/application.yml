@@ -16,10 +16,10 @@ spring:
       salt: ${SIYUKIO_SIGNATURE_SALT:siyukio}
     profiles:
       docs: ${SIYUKIO_PROFILES_DOCS:true}
-      active: ${SIYUKIO_PROFILES_ACTIVE:dev}
+      active: ${SIYUKIO_PROFILES_ACTIVE:test}
   datasource:
     postgres:
-      master-key: ${SIYUKIO_DB_MASTER_KEY:06CVrBQL+6VZzbXYhxfXYIm40I/cS4Ern2DW7beR5JU=}
+      master-key: ${SIYUKIO_DB_MASTER_KEY:}
       hikari:
         maximum-pool-size: 18
         minimum-idle: 18
@@ -27,5 +27,22 @@ spring:
         max-lifetime: 1800000
       master:
         url: ${SIYUKIO_DB_MASTER_URL:jdbc:postgresql://localhost:5432/root}
-        username: ${SIYUKIO_DB_MASTER_USERNAME:root}
-        password: ${SIYUKIO_DB_MASTER_PASSWORD:FYm7JqaEcptxUTgy}
+        username: ${SIYUKIO_DB_MASTER_USERNAME:}
+        password: ${SIYUKIO_DB_MASTER_PASSWORD:}
+
+server:
+  port: ${SERVER_PORT:8080}
+
+SIYUKIO_JWT_PUBLIC_KEY: |
+  -----BEGIN PUBLIC KEY-----
+  MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEIvOb3WiWoNrQ1ggpeoYz44jxjY+S
+  jcIQ4NmtOvfRRYdq4YTTyN4IoMT2mfOO72GfmYYyXhhKP1KonShHvxmBXA==
+  -----END PUBLIC KEY-----
+SIYUKIO_JWT_PRIVATE_KEY: |
+  -----BEGIN PRIVATE KEY-----
+  MEECAQAwEwYHKoZIzj0CAQYIKoZIzj0DAQcEJzAlAgEBBCAhiWxwhbZlhG5K2f4Z
+  hCSvly9hfoK2z2UcpfAyD/n0KQ==
+  -----END PRIVATE KEY-----
+SIYUKIO_SIGNATURE_SALT: SiyukioAgentStudio
+SIYUKIO_DB_MASTER_KEY: 06CVrBQL+6VZzbXYhxfXYIm40I/cS4Ern2DW7beR5JU=
+INTERNAL_AUTHORIZATION: eyJhbGciOiJFUzI1NiJ9.eyJoIjpmYWxzZSwic3ViIjoiaW50ZXJuYWwiLCJzIjpbImludGVybmFsIl0sImV4cCI6NDg4ODg3NzYyNiwiZSI6ImludGVybmFsIiwianRpIjoiYVY3THlLTW5xTXdkMnlrY2Y4YnpCIn0.wWoWY62LPV-LmVdoH8Tkk0zVgP7zbNfQBdOSpED273lO8QVybIKoal5A99UVmxMYHNq_DK7LVsd8gyWl23pCtw

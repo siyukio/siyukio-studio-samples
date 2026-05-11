@@ -30,6 +30,30 @@ public class VariablePolicy {
         return variable;
     }
 
+    public Variable checkVariableExists(String category, String key) {
+        if (!StringUtils.hasText(category)) {
+            throw new ApiException(VariableErrors.VARIABLE_CATEGORY_REQUIRED);
+        }
+        if (!StringUtils.hasText(key)) {
+            throw new ApiException(VariableErrors.VARIABLE_KEY_REQUIRED);
+        }
+        String categoryValue = category.trim();
+        String keyValue = key.trim();
+        Variable variable = this.variablePgEntityDao.queryOne(
+                QueryBuilders.boolQuery()
+                        .must(QueryBuilders.termQuery("category", categoryValue))
+                        .must(QueryBuilders.termQuery("key", keyValue))
+        );
+        if (variable == null) {
+            throw new ApiException(String.format(
+                    VariableErrors.VARIABLE_NOT_FOUND_BY_CATEGORY_AND_KEY,
+                    categoryValue,
+                    keyValue
+            ));
+        }
+        return variable;
+    }
+
     public void checkVariableUnique(String category, String key, String excludeId) {
         if (!StringUtils.hasText(category)) {
             throw new ApiException(VariableErrors.VARIABLE_CATEGORY_REQUIRED);

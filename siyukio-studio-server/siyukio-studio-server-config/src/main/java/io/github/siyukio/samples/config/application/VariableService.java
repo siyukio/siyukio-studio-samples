@@ -8,6 +8,8 @@ import io.github.siyukio.samples.config.api.dto.AdminVariableGetResponse;
 import io.github.siyukio.samples.config.api.dto.AdminVariableListResponse;
 import io.github.siyukio.samples.config.api.dto.AdminVariableUpdateRequest;
 import io.github.siyukio.samples.config.api.dto.AdminVariableUpdateResponse;
+import io.github.siyukio.samples.config.api.dto.InternalVariableGetRequest;
+import io.github.siyukio.samples.config.api.dto.InternalVariableGetResponse;
 import io.github.siyukio.samples.config.model.entity.Variable;
 import io.github.siyukio.samples.config.model.errors.VariableErrors;
 import io.github.siyukio.samples.config.model.policy.VariablePolicy;
@@ -33,6 +35,7 @@ import java.util.List;
 @Service
 public class VariableService {
 
+    private static final String DEFAULT_CATEGORY = "default";
     private static final int DEFAULT_PAGE = 1;
     private static final int DEFAULT_PAGE_SIZE = 20;
     private static final int MAX_PAGE_SIZE = 1000;
@@ -95,6 +98,15 @@ public class VariableService {
         return XDataUtils.copy(variable, AdminVariableGetResponse.class);
     }
 
+    public InternalVariableGetResponse getInternalVariable(InternalVariableGetRequest request) {
+        String category = request == null ? null : request.category();
+        String key = request == null ? null : request.key();
+        String normalizedCategory = this.normalizeCategoryOrDefault(category);
+        String normalizedKey = this.requireText(key, VariableErrors.VARIABLE_KEY_REQUIRED);
+        Variable variable = this.variablePolicy.checkVariableExists(normalizedCategory, normalizedKey);
+        return XDataUtils.copy(variable, InternalVariableGetResponse.class);
+    }
+
     @Transactional
     public AdminVariableUpdateResponse updateVariable(AdminVariableUpdateRequest request) {
         String id = this.requireText(request.id(), VariableErrors.VARIABLE_ID_REQUIRED);
@@ -150,5 +162,13 @@ public class VariableService {
             return null;
         }
         return value.trim();
+    }
+
+    private String normalizeCategoryOrDefault(String category) {
+        String normalized = this.trimToNull(category);
+        if (normalized == null) {
+            return DEFAULT_CATEGORY;
+        }
+        return normalized;
     }
 }

@@ -1,0 +1,4 @@
+internal:
+  authorization: ${INTERNAL_AUTHORIZATION:}
+  variable:
+    url: ${INTERNAL_VARIABLE_URL:http://localhost:8080}
