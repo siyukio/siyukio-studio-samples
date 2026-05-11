@@ -96,6 +96,11 @@ Rules:
     <artifactId>spring-siyukio-http-client</artifactId>
 </dependency>
 <dependency>
+    <groupId>{package-name}</groupId>
+    <artifactId>{server-project-name}-{domain}</artifactId>
+    <scope>test</scope>
+</dependency>
+<dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-test</artifactId>
     <scope>test</scope>
@@ -167,30 +172,75 @@ Create or update:
 
 `{server-project-name}/{server-project-name}-{domain}-client/src/test/resources/application.yml`
 
-Required YAML keys:
+with:
 
 ```yaml
 internal:
-  url:
-  authorization:
+  authorization: ${INTERNAL_AUTHORIZATION:}
+  { context }:
+    url: ${INTERNAL_{CONTEXT}_URL:http://localhost:8080}
 ```
 
 Rules:
 
 - Create `src/test/resources` if missing.
-- Preserve unrelated existing YAML keys; only add/update `internal.url` and `internal.authorization` when needed.
-- Keep placeholder values empty unless the user explicitly provides test endpoints/tokens.
+- Preserve unrelated existing YAML keys; only add/update `internal.authorization` and `internal.{context}.url` when needed.
 
-### 6) Consistency checks
+Then create or update:
+
+`{server-project-name}/{server-project-name}-{domain}-client/src/test/resources/application-local.yml`
+
+with:
+
+```yaml
+INTERNAL_{CONTEXT}_URL: http://localhost:8080
+```
+
+Additional rules:
+
+- Keep env key naming uppercase with underscore style, using `{CONTEXT}` uppercase placeholder.
+- Keep placeholder structure consistent with `application.yml`.
+
+### 6) Register module in parent `pom.xml`
+
+Check parent pom:
+
+`{server-project-name}/pom.xml`
+
+Rules:
+
+- Ensure `<modules>` contains:
+
+```xml
+<module>{server-project-name}-{domain}-client</module>
+```
+
+- If missing, add it once (do not duplicate).
+- Ensure `<dependencyManagement><dependencies>` contains dependency for `{server-project-name}-{domain}-client`.
+- If missing, add:
+
+```xml
+<dependency>
+    <groupId>{package-name}</groupId>
+    <artifactId>{server-project-name}-{domain}-client</artifactId>
+    <version>${project.version}</version>
+</dependency>
+```
+
+- Do not remove or rewrite unrelated existing parent module/dependency entries.
+
+### 7) Consistency checks
 
 Confirm:
 
 - Internal API source exists (created when absent).
 - Client module exists and has required HTTP client/test dependencies.
+- Parent `{server-project-name}/pom.xml` registers `{server-project-name}-{domain}-client` in both `<modules>` and `<dependencyManagement><dependencies>`.
 - `{Context}` DTO/paths are synchronized from internal API to client module.
 - `{Context}Client` methods map one-to-one with target internal `@ApiMapping` methods.
 - No hard-coded internal endpoint string inside client methods when path constants exist.
-- Client test config exists at `src/test/resources/application.yml` with `internal.url` and `internal.authorization` keys.
+- Client test config exists at `src/test/resources/application.yml` with `internal.authorization` and `internal.{context}.url`.
+- Client test override exists at `src/test/resources/application-local.yml` with `INTERNAL_{CONTEXT}_URL`.
 
 ## Verification
 
