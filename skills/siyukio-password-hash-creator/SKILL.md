@@ -14,7 +14,7 @@ Use this skill for:
 - Creating or updating save/update flows that write user passwords.
 - Creating or updating password-login verification flows.
 - Refactoring legacy `equals` password checks to `PasswordEncoder.matches`.
-- Standardizing password handling in `application` and auth-related services.
+- Standardizing password handling in `application`, auth-related services, and module security configuration.
 
 Do not use this skill for:
 
@@ -23,73 +23,98 @@ Do not use this skill for:
 
 ## Required rules
 
-1. Always inject `org.springframework.security.crypto.password.PasswordEncoder` with `@Autowired` before handling password hashing or password matching.
-2. Always hash raw passwords with `PasswordEncoder.encode(String rawPassword)` before storing.
-3. Always verify login with `PasswordEncoder.matches(String rawPassword, String encodedPassword)`.
-4. Never compare raw password and stored hash using `equals`.
-5. Never store raw passwords and never log raw passwords or password hashes.
-6. Avoid double hashing. Encode only user-provided raw passwords from request input.
+1. Ensure module `pom.xml` includes `spring-security-crypto` and `bcprov-jdk18on` when password hash or password validation logic is involved.
+2. Ensure module has a `PasswordEncoder` bean initialization in `{domain}/configuration/SecurityConfiguration.java`.
+3. Always inject `org.springframework.security.crypto.password.PasswordEncoder` with `@Autowired` before handling password hashing or password matching.
+4. Always hash raw passwords with `PasswordEncoder.encode(String rawPassword)` before storing.
+5. Always verify login with `PasswordEncoder.matches(String rawPassword, String encodedPassword)`.
+6. Never compare raw password and stored hash using `equals`.
+7. Never store raw passwords and never log raw passwords or password hashes.
+8. Avoid double hashing. Encode only user-provided raw passwords from request input.
 
 ## Execution workflow
 
-### 1) Locate password touch points
+### 1) Check module dependencies in `pom.xml`
 
-Inspect service flows that:
+Inspect:
 
-- Create user/account credentials
-- Reset/change passwords
-- Perform password login checks
+- `{server-project-name}/{server-project-name}-{domain}/pom.xml`
 
-Typical files:
+If dependencies are missing, add:
 
-- `{server-project-name}/{server-project-name}-{domain}/src/main/java/{package-path}/{domain}/application/*Service.java`(only when password checks happen here)
+```xml
+<dependency>
+    <groupId>org.springframework.security</groupId>
+    <artifactId>spring-security-crypto</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.bouncycastle</groupId>
+    <artifactId>bcprov-jdk18on</artifactId>
+</dependency>
+```
 
-### 2) Inject PasswordEncoder
+### 2) Ensure PasswordEncoder bean initialization exists
 
-Import and inject `PasswordEncoder`:
+Inspect:
+
+- `{server-project-name}/{server-project-name}-{domain}/src/main/java/{package-path}/{domain}/configuration/SecurityConfiguration.java`
+
+If not initialized, create/update with:
 
 ```java
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+@Configuration
+@Slf4j
+public class SecurityConfiguration {
 
+    @Bean
+    @ConditionalOnMissingBean(PasswordEncoder.class)
+    public PasswordEncoder passwordEncoder() {
+        Argon2PasswordEncoder argon2PasswordEncoder = Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
+        String hash = argon2PasswordEncoder.encode("init");
+        log.info("Init argon2PasswordEncoder v5_8: init, {}", hash);
+        return argon2PasswordEncoder;
+    }
+}
+```
+
+### 3) Hash password before persistence via injected `PasswordEncoder`
+
+Inject once:
+
+```java
 @Autowired
 private PasswordEncoder passwordEncoder;
 ```
 
-### 3) Hash before persistence
-
-For create/reset/change password paths:
+When handling save/reset/change password:
 
 ```java
-String passwordHash = this.passwordEncoder.encode(request.password());
-
-User saved = this.userDao.insert(
-        User.builder()
-                .username(request.username())
-                .password(passwordHash)
-                .build()
-);
-```
-
-If updating existing entity:
-
-```java
-String passwordHash = this.passwordEncoder.encode(request.newPassword());
-User updated = this.userDao.updateById(user.withPassword(passwordHash));
-```
-
-### 4) Verify login with matches
-
-For password login:
-
-```java
-User user = this.userPolicy.checkUserExistsByUsername(request.username());
-if (!this.passwordEncoder.matches(request.password(), user.password())) {
-    throw new ApiException("Invalid username or password");
+public void doBusiness(String passwordPlaintext) {
+    String passwordHash = this.passwordEncoder.encode(passwordPlaintext);
+    // Save passwordHash
 }
 ```
 
-### 5) Apply guardrails
+### 4) Verify login password with `matches` via injected `PasswordEncoder`
+
+Inject once:
+
+```java
+@Autowired
+private PasswordEncoder passwordEncoder;
+```
+
+For login verification:
+
+```java
+public void doBusiness(String passwordPlaintext, String passwordHash) {
+    if (!this.passwordEncoder.matches(passwordPlaintext, passwordHash)) {
+        throw new ApiException("Invalid password");
+    }
+}
+```
+
+### Apply guardrails
 
 - Do not query user by password hash generated from login input.
 - Do not re-encode already encoded values from database.
