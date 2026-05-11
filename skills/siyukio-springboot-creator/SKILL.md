@@ -289,7 +289,7 @@ spring:
       salt: ${SIYUKIO_SIGNATURE_SALT:siyukio}
     profiles:
       docs: ${SIYUKIO_PROFILES_DOCS:true}
-      active: ${SIYUKIO_PROFILES_ACTIVE:dev}
+      active: ${SIYUKIO_PROFILES_ACTIVE:test}
   datasource:
     postgres:
       master-key: ${SIYUKIO_DB_MASTER_KEY:}
