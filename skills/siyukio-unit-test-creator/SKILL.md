@@ -50,10 +50,10 @@ Create or update files under:
 ## Test style policy
 
 - Modification mode: preserve style used by the target test class unless user requests migration.
-- Creation mode default for Siyukio server modules:
-  - Prefer `@SpringBootTest(classes = TestApplication.class)`.
-  - Prefer `@ActiveProfiles("local")`.
-  - Prefer real Spring beans via `@Autowired`.
+- For any unit test, always use:
+  - `@SpringBootTest(classes = TestApplication.class)`
+  - `@ActiveProfiles("local")`
+- Prefer real Spring beans via `@Autowired`.
 - Never use any form of mock test (`Mockito`, mock beans, stubs/fakes used as mock replacements for business dependencies, etc.).
 - Even if existing tests use mocks, new or modified tests must be converted to real-bean integration style.
 - Keep assertions deterministic and scenario-focused.
@@ -122,7 +122,7 @@ If the current module depends on `{server-project-name}-{domain}-client`, ensure
 </dependency>
 ```
 
-### 4) Ensure local test profile config (when using SpringBootTest)
+### 4) Ensure local test profile config (mandatory)
 
 Copy both files from `{server-project-name}-bootstrap/src/main/resources` to
 `{server-project-name}-{domain}/src/test/resources`:
@@ -132,7 +132,7 @@ Copy both files from `{server-project-name}-bootstrap/src/main/resources` to
 
 If the target `src/test/resources` directory does not exist, create it first.
 
-### 5) Ensure test bootstrap class (when using SpringBootTest)
+### 5) Ensure test bootstrap class (mandatory)
 
 Create if missing:
 `src/test/java/{package-path}/TestApplication.java`
@@ -273,7 +273,8 @@ API unit-test retry rule:
 ## Output checklist
 
 - `spring-boot-starter-test` dependency present.
-- SpringBootTest-based suites have `TestApplication` and `application-local.yml` in place.
+- All unit tests use `@SpringBootTest(classes = TestApplication.class)` and `@ActiveProfiles("local")`.
+- Test suites have `TestApplication` and `application-local.yml` in place.
 - Created/modified tests cover positive + negative + edge scenarios.
 - Optional service/client tests are added only when controller coverage is insufficient.
 - Existing test style is preserved in modification mode unless migration is explicitly requested.
