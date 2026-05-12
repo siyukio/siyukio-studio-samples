@@ -23,6 +23,7 @@ Write or update files under:
 - Implement a simple outbound HTTP call directly with `@ApiClient`.
 - Add request/response transport DTO mapping.
 - Standardize retry, timeout, and error translation behavior.
+- During implementation, if you encounter outbound HTTP calls, prefer `@ApiClient` unless a dedicated client already exists.
 
 ## Do not use this skill when
 
@@ -64,6 +65,7 @@ Rules:
 
 ### 3) Choose integration implementation style
 
+- During implementation, for outbound HTTP calls, use `@ApiClient` by default unless a dedicated client already exists.
 - For simple external HTTP access, prefer direct `@ApiClient` interface implementation.
 - For complex integrations (custom retries, signing, multi-step flows, SDK orchestration), use class-based client implementation.
 
@@ -86,6 +88,7 @@ Rules:
 
 - Only add when missing; do not duplicate dependency entries.
 - Keep existing dependency order/style consistent with the current `pom.xml`.
+- `@ApiClient` only needs an interface definition; inject and use it directly where needed.
 
 ### 5) Implement `{Context}Client`
 
@@ -167,6 +170,7 @@ public interface {Context}Client {
 `@ApiClient` path rule:
 
 - Define path values directly in exchange annotations (`@PostExchange`, `@GetExchange`, etc.).
+- `@ApiClient` should be defined as an `interface` only; do not implement it manually.
 
 ### 6) Add optional client configuration inline
 
@@ -179,7 +183,16 @@ Rules:
 - Do not hardcode tokens, passwords, or endpoint secrets.
 - Do not create a standalone `config/` subdirectory for client configuration.
 
-### 7) Apply integration conventions
+### 7) Place test variables in `application-local.yml`
+
+When tests require integration variables (for example base URL, token, app key, secret):
+
+- Write variables to:
+  `{server-project-name}/{server-project-name}-{domain}/src/test/resources/application-local.yml`
+- Read variables in code via configuration placeholders.
+- Do not hardcode test variables in Java code.
+
+### 8) Apply integration conventions
 
 - Package: `{server-project-name}-{domain}.integration`
 - Class naming: `{Context}Client`
@@ -189,6 +202,7 @@ Rules:
 - When schema is confirmed: prefer nested `record` `{Operation}Command` and `{Operation}Result`.
 - Never use `Map` as request/response parameter type.
 - For `@ApiClient`, write endpoint paths directly in exchange annotations; do not define separate constants for those paths.
+- If test variables are needed, keep them in `src/test/resources/application-local.yml`, not in code.
 - Logging: include request IDs/correlation IDs, avoid sensitive payload leakage
 - Error handling: translate low-level exceptions into integration-oriented messages
 
@@ -211,4 +225,5 @@ Then confirm:
 - Client APIs are deterministic and type-safe.
 - Public client contract is independent from domain entities.
 - Configuration and secrets handling follow project conventions.
+- Test variables are stored in `src/test/resources/application-local.yml` and not hardcoded in source code.
 - Logging and exception mapping are safe and actionable.
