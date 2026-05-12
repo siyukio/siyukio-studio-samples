@@ -89,6 +89,7 @@ Rules:
 - Only add when missing; do not duplicate dependency entries.
 - Keep existing dependency order/style consistent with the current `pom.xml`.
 - `@ApiClient` only needs an interface definition; inject and use it directly where needed.
+- For `@ApiClient`, keep related `record` types and constants inside the same interface to keep cohesion high.
 
 ### 5) Implement `{Context}Client`
 
@@ -171,6 +172,8 @@ public interface {Context}Client {
 
 - Define path values directly in exchange annotations (`@PostExchange`, `@GetExchange`, etc.).
 - `@ApiClient` should be defined as an `interface` only; do not implement it manually.
+- `@ApiClient`-related `record` types and constants should be declared in the same interface.
+- If constants are needed, define them in the same `@ApiClient` interface (do not scatter across extra classes).
 
 ### 6) Add optional client configuration inline
 
@@ -202,6 +205,7 @@ When tests require integration variables (for example base URL, token, app key, 
 - When schema is confirmed: prefer nested `record` `{Operation}Command` and `{Operation}Result`.
 - Never use `Map` as request/response parameter type.
 - For `@ApiClient`, write endpoint paths directly in exchange annotations; do not define separate constants for those paths.
+- For `@ApiClient`, declare both `record` types and constants in the same interface.
 - If test variables are needed, keep them in `src/test/resources/application-local.yml`, not in code.
 - Logging: include request IDs/correlation IDs, avoid sensitive payload leakage
 - Error handling: translate low-level exceptions into integration-oriented messages
