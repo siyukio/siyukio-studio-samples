@@ -36,6 +36,7 @@ Write or update files under:
 - Package base exists: `{server-project-name}-{domain}.integration`.
 - External service contract is known: endpoints/protocol, auth mode, and required operations.
 - No business rules are expected inside integration classes.
+- When using `@ApiClient`, ensure module `pom.xml` includes `spring-siyukio-http-client`.
 
 ## Execution workflow
 
@@ -59,13 +60,34 @@ Rules:
 - If the request/response schema is clear, define immutable `record` types.
 - Record type names must end with `Command` and `Result`.
 - Record types must be defined inside the client type.
+- Do not use `Map` as request or response parameter type.
 
 ### 3) Choose integration implementation style
 
 - For simple external HTTP access, prefer direct `@ApiClient` interface implementation.
 - For complex integrations (custom retries, signing, multi-step flows, SDK orchestration), use class-based client implementation.
 
-### 4) Implement `{Context}Client`
+### 4) Ensure `@ApiClient` dependency exists when needed
+
+Before implementing `@ApiClient`, check:
+
+`{server-project-name}/{server-project-name}-{domain}/pom.xml`
+
+If missing, add:
+
+```xml
+<dependency>
+        <groupId>io.github.siyukio</groupId>
+        <artifactId>spring-siyukio-http-client</artifactId>
+</dependency>
+```
+
+Rules:
+
+- Only add when missing; do not duplicate dependency entries.
+- Keep existing dependency order/style consistent with the current `pom.xml`.
+
+### 5) Implement `{Context}Client`
 
 Create or update:
 `{server-project-name}/{server-project-name}-{domain}/src/main/java/{package-path}/{domain}/integration/{Context}Client.java`
@@ -127,6 +149,9 @@ public interface {Context}Client {
     @PostExchange("/query")
     JSONObject query(@RequestBody JSONObject command);
 
+    @PostExchange("/queryByCommand")
+    QueryResult queryByCommand(@RequestBody QueryCommand command);
+
     record QueryCommand(
             String requestId
     ) {
@@ -139,7 +164,11 @@ public interface {Context}Client {
 }
 ```
 
-### 5) Add optional client configuration inline
+`@ApiClient` path rule:
+
+- Define path values directly in exchange annotations (`@PostExchange`, `@GetExchange`, etc.).
+
+### 6) Add optional client configuration inline
 
 Define client configuration as a nested `record` inside `{Context}Client` when endpoint, timeout, or auth settings are needed.
 
@@ -150,7 +179,7 @@ Rules:
 - Do not hardcode tokens, passwords, or endpoint secrets.
 - Do not create a standalone `config/` subdirectory for client configuration.
 
-### 6) Apply integration conventions
+### 7) Apply integration conventions
 
 - Package: `{server-project-name}-{domain}.integration`
 - Class naming: `{Context}Client`
@@ -158,6 +187,8 @@ Rules:
 - Output type naming: `{Operation}Result`
 - When schema is uncertain: allow `JSONObject` for request/response types.
 - When schema is confirmed: prefer nested `record` `{Operation}Command` and `{Operation}Result`.
+- Never use `Map` as request/response parameter type.
+- For `@ApiClient`, write endpoint paths directly in exchange annotations; do not define separate constants for those paths.
 - Logging: include request IDs/correlation IDs, avoid sensitive payload leakage
 - Error handling: translate low-level exceptions into integration-oriented messages
 
