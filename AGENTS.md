@@ -16,7 +16,7 @@ understand how to use various features of the framework.
 siyukio-studio-samples/
 ├── siyukio-studio-web/       # Web frontend (TBD)
 ├── siyukio-studio-desktop/   # Desktop application (TBD)
-├── siyukio-studio-console/   # Admin console frontend (TBD)
+├── siyukio-studio-console/   # Admin console frontend (Vue3 + TDesign)
 └── siyukio-studio-server/    # Server project (Spring Boot)
 ```
 
@@ -25,61 +25,46 @@ siyukio-studio-samples/
 ### Global
 
 ```yaml
-project-version: 1.0.0
+project-name: Siyukio Studio
+project-version: 1.0.1
 ```
 
 ### Server
 
 ```yaml
-project-name: siyukio-studio-server
+server-project-name: siyukio-studio-server
 package-name: io.github.siyukio.samples
 package-path: /io/github/siyukio/samples
-java-version: 21
+pg-schema: siyukiostudio
+java-version: 25
 maven-version: 3.9
 ```
 
-### Web / Desktop / Console
+### Console
 
-(TBD)
-
-## Task Execution Guidelines
-
-**Restriction**: Currently only Server is under development. Web / Desktop / Console technical details are not yet finalized - reject any related tasks.
-
-**PR Restriction**: All PRs must target `test/{project-version}` by default. PRs to `main` are not allowed unless explicitly approved.
-
-<Execution_Policy>
-
-- All tasks must follow the workflow described in this document.
-- When executing specific steps, prefer to use skills with `siyukio` prefix.
-
-</Execution_Policy>
-
-### Task Workflow
-
-**NOTE**: You may resume from any step during execution, but you MUST complete the remaining workflow from that step onwards. For example, if the current task is only to submit a PR, you can start from step 4 and continue to step 7.
-
-1. **Check test branch** - If `test/{project-version}` does not exist, create it from `main` and push
-2. **Create a feature branch** from `test/{project-version}` with appropriate prefix (e.g., `feat/`, `fix/`, `refactor/`)
-3. **Implement changes** following the applicable sub-project skill
-4. **Verify** using the sub-project's verification gates
-5. **Commit** with Lore-compliant message format: `<type>(<scope>): <intent>`
-6. **Push branch and create PR** to `test/{project-version}`
-7. **Cleanup**: Switch back to `test/{project-version}` and delete the submitted local branch
+```yaml
+console-project-name: siyukio-studio-console
+app-name: Siyukio Studio
+watermark: Siyukio Studio
+#favicon: assets/favicon.ico
+#logo: assets/logo.svg
+#logo-full: assets/logo-full.svg
+```
 
 ### Local Environment Configuration
 
 **Required Environment Variables for Local Test:**
 
-| Variable                   | Purpose           | Test Value                            |
-|----------------------------|-------------------|---------------------------------------|
-| SIYUKIO_DB_MASTER_URL      | Database url      | jdbc:postgresql://localhost:5432/root |
-| SIYUKIO_DB_MASTER_USERNAME | Database username | root                                  |
-| SIYUKIO_DB_MASTER_PASSWORD | Database password | FYm7JqaEcptxUTgy                      |
+| Variable                   | Purpose           | Test Value                                   |
+|----------------------------|-------------------|----------------------------------------------|
+| SIYUKIO_DB_MASTER_KEY      | Database encrypt  | 06CVrBQL+6VZzbXYhxfXYIm40I/cS4Ern2DW7beR5JU= |
+| SIYUKIO_DB_MASTER_URL      | Database url      | jdbc:postgresql://localhost:5432/root        |
+| SIYUKIO_DB_MASTER_USERNAME | Database username | root                                         |
+| SIYUKIO_DB_MASTER_PASSWORD | Database password | FYm7JqaEcptxUTgy                             |
 
 ## Language Policy
 
-- All generated code, comments must be in English only.
+- All files must use English only.
 
 ## Commit Convention
 
@@ -91,6 +76,27 @@ Format: `<type>(<scope>): <description>`
 
 ### Scopes
 
-`server`, `sample`, `common`, `config`, `dependency`
+`server`, `console`, `web`, `desktop`
 
-## Notes
+# Esexecution Workflow
+
+## PR Target Policy
+
+- Default PR base branch is `test/{project-version}`.
+- PRs targeting `main` are prohibited unless explicitly approved by the user.
+
+### Standard Workflow
+
+1. **Ensure test base branch**: Check whether `test/{project-version}` exists. If not, create it from `main` and push it.
+2. **Create working branch**: Create a feature branch from `test/{project-version}` using a valid prefix such as `feat/`, `fix/`, or `refactor/`.
+3. **Implement**: Apply code changes under the relevant sub-project rules (Server only at this stage).
+4. **Verify**: Run the required verification gates for the sub-project before committing.
+5. **Commit**: Create a commit using the required format `<type>(<scope>): <intent>`, with Lore protocol trailers in the commit body.
+6. **Push and open PR**: Push the branch and create a PR targeting `test/{project-version}`.
+7. **Local cleanup**: Switch back to `test/{project-version}` and delete the submitted local feature branch.
+
+### Failure Handling
+
+- If verification fails, fix issues and repeat from Step 3.
+- If branch conflicts occur, rebase or merge from `test/{project-version}` and rerun verification.
+- Do not skip verification to accelerate PR submission.

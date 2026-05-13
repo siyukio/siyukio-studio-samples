@@ -1,0 +1,33 @@
+# OS specific files
+.DS_Store
+
+# dependencies manager
+node_modules/
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# build files
+es/
+lib/
+dist/
+typings/
+
+_site
+package
+tmp*
+temp*
+coverage
+test-report.html
+.idea/
+yarn-error.log
+*.zip
+.history
+.stylelintcache
+
+.env.local
+.env.*.local

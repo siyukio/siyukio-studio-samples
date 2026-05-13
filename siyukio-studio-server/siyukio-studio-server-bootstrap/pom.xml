@@ -6,7 +6,7 @@
     <parent>
         <groupId>io.github.siyukio.samples</groupId>
         <artifactId>siyukio-studio-server</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>siyukio-studio-server-bootstrap</artifactId>
@@ -29,11 +29,27 @@
 
     <profiles>
         <profile>
+            <id>config</id>
+            <properties>
+                <deployment-profile>config</deployment-profile>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>io.github.siyukio.samples</groupId>
+                    <artifactId>siyukio-studio-server-config</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
             <id>full</id>
             <properties>
                 <deployment-profile>full</deployment-profile>
             </properties>
             <dependencies>
+                <dependency>
+                    <groupId>io.github.siyukio.samples</groupId>
+                    <artifactId>siyukio-studio-server-config</artifactId>
+                </dependency>
             </dependencies>
         </profile>
     </profiles>

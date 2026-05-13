@@ -1,0 +1,25 @@
+@import './font-family.less';
+@import './reset.less';
+
+#nprogress .bar {
+  background: var(--td-brand-color) !important;
+}
+
+.common-container {
+  background-color: var(--td-bg-color-container);
+  padding: var(--td-comp-paddingTB-xl) var(--td-comp-paddingLR-xl);
+  border-radius: var(--td-radius-medium);
+}
+
+.operation-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  .expand {
+    .t-button__text {
+      display: flex;
+      align-items: center;
+    }
+  }
+}
