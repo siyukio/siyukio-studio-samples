@@ -52,6 +52,30 @@ Type naming expectations:
 
 ## Workflow and code template structure
 
+### Mandatory layout rules
+
+For page sections containing multiple elements (query forms, action areas, grouped controls), prefer `<t-row>` + `<t-col>` layout.
+
+- Always set row gutter as `:gutter="[12, 20]"`.
+- Use column span by required columns per row:
+  - 3 columns in one row: `:span="4"`
+  - 2 columns in one row: `:span="6"`
+  - 1 column in one row: `:span="12"`
+- For `<t-col>`, use only `:span` to control occupied width.
+- Unless explicitly required, do not add responsive size props (`xs`, `sm`, `md`, `lg`, `xl`) or screen-specific layout branches.
+- Default query form layout is 3 columns per row unless user explicitly requests 2-column or 1-column layout.
+- Because English labels are often longer, use `<t-form :label-width="120">` as the default label width.
+- Unless explicitly required, do not change the default form label width from `120`.
+- When using a 2-column layout, keep both columns visually balanced in overall height.
+- For multi-line inputs such as `<t-textarea>`, set a maximum height to prevent long content from stretching one column and breaking the two-column balance.
+- For `<t-textarea>`, keep `maxRows` no greater than `12`, and set `minRows` equal to `maxRows` to avoid layout shifts caused by content growth.
+- Keep action buttons inside `<t-col>` so they follow the same grid layout rules.
+- Action buttons can exist directly inside `<t-col>` and do not need to be wrapped by `<t-form-item>`.
+- For action areas with multiple buttons, `<t-col class="operation-container">` is allowed and recommended.
+- Button component selection:
+  - If a button handler does not call API, use `<t-button>`.
+  - If a button handler calls API, use `<loading-button>`.
+
 ### 1) Create or update base `index.vue` from list/query API + i18n
 
 Read API + i18n contracts and generate or modify the base query/list page.
@@ -84,16 +108,23 @@ Base template:
       @reset="onReset"
       @submit="onSubmit"
     >
-      <t-row>
-        <t-col :span="10">
-          <t-row :gutter="[12, 16]">
-            <!-- Query form items -->
-          </t-row>
+      <t-row :gutter="[12, 20]">
+        <t-col :span="4">
+          <!-- Query form item -->
+          <t-form-item :label="t('pages.{context}.queryFields.name')">
+            <t-input v-model="formData.name" clearable />
+          </t-form-item>
         </t-col>
-        <t-col :span="2" class="operation-container">
-          <t-button theme="primary" type="submit">
+        <t-col :span="4">
+          <!-- Query form item -->
+          <t-form-item :label="t('pages.{context}.queryFields.enabled')">
+            <t-select v-model="formData.enabled" clearable />
+          </t-form-item>
+        </t-col>
+        <t-col :span="4" class="operation-container">
+          <loading-button theme="primary" type="submit">
             {{ t("pages.common.query") }}
-          </t-button>
+          </loading-button>
           <t-button type="reset" variant="base" theme="default">
             {{ t("pages.common.reset") }}
           </t-button>
@@ -221,15 +252,15 @@ Script extension:
 
 ```vue
 <script setup lang="ts">
-import { showRemoveConfirm } from '@/utils/dialog';
+import { showRemoveConfirm } from "@/utils/dialog";
 
 const handleClickRemove = (row: any) => {
-  const removeApi = {context}.remove ?? {context}.delete;
+  const removeApi = { context }.remove ?? { context }.delete;
   showRemoveConfirm(
     `[${row.name}]`,
     async () => {
       await removeApi({ id: row.id });
-      MessagePlugin.success(t('pages.{context}.messages.removeSuccess'));
+      MessagePlugin.success(t("pages.{context}.messages.removeSuccess"));
     },
     () => {
       fetchData();
@@ -242,7 +273,12 @@ const handleClickRemove = (row: any) => {
 Template extension (add under `<!-- Additional operations (optional) -->` in `#op` slot):
 
 ```vue
-<t-link size="small" theme="primary" hover="color" @click="handleClickRemove(row)">
+<t-link
+  size="small"
+  theme="primary"
+  hover="color"
+  @click="handleClickRemove(row)"
+>
   {{ t('pages.common.remove') }}
 </t-link>
 ```
@@ -256,6 +292,17 @@ Template extension (add under `<!-- Additional operations (optional) -->` in `#o
 - Keep page names stable and deterministic (`{Context}List`).
 - Keep scope to base index page only. Do not include menu updates or drawer implementations.
 - When remove API exists, use `showRemoveConfirm` from `@/utils/dialog` and show `pages.{context}.messages.removeSuccess` after removal.
+- For multi-element layout, use `<t-row :gutter="[12, 20]">` with `<t-col>` spans following the mandatory rules (3-col `4`, 2-col `6`, 1-col `12`).
+- Use `<t-form :label-width="120">` as default to keep long English labels readable and aligned.
+- Unless explicitly required, keep form label width fixed at `120`.
+- Use only `:span` on `<t-col>` for width allocation; unless explicitly required, do not add responsive breakpoint props or screen-size-specific adaptations.
+- In 2-column layouts, keep both columns balanced in height; for `<t-textarea>` and other multi-line fields, enforce a max height to avoid one-sided stretching.
+- For `<t-textarea>`, enforce `maxRows <= 12` and `minRows === maxRows` to prevent content-driven height changes.
+- Buttons may be placed directly inside `<t-col>` without `<t-form-item>` wrapping.
+- For multiple action buttons, use `<t-col class="operation-container">` as the container.
+- Use `<t-button>` for non-API handlers and `<loading-button>` for API-calling handlers.
+- Do not add custom CSS in a `<style>` block inside `index.vue`.
+- If custom CSS is truly necessary, explain the reason first and do not apply the style change until the user confirms.
 
 ## Validation steps
 

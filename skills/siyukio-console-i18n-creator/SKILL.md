@@ -105,6 +105,9 @@ Apply to all generated labels in `fields`, `queryFields`, and `operations`:
 - Keep labels as short as possible while preserving meaning.
 - Prefer a single core noun/verb phrase; avoid redundant qualifiers.
 - Avoid repeating obvious context words (for example the resource name) when the page context already makes them clear.
+- For `zh_CN`, labels should usually be no more than 6 Chinese characters.
+- For `en_US`, labels should usually be a single word.
+- If an `en_US` word would exceed 12 letters, consider a clear and common abbreviation.
 
 ### 1) fields
 
@@ -117,8 +120,8 @@ Label priority:
 
 Language generation:
 
-- `en_US`: concise title case, for example `createdAtTs` -> `Created At Timestamp`
-- `zh_CN`: natural Chinese, for example `createdAtTs` -> `创建时间戳`
+- `en_US`: concise single-word label by default, for example `createdAtTs` -> `CreatedTS`
+- `zh_CN`: concise natural Chinese (typically <= 6 characters), for example `createdAtTs` -> `创建时间`
 
 ### 2) enums
 

@@ -141,7 +141,7 @@ Apply conservative merges:
     <parent>
         <groupId>io.github.siyukio</groupId>
         <artifactId>spring-siyukio</artifactId>
-        <version>3.5.14-M4</version>
+        <version>3.5.14-M7</version>
     </parent>
 
     <groupId>{package-name}</groupId>
@@ -149,12 +149,6 @@ Apply conservative merges:
     <version>{project-version}-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>{ServerProjectName}</name>
-
-    <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 
     <modules>
         <module>{server-project-name}-common</module>

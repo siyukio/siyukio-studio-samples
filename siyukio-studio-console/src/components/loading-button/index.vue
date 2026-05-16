@@ -1,6 +1,6 @@
 <!-- LoadingButton.vue -->
 <template>
-  <t-button :loading="loading" @click="handleClick">
+  <t-button :loading="loading" :disabled="disabled" @click="handleClick">
     <slot />
   </t-button>
 </template>
