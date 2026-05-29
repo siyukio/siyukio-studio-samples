@@ -1,6 +1,5 @@
 package io.github.siyukio.samples.config.api;
 
-import io.github.siyukio.samples.common.constants.RolesConstants;
 import io.github.siyukio.samples.config.api.dto.AdminVariableCreateRequest;
 import io.github.siyukio.samples.config.api.dto.AdminVariableCreateResponse;
 import io.github.siyukio.samples.config.api.dto.AdminVariableFilter;
@@ -13,13 +12,15 @@ import io.github.siyukio.samples.config.api.paths.AdminVariablePaths;
 import io.github.siyukio.samples.config.application.VariableService;
 import io.github.siyukio.tools.api.annotation.ApiController;
 import io.github.siyukio.tools.api.annotation.ApiMapping;
+import io.github.siyukio.tools.api.annotation.Authorization;
 import io.github.siyukio.tools.api.dto.PageRequest;
 import io.github.siyukio.tools.api.dto.PageResponse;
+import io.github.siyukio.tools.api.token.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ApiController(
         summary = "Variable admin API",
-        roles = {RolesConstants.ADMIN}
+        authorization = @Authorization(type = Token.PRINCIPAL_TYPE_ADMIN_USER)
 )
 public class AdminVariableController {
 
