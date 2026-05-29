@@ -1,6 +1,6 @@
 ---
 name: siyukio-unit-test-creator
-description: Create or modify server-side unit tests for Siyukio Spring Boot domain modules. Use when adding new tests, fixing or refactoring existing test classes, expanding scenario coverage, or aligning test bootstrap/configuration for controller, application, and integration layers.
+description: Create or modify controller-layer unit tests for Siyukio Spring Boot domain modules. Use when adding new controller tests, fixing or refactoring existing controller test classes, expanding endpoint scenario coverage, or aligning controller test bootstrap/configuration.
 ---
 
 # siyukio-unit-test-creator
@@ -11,8 +11,8 @@ Create and modify test code for Siyukio server domain modules.
 
 Support two workflows:
 
-- Create new tests when a context has no sufficient coverage.
-- Modify existing tests when behavior changes, failures appear, or assertions/fixtures need repair.
+- Create new controller tests when a context has no sufficient API-layer coverage.
+- Modify existing controller tests when behavior changes, failures appear, or assertions/fixtures need repair.
 
 ## Scope
 
@@ -26,8 +26,6 @@ Create or update files under:
     │   ├── TestApplication.java
     │   └── {domain}/
     │       ├── api/{Context}ControllerTest.java
-    │       ├── application/{Context}ServiceTest.java      (optional)
-    │       ├── integration/{Context}ClientTest.java       (optional)
     │       └── ... existing *Test.java files
     └── resources/
         ├── application.yml
@@ -36,8 +34,8 @@ Create or update files under:
 
 ## Use this skill when
 
-- Add tests for new controller/service/client behavior.
-- Repair failing tests after API/service changes.
+- Add tests for new controller endpoint behavior.
+- Repair failing controller tests after API contract or behavior changes.
 - Refactor brittle tests (naming, fixtures, assertions) with no behavior regression.
 - Extend scenario coverage for validation, not-found, authorization, and edge cases.
 
@@ -87,7 +85,7 @@ Extract and normalize:
 
 Inspect existing tests under `src/test/java/{package-path}/{domain}` and record:
 
-- Existing class naming patterns (`{Context}ControllerTest`, etc.).
+- Existing class naming patterns (`{Context}ControllerTest`).
 - Annotation style (`@SpringBootTest`, Mockito, profile usage).
 - Assertion style (JUnit assertions, AssertJ, custom helpers).
 - Fixture conventions (factory methods, builders, setup/teardown).
@@ -161,10 +159,9 @@ Cover at least:
 
 #### Mode A: Create tests
 
-1. Prefer creating `api/{Context}ControllerTest.java` first.
-2. Add `application/{Context}ServiceTest.java` only for logic not covered by controller tests.
-3. Add `integration/{Context}ClientTest.java` only when integration behavior needs direct verification.
-4. Use unique test data (`name-{timestamp-or-suffix}` style) to avoid collisions.
+1. Create only `api/{Context}ControllerTest.java`.
+2. Do not create `application/*Test.java` or `integration/*Test.java`.
+3. Use unique test data (`name-{timestamp-or-suffix}` style) to avoid collisions.
 
 #### Mode B: Modify tests
 
@@ -234,10 +231,10 @@ class {Context}ControllerTest {
 }
 ```
 
-### 9) Generate service/client tests only when needed
+### 9) Restrict output to controller tests
 
-Generate `application/{Context}ServiceTest.java` only for methods that are not exercised by controller tests.
-Generate `integration/{Context}ClientTest.java` only when client behavior needs direct verification.
+Do not generate `application/{Context}ServiceTest.java` or `integration/{Context}ClientTest.java`.
+This skill only produces `api/{Context}ControllerTest.java` and updates existing controller tests.
 
 ### 10) Run verification
 
@@ -276,7 +273,7 @@ API unit-test retry rule:
 - All unit tests use `@SpringBootTest(classes = TestApplication.class)` and `@ActiveProfiles("local")`.
 - Test suites have `TestApplication` and `application-local.yml` in place.
 - Created/modified tests cover positive + negative + edge scenarios.
-- Optional service/client tests are added only when controller coverage is insufficient.
+- Only controller tests are created or modified; no service/client test files are generated.
 - Existing test style is preserved in modification mode unless migration is explicitly requested.
 - Test changes are minimal, deterministic, and readable.
 - Maven tests pass for the target module.

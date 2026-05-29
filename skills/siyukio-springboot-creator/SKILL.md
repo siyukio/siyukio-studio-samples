@@ -141,7 +141,7 @@ Apply conservative merges:
     <parent>
         <groupId>io.github.siyukio</groupId>
         <artifactId>spring-siyukio</artifactId>
-        <version>3.5.14-M9</version>
+        <version>3.5.14-M17</version>
     </parent>
 
     <groupId>{package-name}</groupId>
