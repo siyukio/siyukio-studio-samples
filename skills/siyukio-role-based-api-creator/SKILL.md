@@ -41,6 +41,7 @@ Create or update files under:
 
 - A domain needs default role APIs for user, admin, internal, app, and member.
 - You need to add role restrictions through `@ApiController` and `@ApiMapping` with `authorization`.
+- Some endpoints should be publicly accessible and must disable token validation explicitly.
 - You need deterministic naming for role-specific controllers, paths classes, and DTOs in one shared `api` package tree.
 - You need admin API changes to stay synchronized with console TypeScript API contracts.
 
@@ -115,6 +116,8 @@ Authorization precedence contract (mandatory):
 - `@ApiMapping` defines method-level authorization.
 - If `@ApiMapping` has `authorization`, it overrides `@ApiController` authorization.
 - For user-role endpoints, both `@ApiController` and `@ApiMapping` should normally omit `authorization`.
+- If an API does not require token validation, configure `authorization = @Authorization(state = Authorization.State.DISABLED)` on `@ApiController` or `@ApiMapping`.
+- Do not combine `state = Authorization.State.DISABLED` with `type = Token.PRINCIPAL_TYPE_*` in the same annotation.
 
 ### 2) Create or update role-based controllers in shared `api` package
 
@@ -145,6 +148,7 @@ Controller rules:
 - Keep endpoint mappings on role-specific paths constants only.
 - Configure `@ApiMapping.authorization` only when method-level authorization differs from controller-level default.
 - If both controller and method specify authorization, method-level (`@ApiMapping`) takes precedence.
+- For public endpoints that skip token validation, set `authorization = @Authorization(state = Authorization.State.DISABLED)` at controller or method level.
 - Keep files inside `api`, `api/dto`, `api/paths` only.
 - Inject `{Context}Service` from application layer.
 
@@ -232,6 +236,19 @@ public void listAsInternalOnly() {
 }
 ```
 
+Token-disabled template (public endpoint):
+
+```java
+@ApiMapping(
+        path = {Context}Paths.LIST,
+        summary = "Public {Context} list",
+        authorization = @Authorization(state = Authorization.State.DISABLED)
+)
+public void listPublic() {
+    // This endpoint disables token validation.
+}
+```
+
 For role-specific controllers, import and use their corresponding path classes:
 
 - `Admin{Context}Controller` -> `Admin{Context}Paths`
@@ -284,7 +301,9 @@ Then confirm:
 - `@ApiController` and `@ApiMapping` do not use `roles`.
 - User APIs keep default authorization by omitting `authorization` on controller/method unless override is needed.
 - Non-user controller authorizations match required `Token.PRINCIPAL_TYPE_*` constants.
+- Endpoints without token validation use `@Authorization(state = Authorization.State.DISABLED)` explicitly.
 - When method-level authorization is configured in `@ApiMapping`, it overrides controller-level authorization by design.
+- Token-disabled annotations do not include `type = Token.PRINCIPAL_TYPE_*`.
 - API path strings are not hard-coded; they come from role-specific classes:
   - user: `{Context}Paths`
   - admin: `Admin{Context}Paths`
